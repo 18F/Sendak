@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 // Note that this only shows the AWS IAM users at the moment, and that should
 // be changed so that it prefers data from the database and adds as-needed
 // from IAM.
