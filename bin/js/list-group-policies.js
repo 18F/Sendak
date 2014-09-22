@@ -1,3 +1,8 @@
+#!/usr/bin/env node
+
+// This is not written right now because the policies are very complicated objects.
+//
+
 // Load aws-sdk & iam
 //
 var AWS = require('aws-sdk');
@@ -19,4 +24,5 @@ iam.listGroupPolicies(
 		else {
 			console.log( data )
 		}
-	);
+	}
+);
