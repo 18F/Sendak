@@ -52,11 +52,8 @@ iam.listUsers( { },
 			console.log( err, err.stack )
 		}
 		else {
-			// does iam have a .waitFor?
-			// https://github.com/18F/DevOps/blob/master/sendak/components/aws/run_instance.js#L128
-			//
 			var users = data.Users;
-			var sendak_users = [ ];
+			var sendak_users = [ ]; // spoiler: these are not really sendak users right now
 
 			// Transform the AWS IAM data into something more
 			// machine-and-human-readable.
@@ -90,7 +87,9 @@ iam.listUsers( { },
 			if (parsed['raw']) {
 				var raw_display = '';
 				for (var idx in display) {
-					// console.log( display[idx] )
+					// Construct the raw display, element by element, and give the user
+					// (which we assume to be a shell script).
+					//
 					if (display[idx]['username']) {
 						if (raw_display != '') {
 							raw_display = raw_display + ',' ;
@@ -110,7 +109,7 @@ iam.listUsers( { },
 						raw_display = raw_display + display[idx]['uid'] ;
 					}
 					console.log( raw_display ) ;
-					raw_display = '' ; //
+					raw_display = '' ; // for some reason this was not getting de-scoped
 				} // iterate display
 			}
 			else {
