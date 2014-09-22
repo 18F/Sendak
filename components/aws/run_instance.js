@@ -1,4 +1,4 @@
-/* 
+/*
 
 	function to build a node with aws-sdk using runInstances, export that so the rest of
 	Sendak can use it.
@@ -14,11 +14,7 @@ var ec2 = new AWS.EC2(
 	}
 );
 
-// This is just used to generate a noncely thing for nodename
-//
-var t = new Date().getTime() ; var frag = t.toString().substr(-4) ;
-
-var Sendak = function( args, callback ) {
+var new_sendak_node = function( args, callback ) {
 	// 'args' should be a dictionary containing
 	//   required:
 	//   * ssh_key_name (a string, from the aws console; NOT the name of a keyfile on disk)
@@ -44,10 +40,15 @@ var Sendak = function( args, callback ) {
 	//  * aws ec2 instance id (e.g., 'i-87bd676c')
 	//
 
+	// This is just used to generate a noncely thing for nodename
+	//
+	var t = new Date().getTime() ; var frag = t.toString().substr(-4) ;
+
 	var return_value = {
-		hostname    : '',
-		public_ip   : '',
-		instance_id : ''
+		hostname          : '',
+		public_ip         : '',
+		instance_id       : '',
+		availability_zone : ''
 	};
 
 	// This is the 18f hardened ubuntu image
@@ -109,7 +110,7 @@ var Sendak = function( args, callback ) {
 		if (ri_err) {
 			callback( ri_err, ri_err.stack );
 		}
-		else { 
+		else {
 
 			return_value.instance_id = data.Instances[0].InstanceId;
 
@@ -125,6 +126,9 @@ var Sendak = function( args, callback ) {
 					// XXX: note that this explicitly assumes ONE AND ONLY ONE instance is spun up
 					// and accordingly is not "really" asychronous. Whatever. Fix later.
 					//
+					// XXX: We need to break out of this if we are using dry run, as this will
+					// dutifully block synchronously until forever
+					//
 					ec2.waitFor( 'instanceRunning', { InstanceIds : [ return_value.instance_id ] }, function ( wait_for_err, instance_data ) {
 						if (wait_for_err) {
 							callback( wait_for_err, wait_for_err.stack );
@@ -133,8 +137,11 @@ var Sendak = function( args, callback ) {
 							var reservation_zero = instance_data.Reservations[0];
 							var instance_zero    = reservation_zero.Instances[0];
 
-							return_value.hostname  = instance_zero.PublicDnsName;
-							return_value.public_ip = instance_zero.PublicIpAddress;
+							return_value.hostname          = instance_zero.PublicDnsName;
+							return_value.public_ip         = instance_zero.PublicIpAddress;
+							return_value.availability_zone = instance_zero.Placement.AvailabilityZone;
+
+							// console.log( instance_zero )
 
 							callback( return_value );
 						} // if wait_for_err
@@ -143,6 +150,8 @@ var Sendak = function( args, callback ) {
 			} ) // describeInstances
 		} // if ri_err
 	} ) // runInstances
-}; // anonymous Sendak function 
+}; // new_sendak_node function 
 
-
+module.exports = {
+	new_node : new_sendak_node
+}; // module.exports
