@@ -39,7 +39,9 @@ export DEBUG=0
 ATOM=""
 WANTED_ATOM=$1
 
-if [[ "x${WANTED_ATOM}" == "x" ]]; then
+# Just tells the user what the general form of commands is
+#
+function usage () { # {{{
 	cat << USAGE
 
   sendak.sh - The Sendak command dispatcher.
@@ -52,26 +54,41 @@ if [[ "x${WANTED_ATOM}" == "x" ]]; then
   you will execute that. Please police your bin/ dir. Extensions (".js",
   ".py", and so on) are omitted for prettiness.
 
+  $ sendak.sh --list-atoms
+
+  This should return the list of available commands and which language they
+  are written in (which indicates the directory they reside in).
+
 USAGE
+	echo
+} # }}}
+
+if [[ "x${WANTED_ATOM}" == "x" ]]; then # {{{
+	usage
 	exit -255
-fi
+elif [[ "x${WANTED_ATOM}" == "x--list-atoms" ]]; then
+	echo
+	echo "Available atoms include: "
+	find bin -type f | perl -ne 'm!bin/([^/]+)/([^.]+).\S! and print qq/\t* $2 ($1)\n/'
+	echo
+	exit 0 # because successful.
+fi # }}}
 
 # Looks in a directory (first argument) for an "atom" (a sub-command for
 # sendak, second argument). For example:
 #
 # find_atom 'bin/js' 'list-users'
 #
-function find_atom () {
+function find_atom () { # {{{
 	dir=$1
 	atom=$2
 	log "dir - $dir, atom - $atom"
 	# atom = `echo atom | cut -d'.' -f1`
 	found=`find $dir -name ${atom}.* -print`
 	ATOM=${found};
-} # find_atom
+} # find_atom }}}
 
-
-for possible in `find bin/* -type d`; do
+for possible in `find bin/* -type d`; do # {{{
 	find_atom $possible $WANTED_ATOM
 	if [[ "${ATOM}x" == "x" ]]; then
 		# we did not find it
@@ -83,7 +100,7 @@ for possible in `find bin/* -type d`; do
 		# XXX: yes, bash "arrays" suck, so we need to clean up $* here
 		echo "we would be executing ${ATOM} $*"
 	fi
-done
+done # }}}
 
 exit 0
 
