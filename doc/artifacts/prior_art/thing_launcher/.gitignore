@@ -1,0 +1,4 @@
+*.pyc
+project/dev.db
+project/build/
+*.swp

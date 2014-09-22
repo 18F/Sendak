@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+
+
+
+{% block content %}
+
+	<div class="row">
+
+	
+		<div class="span6 offset0">
+			<h2>Launch Something</h2>
+			<form method="POST">
+				<fieldset>
+					
+			{% for field in form %}
+			<div class="clearfix">
+			            <label for="xlInput">{{field.label}}</label>
+			            <div class="input">
+			              {{ field }}
+			            </div>
+			         </div>
+			{% endfor %}	
+		    	<div class="actions">
+			<input type="submit" value="Launch a server" class="btn primary"/>
+				</div>
+	
+			{% csrf_token %}
+			</fieldset>
+			</form>
+	
+
+	
+	
+			<form method="POST" action="/flushkeys/" >
+				<fieldset>
+			
+			{% csrf_token %}
+			<a href="https://github.cfpb.gov/account/ssh">Set up</a> or <input type="submit" value="reload" class="btn primary"/> your SSH keys.
+			</fieldset>
+			</form>
+		</div>
+
+	
+
+	
+	<div class="span7 offset1">
+	<h2>My servers</h2>
+
+		
+		{% for instance in instances %}
+		<div class="row">
+		<div class="span2">
+			<h3 class="serverlabel">{{ instance.label}}</h3> 
+			<div class="serverlabel">{{ instance.status|default:"enqueued"}}</div>
+			</div>
+		<div class="span5">
+				<form method="POST" action="/update/">
+			{% if instance.status != 'stopped' %}<div>will be stopped after {{ instance.stop_after }}</div>{% endif %}
+			
+			<div> 
+				{% for action in instance.actions %}
+				<input type="submit" name="action" value="{{action}}" class="btn"> 
+				{% endfor %}
+				{% csrf_token %}
+				<input type="hidden" name="instance" value="{{instance.id}}">
+			</div>
+			{% if instance.ip_address %}<div><code>ssh ubuntu@{{instance.ip_address }}</code></div>{% endif %}
+			</form>
+			</div>
+		</div>
+		
+		{% endfor %}
+		
+
+
+	</div>
+ 	</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+	<title>Launch a thing!</title>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	
+	{% block extra %}
+	
+	{% endblock %}
+	
+	<style type="text/css">
+	.serverlabel{
+		text-align:right;
+		line-height:1em;
+		
+	}
+	
+	h3.serverlabel{
+		
+		font-size:small;
+	}
+	
+	
+	
+	</style>
+	
+</head>
+
+<body>
+	<div id="tools">
+		 hi {{ request.user }} | <a href="/logout">logout</a>
+	</div>
+	<div class="container">
+	
+	
+	{% block content %}
+	
+	{% endblock %}
+	</div>
+	
+</body>
+</html>
+

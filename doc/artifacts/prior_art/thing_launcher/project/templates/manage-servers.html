@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+
+
+
+{% block content %}
+<h1>Manage all the servers</h1>
+
+	
+	
+	<h2>Running servers</h2>
+	
+	<dl>
+		{% for instance in active_servers %}
+		<dt>{{ instance.label}} [{{instance.user}}]</dt> 
+			<dd>
+				<form method="POST" action="/update/">
+				<input type="hidden" name="return" value="manage">
+				<div>{{ instance.status|default:"enqueued"}}</div>
+				{% if instance.status != 'stopped' %}<div>will be stopped after {{ instance.stop_after }}</div>{% endif %}
+			
+			
+			{% if instance.ip_address %}<div><code>ssh ubuntu@{{instance.ip_address }}</code></div>{% endif %}
+			<div> 
+				{% for action in instance.actions %}
+				<input type="submit" name="action" value="{{action}}">
+				{% endfor %}
+				{% csrf_token %}
+				<input type="hidden" name="instance" value="{{instance.id}}">
+			</div>
+			</form>
+			</dd>
+		
+		{% endfor %}
+		
+	</dl>
+	
+		<h2>Stopped servers</h2>
+	
+	<dl>
+		{% for instance in stopped_servers %}
+		<dt>{{ instance.label}} [{{instance.user}}]</dt> 
+			<dd>
+				<form method="POST" action="/update/">
+				<input type="hidden" name="return" value="manage">
+				<div>{{ instance.status|default:"enqueued"}}</div>
+			
+			
+			{% if instance.ip_address %}<div><code>ssh ubuntu@{{instance.ip_address }}</code></div>{% endif %}
+			<div> 
+				{% for action in instance.actions %}
+				<input type="submit" name="action" value="{{action}}">
+				{% endfor %}
+				{% csrf_token %}
+				<input type="hidden" name="instance" value="{{instance.id}}">
+			</div>
+			</form>
+			</dd>
+		
+		{% endfor %}
+		
+	</dl>
+	
+	
+	
+
+{% endblock %}
