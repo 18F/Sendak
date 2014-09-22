@@ -82,7 +82,7 @@ fi # }}}
 function find_atom () { # {{{
 	dir=$1
 	atom=$2
-	log "dir - $dir, atom - $atom"
+	# log "dir - $dir, atom - $atom"
 	# atom = `echo atom | cut -d'.' -f1`
 	found=`find $dir -name ${atom}.* -print`
 	ATOM=${found};
@@ -97,8 +97,14 @@ for possible in `find bin/* -type d`; do # {{{
 	else
 		# We found it. Let's execute it with the arguments we were given
 		#
-		# XXX: yes, bash "arrays" suck, so we need to clean up $* here
-		echo "we would be executing ${ATOM} $*"
+		# bash "arrays" suck, so we need to clean up $* here
+		#
+		DISPATCH="`echo $* | perl -ne 'm!\S+\s(.*)! and print $1'`"
+		DISPATCH="${ATOM} ${DISPATCH}"
+		# This is kind of frightening, but this script should be running as the
+		# (unprivileged) user in the shell. Not a web form etc.
+		#
+		${DISPATCH}
 	fi
 done # }}}
 
