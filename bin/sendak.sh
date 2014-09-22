@@ -40,6 +40,23 @@ export DEBUG=0
 ATOM=""
 WANTED_ATOM=$1
 
+if [[ "x${WANTED_ATOM}" == "x" ]]; then
+	cat << USAGE
+
+  sendak.sh - The Sendak command dispatcher.
+
+  $ sendak.sh sub-command --sub-command-args
+
+  In this example, 'sub-command.js' is found in bin/js/sub-command.js and
+  executed with arguments --sub-comand-args. $0 is not real smart and will
+  simply return the first sub-command (internally: "atoms") it finds and
+  you will execute that. Please police your bin/ dir. Extensions (".js",
+  ".py", and so on) are omitted for prettiness.
+
+USAGE
+	exit -255
+fi
+
 # Looks in a directory (first argument) for an "atom" (a sub-command for
 # sendak, second argument). For example:
 #
@@ -73,3 +90,5 @@ exit 0
 
 # ps. bash sucks.
 # http://www.linuxjournal.com/content/return-values-bash-functions
+
+# jane@cpan.org // vim:tw=80:ts=2:noet
