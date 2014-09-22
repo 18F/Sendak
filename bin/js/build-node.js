@@ -41,8 +41,8 @@ var nopt = require('nopt')
 
 // TODO: Add 'self-destruct-upon-task' flag for constructor
 
-var Sendak = require( './sendak_node_backend.js' ); // the ec2 calls live here
-var ORM    = require( './odorm.js' ); // this is our "orm"
+var Sendak = require( './components/aws/run_intsance.js' ); // the ec2 calls live here
+var ORM    = require( './components/odorm/odorm.js' ); // this is our "orm"
 
 var this_node = Sendak.new_node(
 	{
