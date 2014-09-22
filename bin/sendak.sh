@@ -25,10 +25,9 @@
 # Sendak ORM looks like, which includes AWS IAM data and 18F user/group/policy
 # data, among others).
 
-# We assume this will be here. Sooner or later I will be Responsible about
-# this and put it somewhere more reasonable.
+# Bring in the included goodies we carry around as Sendak components in shell
 #
-. components/common/sendak.sh
+. components/common/shell/sendak.sh
 
 # debuggery is not working. so we get all the messages. which is okay with me.
 #
