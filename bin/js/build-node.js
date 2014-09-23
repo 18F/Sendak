@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // The stuff that was here in the previous revision is being moved (has been moved)
 // to the backend, where it should be.
 //
