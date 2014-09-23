@@ -20,3 +20,9 @@ export SENDAK_HOME=/tmp
 
 # this is ... nevermind.
 export SENDAK_DRY_RUN=true
+
+# For clarity's sake, we create this
+export SENDAK_ROOT="/Users/jane/dev/sendak"
+
+# And then frob this
+export NODE_PATH="${NODE_PATH}:${SENDAK_ROOT}"
