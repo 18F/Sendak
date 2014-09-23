@@ -20,3 +20,5 @@ consider it to be a directory on github with a fab file.
 * `mockups` - “straw men”/“wireframes” and similar pieces of code designed to demonstrate a functionality or what something would look like If It Really Worked™. None of these should ever be considered functional, safe, or production-ready. If you find yourself using something here more than once, please clean it up and place it in `bin/`.
 
 * `contrib` - these things are helpful but not really "officially part of the sendak distribution." If you have something that would be useful to Sendak users, this is the place to add it and submit a PR.
+
+* `var` - as per convention your runtime files go here (such as `datastore.json` from the odorm module)
