@@ -2,7 +2,7 @@
 // Wrapper to proof the display-raw function
 //
 
-var sendak_supplemental = require( './components/common/js/supplemental.js' );
+var sendak_supplemental = require( 'components/common/js/supplemental.js' );
 
 var dict = {
 	'wanted_key_a' : 'long value for a',
