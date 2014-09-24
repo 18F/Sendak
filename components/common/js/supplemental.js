@@ -6,18 +6,29 @@
 //
 
 var display_raw = function ( hash, keys ) {
+	// This is the target for concatenated csv rows
+	//
 	var display = '';
+
+	// This is the current row
+	//
 	var raw_display = '';
+
 	for (var idx in keys) { // {{{
 		if (hash.hasOwnProperty( keys[idx] )) {
-			if (raw_display != '') {
-				raw_display = raw_display + ',' ;
+			// Only add commas to non-zeroth elements of the record
+			//
+			if (idx != 0) {
+				raw_display = raw_display + ',' + hash[ keys[idx] ];
 			}
-			raw_display = raw_display + hash[ keys[idx] ];
-			display = display + raw_display + "\n";
+			else {
+				raw_display = raw_display + hash[ keys[idx] ];
+			}
+			display = display + raw_display;
 			raw_display = '' ;
 		} // if key exists
 	} // iterate display }}}
+
 	return display;
 } // display_raw anon function
 
