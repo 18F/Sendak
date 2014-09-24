@@ -4,6 +4,7 @@
 //
 // Return a string of lines which are all the requested keys joined by a comma
 //
+
 var display_raw = function ( hash, keys ) {
 	var display = '';
 	var raw_display = '';
@@ -15,12 +16,11 @@ var display_raw = function ( hash, keys ) {
 		raw_display = raw_display + hash[key];
 		display = raw_display + "\n"
 		raw_display = '' ; 
-	} // iterate display
+	} // iterate display }}}
 	return display;
 } // display_raw anon function
 
 exports.display_raw = display_raw;
-
 
 // There are several places where I am reproducing this code which just
 // returns the keys of a dictionary/hash. I got tired of this. Basically
