@@ -32,13 +32,15 @@ var nopt = require('nopt')
 			'username'   : [ Boolean, null ],
 			'arn'        : [ Boolean, null ],
 			'uid'        : [ Boolean, null ],
-			'raw'        : [ Boolean, null ]
+			'raw'        : [ Boolean, null ],
+			'help'       : [ Boolean, null ]
 		}
 	, description = {
-			'username'   : 'Display usernames (e.g., JaneAvriette)',
-			'arn'        : 'Display arns (e.g., arn:aws:iam::141234512345:user/JaneAvriette)',
-			'uid'        : 'Display uids (e.g., AIXXKLJASDEXEXXASDXXE)',
-			'raw'        : 'Just display the records without json (csv)'
+			'username'   : ' Display usernames (e.g., JaneAvriette)',
+			'arn'        : ' Display arns (e.g., arn:aws:iam::141234512345:user/JaneAvriette)',
+			'uid'        : ' Display uids (e.g., AIXXKLJASDEXEXXASDXXE)',
+			'raw'        : ' Just display the records without json (csv)',
+			'help'       : ' Sets the helpful bit.'
 		}
 	, defaults = {
 			'username'   : true,
@@ -46,9 +48,20 @@ var nopt = require('nopt')
 			'uid'        : true,
 			'raw'        : false
 		}
-	, shortHands = { }
+	, shortHands = {
+			'h'          : [ '--help' ],
+			'halp'       : [ '--help' ]
+		}
 	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, description, defaults)
+	, usage = noptUsage(knownOpts, shortHands, description, defaults)
+
+if (parsed['help']) {
+	// Be halpful
+	//
+	console.log( 'Usage: ' );
+	console.log( usage );
+	process.exit(0); // success
+}
 
 iam.listUsers( { },
 	function( err, data ) {
