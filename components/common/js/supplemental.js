@@ -8,14 +8,15 @@
 var display_raw = function ( hash, keys ) {
 	var display = '';
 	var raw_display = '';
-	for (var key in keys) { // {{{
-		// if (hash.hasOwnProperty( key )) {
-		if (raw_display != '') {
-			raw_display = raw_display + ',' ;
-		}
-		raw_display = raw_display + hash[key];
-		display = raw_display + "\n"
-		raw_display = '' ; 
+	for (var idx in keys) { // {{{
+		if (hash.hasOwnProperty( keys[idx] )) {
+			if (raw_display != '') {
+				raw_display = raw_display + ',' ;
+			}
+			raw_display = raw_display + hash[ keys[idx] ];
+			display = display + raw_display + "\n";
+			raw_display = '' ;
+		} // if key exists
 	} // iterate display }}}
 	return display;
 } // display_raw anon function
@@ -27,9 +28,9 @@ exports.display_raw = display_raw;
 // synonymous with perl's 'keys %foo' function.
 //
 
-var get_keys = function ( hash, keys ) {
+var get_keys = function ( hash ) {
 	var r_keys = [ ];
-	for (var key in keys) { // {{{
+	for (var key in hash) { // {{{
 		if (hash.hasOwnProperty( key )) {
 			r_keys.push( key );
 		}

@@ -12,3 +12,10 @@ var dict = {
 	'unwanted_key_b' : 'long value for uwb'
 };
 
+var keynames = sendak_supplemental.get_keys( dict );
+
+// console.log( foo );
+
+var string = sendak_supplemental.display_raw( dict, [ 'wanted_key_a', 'wanted_key_b' ] );
+
+console.log( string );
