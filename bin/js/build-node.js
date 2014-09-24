@@ -44,8 +44,8 @@ var nopt = require('nopt')
 		}
 	, parsed = nopt(knownOpts, process.argv)
 	  // defaults, above, can be added to the arguments for noptUsage
-		// but it makes the response unreasonably wide.
-		//
+	  // but it makes the response unreasonably wide.
+	  //
 	, usage = noptUsage(knownOpts, shortHands, description )
 
 if (parsed['help']) {
