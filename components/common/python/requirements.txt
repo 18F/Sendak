@@ -1,0 +1,4 @@
+#Python 2.7, b/c not all these libraries are avaible in Python3
+Fabric==1.10.0
+boto==2.32.1
+psycopg2==2.5.4
