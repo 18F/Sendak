@@ -92,6 +92,8 @@ iam.listGroups( { },
 				display.push( record )
 			} // iterate sendak_groups }}}
 			if (parsed['raw']) {
+				// TODO: use raw_display() from Sendak.supplemental
+				//
 				var raw_display = '';
 				for (var idx in display) {
 					// Construct the raw display, element by element, and give the user
