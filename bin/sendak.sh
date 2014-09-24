@@ -66,6 +66,9 @@ USAGE
 if [[ "x${WANTED_ATOM}" == "x" ]]; then # {{{
 	usage
 	exit -255
+elif [[ "x${WANTED_ATOM}" == "x--help" ]]; then
+	usage
+	exit -255
 elif [[ "x${WANTED_ATOM}" == "x--list-atoms" ]]; then
 	echo
 	echo "Available atoms include: "

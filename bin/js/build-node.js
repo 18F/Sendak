@@ -16,7 +16,8 @@ var nopt = require('nopt')
 			'ami-id'          : [ String, null ],
 			'instance-type'   : [ String, null ],
 			'protect'         : [ Boolean, null ],
-			'autoburn'        : [ Boolean, null ]
+			'autoburn'        : [ Boolean, null ],
+			'help'            : [ Boolean, null ]
 		}
 	, description = {
 			'ssh-key-name'    : 'The ssh key name (not filename) you would use to log into this node with.',
@@ -25,7 +26,8 @@ var nopt = require('nopt')
 			'ami-id'          : 'The amazon AMI you would have burned onto this node.',
 			'instance-type'   : 'The type of instance for the node.',
 			'protect'         : 'Whether this node should have instance termination protection.',
-			'autoburn'        : 'Whether this node should be terminated upon launch (useful for "burner" nodes).'
+			'autoburn'        : 'Whether this node should be terminated upon launch (useful for "burner" nodes).',
+			'help'            : 'Halp the user.'
 		}
 	, defaults = {
 			'ssh-key-name'    : 'jane-fetch-aws-root',
@@ -36,9 +38,23 @@ var nopt = require('nopt')
 			'protect'         : false,
 			'autoburn'        : false
 		}
-	, shortHands = { }
+	, shortHands = {
+			'h'          : [ '--help' ],
+			'halp'       : [ '--help' ]
+		}
 	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, description, defaults)
+	  // defaults, above, can be added to the arguments for noptUsage
+		// but it makes the response unreasonably wide.
+		//
+	, usage = noptUsage(knownOpts, shortHands, description )
+
+if (parsed['help']) {
+	// Be halpful
+	//
+	console.log( 'Usage: ' );
+	console.log( usage );
+	process.exit(0); // success
+}
 
 // TODO: Add 'self-destruct-upon-task' flag for constructor
 
@@ -47,6 +63,8 @@ var ORM    = require( 'components/odorm/odorm.js' ); // this is our "orm"
 
 var this_node = Sendak.new_node(
 	{
+		// TODO: Fix this to use a map from the defaults hash use with nopt, above
+		//
 		ssh_key_name    : parsed[ 'ssh-key-name' ]    ? parsed[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
 		security_groups : parsed[ 'security-groups' ] ? parsed[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
 		subnet          : parsed[ 'subnet' ]          ? parsed[ 'subnet' ]          : 'subnet-bd4d85ca',
@@ -71,7 +89,19 @@ var this_node = Sendak.new_node(
 			// console.log( metadata );
 
 			ORM.write_data( 'datastore.json', metadata, function (err) {
-				console.log( err )
+				if (err) {
+					console.log( 'fs.write: ', err.stack )
+				}
+				else {
+					// was successful so nop
+					//
+					console.log(
+						'Node created (' +
+						metadata['instance_id'] +
+						') : ssh ubuntu@' +
+						ec2_result['public_ip']
+					);
+				}
 			} );
 		}
 	} // callback function
