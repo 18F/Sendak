@@ -18,6 +18,10 @@ var iam = new AWS.IAM(
 	}
 );
 
+// Import sendak supplemental functions
+//
+var supp = require( 'components/common/js/supplemental.js' );
+
 // parse opts
 //
 var nopt = require('nopt')
@@ -84,34 +88,12 @@ iam.listUsers( { },
 				}
 				display.push( record )
 			} // iterate sendak_users }}}
-			if (parsed['raw']) {
-				var raw_display = '';
+			if (parsed['raw']) { // display raw {{{
 				for (var idx in display) {
-					// Construct the raw display, element by element, and give the user
-					// (which we assume to be a shell script).
-					//
-					if (display[idx]['username']) {
-						if (raw_display != '') {
-							raw_display = raw_display + ',' ;
-						}
-						raw_display = raw_display + display[idx]['username'] ;
-					}
-					if (display[idx]['arn']) {
-						if (raw_display != '') {
-							raw_display = raw_display + ',' ;
-						}
-						raw_display = raw_display + display[idx]['arn'] ;
-					}
-					if (display[idx]['uid']) {
-						if (raw_display != '') {
-							raw_display = raw_display + ',' ;
-						}
-						raw_display = raw_display + display[idx]['uid'] ;
-					}
-					console.log( raw_display ) ;
-					raw_display = '' ; // for some reason this was not getting de-scoped
+					var output = supp.display_raw( display[ idx ], supp.get_keys( parsed ) );
+					console.log( output ) ;
 				} // iterate display
-			}
+			} // }}} display raw
 			else {
 				console.log( display )
 			} // if raw
