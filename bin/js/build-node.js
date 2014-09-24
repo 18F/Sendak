@@ -47,6 +47,8 @@ var ORM    = require( 'components/odorm/odorm.js' ); // this is our "orm"
 
 var this_node = Sendak.new_node(
 	{
+		// TODO: Fix this to use a map from the defaults hash use with nopt, above
+		//
 		ssh_key_name    : parsed[ 'ssh-key-name' ]    ? parsed[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
 		security_groups : parsed[ 'security-groups' ] ? parsed[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
 		subnet          : parsed[ 'subnet' ]          ? parsed[ 'subnet' ]          : 'subnet-bd4d85ca',
@@ -71,7 +73,19 @@ var this_node = Sendak.new_node(
 			// console.log( metadata );
 
 			ORM.write_data( 'datastore.json', metadata, function (err) {
-				console.log( err )
+				if (err) {
+					console.log( 'fs.write: ', err.stack )
+				}
+				else {
+					// was successful so nop
+					//
+					console.log(
+						'Node created (' +
+						metadata['instance_id'] +
+						') : ssh ubuntu@' +
+						ec2_result['public_ip']
+					);
+				}
 			} );
 		}
 	} // callback function
