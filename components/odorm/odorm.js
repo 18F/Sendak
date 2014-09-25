@@ -11,9 +11,8 @@ var supps  = require('components/common/js/supplemental.js');
 // methods:
 //   * new_schema - takes optionally a filename. reads (requires!) the
 //     file indicated, constructs a schema from that file, and returns
-//     a new, empty, copy of that schema. If no filename is provided,
-//     assumes the schema already defined (a singleton) is what you want
-//     and provides you a new, empty copy of that schema.
+//     a copy of the schema. this process re-initliases the singleton
+//     which serves as your in-memory/on-disk database.
 //
 //     you will need to call new_schema before you have objects et cetera.
 //
@@ -26,10 +25,11 @@ var supps  = require('components/common/js/supplemental.js');
 //   * new_object - will return a new object that you specify, providing it's
 //     a key in the hash provided by object_types.
 //
-//   * write_data - provide (filename, datastore, callback) and it will poop it
-//     out onto disk in json, in a way that can be read back in later.
-//     callback will be passed the return from fs.writeFile. If your callback
-//     isn't called, you can assume it was successful.
+//   * write_data - provide (filename, callback) and the in-memory datastore
+//     (a singleton) will be written to the disk. If the operation fails, your
+//     callback will be called from fs.writeFile with corresponding error.
+//     out onto disk in json, in a way that can be read back in later;
+//     you should assume it works if your callback is not called.
 //
 module.exports = {
 	new_schema : function (filename) { // {{{
@@ -52,14 +52,18 @@ module.exports = {
 		else {
 			// This is a request for a clean copy of the schema.
 			//
-			return schema;
+			datastore = schema;
+			datastore[ '_version' ] = _version;
+			return datastore;
 		} // filename
 	}, // }}} new_schema()
 
-	add_object : function( datastore, type, object ) { // {{{
+	add_object : function( type, object ) { // {{{
 		if ( datastore.hasOwnProperty( type )) {
 			// This looks like a datastore that has an object of the type we are
 			// being asked to commit.
+			//
+			// TODO: This needs to check for uniqueness of objects
 			//
 			datastore[ type ].push( object );
 		}
@@ -70,13 +74,31 @@ module.exports = {
 		}
 	}, // }}} add_object()
 
-	del_object : function( datastore, type, object ) { // {{{
+	del_object : function( type, object ) { // {{{
 	// {"name":null,"serial":"b72b4624ac4cbf0d7374d88843edc353eba85651e3527e5c990d8e1c50cf8868","instance_id":"i-f7b8de1c","availability_zone":"us-east-1a"}
 		var serial = object['serial'];
 		var kept = [ ];
 		if (datastore.hasOwnProperty( type )) {
 			// Looks like we can look at the list of objects of that type in the
 			// store
+			for (var idx in datastore[type]) {
+				// This should be an array of hashes
+				//
+				record = datastore[type][idx];
+				if (record['serial'] != object['serial']) {
+					// This means you cannot assume that your datastore is going to
+					// always-and-forever have a given order of objects; use the
+					// serial attribute to keep track of them.
+					//
+					kept.push( record );
+				}
+				else {
+					// Ostensibly here we have found an object with the serial indicated
+					// and we aren't going to push it. So this is a nop.
+					//
+				}
+			} // for idx
+			datastore[type] = kept;
 		}
 		else {
 			// It looks like the user did not actually give us a valid datatype
