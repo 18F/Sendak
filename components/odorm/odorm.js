@@ -1,21 +1,35 @@
-// var odorm  = require( './schema.js' );
 var odorm;
 var schema = { };
 var datastore = { };
+var _version = '0.1';
 
 var crypto = require('crypto');
 var supps  = require('components/common/js/supplemental.js');
 
 // 'schema' should be a hash that includes one hash-per-key (so, it is a hash of hashes)
-// 'callback' will get called with your fancy on-disk "orm" (see docs)
+//
 // methods:
+//   * new_schema - takes optionally a filename. reads (requires!) the
+//     file indicated, constructs a schema from that file, and returns
+//     a new, empty, copy of that schema. If no filename is provided,
+//     assumes the schema already defined (a singleton) is what you want
+//     and provides you a new, empty copy of that schema.
+//
+//     you will need to call new_schema before you have objects et cetera.
+//
+//   * add_object - takes a schema, a specified object type, and writes that
+//     object into the appropriate field of the schema.
+//
 //   * object_types - will return a list of bare strings referring to the
 //     types of objects you have access to inside your orm.
+//
 //   * new_object - will return a new object that you specify, providing it's
 //     a key in the hash provided by object_types.
-//   * write_data - provide (filename, vars, callback) and it will poop it
+//
+//   * write_data - provide (filename, datastore, callback) and it will poop it
 //     out onto disk in json, in a way that can be read back in later.
-//     callback will be passed the return from fs.writeFile.
+//     callback will be passed the return from fs.writeFile. If your callback
+//     isn't called, you can assume it was successful.
 //
 module.exports = {
 	new_schema : function (filename) { // {{{
@@ -32,6 +46,7 @@ module.exports = {
 				//
 				datastore[ schema[objtype] ] = [ ];
 			}
+			datastore[ '_version' ] = _version;
 			return datastore;
 		}
 		else {
@@ -54,6 +69,20 @@ module.exports = {
 			return null; // this should actually be an exception?
 		}
 	}, // }}} add_object()
+
+	del_object : function( datastore, type, object ) { // {{{
+	// {"name":null,"serial":"b72b4624ac4cbf0d7374d88843edc353eba85651e3527e5c990d8e1c50cf8868","instance_id":"i-f7b8de1c","availability_zone":"us-east-1a"}
+		var serial = object['serial'];
+		var kept = [ ];
+		if (datastore.hasOwnProperty( type )) {
+			// Looks like we can look at the list of objects of that type in the
+			// store
+		}
+		else {
+			// It looks like the user did not actually give us a valid datatype
+			//
+		}
+	} // }}}
 
 	new_object : function (varname) { // {{{
 		if (schema.hasOwnProperty( varname )) {
@@ -99,8 +128,17 @@ module.exports = {
 		} // if has property etc
 	}, // }}} new_object()
 
-	object_types : function () { // {{{
-		return supps.keys( schema );
+	object_types : function (datastore) { // {{{
+		var keys = [ ];
+		for (var key in supps.keys(datastore) {
+			// Elements of the schema beginning with '_', like '_version', are
+			// reserved. Please don't mess with that.
+			//
+			if (key.substr(0,1) != '_') {
+				keys.push(key);
+			}
+		}
+		return keys;
 	}, // }}} object_types()
 
 	write_data : function ( filename, datastore, callback ) { // {{{
