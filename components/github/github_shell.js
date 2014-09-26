@@ -1,4 +1,4 @@
-/* 
+/*
 
  Pull a github repository down with git-over-ssh
 
@@ -17,7 +17,7 @@ var fs = require('fs');
 // SENDAK_IDENTITY - This is an ssh key that would be created something like 
 //   `ssh-keygen -t dsa -f ~/.ssh/sendak_dsa `
 // or similar. Note that this refers to the private, not public key.
-// 
+//
 // SENDAK_HOME - Sendak needs to live somewhere. Ordinarily this might be /home/sendak or
 // in /tmp if you prefer; this is the location sendak will pull repositories down into
 // before pushing them out to the new nodes.

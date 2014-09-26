@@ -1,4 +1,4 @@
-#### Sendak, or Infrastructure-as-a-service-as-a-service
+### Sendak, or Infrastructure-as-a-service-as-a-service
 
 Sendak enables someone to launch Things from cloudly locations such as ec2. For now the
 documentation does not actually include the exact format of what a Thing looks like, but
@@ -6,7 +6,7 @@ consider it to be a directory on github with a fab file.
 
 @avriette, jane.avriette@gsa.gov
 
-##### Stuff that lives here:
+#### Stuff that lives here:
 
 * `bin` - separated out by language; these are called by the sendak dispatcher, so something that is called bin/js/build-node.js might be invoked by `sendak build-node --long-arg param` and similar.
 
@@ -22,3 +22,11 @@ consider it to be a directory on github with a fab file.
 * `contrib` - these things are helpful but not really "officially part of the sendak distribution." If you have something that would be useful to Sendak users, this is the place to add it and submit a PR.
 
 * `var` - as per convention your runtime files go here (such as `datastore.json` from the odorm module)
+
+#### What's a Sendak?
+
+From Wikipedia:
+
+**Maurice Bernard Sendak** (/ˈsɛndæk/; June 10, 1928 – May 8, 2012) was an American illustrator and writer of children's books. He became widely known for his book *Where the Wild Things Are*, first published in 1963. Born to Jewish-Polish parents, his childhood was affected by the death of many of his family members during the Holocaust. Besides *Where the Wild Things Are*, Sendak also wrote works such as *In the Night Kitchen* and *Outside Over There*, and illustrated *Little Bear*.
+
+The progenitor of this software was called Thing Launcher (see `doc/artifacts/prior_art`), which was developed at CFPB.

@@ -39,8 +39,7 @@ var nopt = require('nopt')
 			'autoburn'        : false
 		}
 	, shortHands = {
-			'h'          : [ '--help' ],
-			'halp'       : [ '--help' ]
+			'h'          : [ '--help' ]
 		}
 	, parsed = nopt(knownOpts, process.argv)
 	  // defaults, above, can be added to the arguments for noptUsage
