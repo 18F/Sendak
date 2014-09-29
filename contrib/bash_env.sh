@@ -25,7 +25,9 @@ export SENDAK_DRY_RUN=true
 export SENDAK_ROOT="/Users/jane/dev/sendak"
 
 # If a datastore exists in $SENDAK_ROOT, set it
-if [[ -e "${SENDAK_ROOT}/datastore.json" ]]; then
+if [[ -e "${SENDAK_ROOT}/var/datastore.json" ]]; then
+	export SENDAK_DATASTORE="${SENDAK_ROOT}/var/datastore.json"
+elif [[ -e "${SENDAK_ROOT}/datastore.json" ]]; then
 	export SENDAK_DATASTORE="${SENDAK_ROOT}/datastore.json"
 fi
 
