@@ -32,6 +32,16 @@ var supps  = require('components/common/js/supplemental.js');
 //     you should assume it works if your callback is not called.
 //
 module.exports = {
+	restore_schema : function (filename) { // {{{
+		// Read the datastore off disk.
+		//
+		// TODO: Probably validation of the schema would be a good thing to have
+		//       but should be low priority.
+		var ds = require( filename );
+		datastore = ds;
+		return datastore;
+	}, // }}}
+
 	new_schema : function (filename) { // {{{
 		if (filename) {
 			// Define a new schema
@@ -65,8 +75,13 @@ module.exports = {
 			// being asked to commit.
 			//
 			// TODO: This needs to check for uniqueness of objects
+			//
 			// TODO: This requires a "delete from store" method
+			//
 			// TODO: This probably works best with a grep function (which node hasn't)
+			//
+			// TODO: This seems to include a 'data' field inside individual objects
+			//       (cf object tree)
 			//
 			datastore[ type ]['data'].push( object );
 			return datastore;
