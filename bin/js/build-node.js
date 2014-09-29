@@ -20,14 +20,14 @@ var nopt = require('nopt')
 			'help'            : [ Boolean, null ]
 		}
 	, description = {
-			'ssh-key-name'    : 'The ssh key name (not filename) you would use to log into this node with.',
-			'security-groups' : 'A security group or several security groups that apply to this node.',
-			'subnet'          : 'The subnet [implies vpc] where this node should reside.',
-			'ami-id'          : 'The amazon AMI you would have burned onto this node.',
-			'instance-type'   : 'The type of instance for the node.',
-			'protect'         : 'Whether this node should have instance termination protection.',
-			'autoburn'        : 'Whether this node should be terminated upon launch (useful for "burner" nodes).',
-			'help'            : 'Halp the user.'
+			'ssh-key-name'    : ' The ssh key name (not filename) you would use to log into this node with.',
+			'security-groups' : ' A security group or several security groups that apply to this node.',
+			'subnet'          : ' The subnet [implies vpc] where this node should reside.',
+			'ami-id'          : ' The amazon AMI you would have burned onto this node.',
+			'instance-type'   : ' The type of instance for the node.',
+			'protect'         : ' Whether this node should have instance termination protection.',
+			'autoburn'        : ' Whether this node should be terminated upon launch (useful for "burner" nodes).',
+			'help'            : ' Halp the user.'
 		}
 	, defaults = {
 			'ssh-key-name'    : 'jane-fetch-aws-root',
