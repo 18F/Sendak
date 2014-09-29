@@ -138,7 +138,14 @@ module.exports = {
 			var clone = { };
 
 			for (var property in map) { // {{{
-				if ( map.hasOwnProperty( property ) && (property != 'hasone') && (property != 'hasmany') ) {
+				if (
+					map.hasOwnProperty( property ) &&
+					// Don't map the metadata attributes
+					//
+					(property != 'hasone') &&
+					(property != 'hasmany') &&
+					(property != 'data')
+				) {
 					// Need to create a hash with key property and get a serial for it because
 					// this is a new object. XXX: this implies the schema exists somewhere
 					// and doesn't need to be created.
