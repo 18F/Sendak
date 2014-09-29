@@ -1,12 +1,6 @@
 #! /usr/bin/env node
-// Note that this only shows the AWS IAM users at the moment, and that should
-// be changed so that it prefers data from the database and adds as-needed
-// from IAM.
+// List the users in IAM, optionally with pattern supplied as --pattern
 //
-// Note it is assumed you will filter the output from these commands via the
-// shell rather than passing expressions and transformations to this tool.
-//
-
 
 // Load aws-sdk & iam
 //
@@ -33,13 +27,17 @@ var nopt = require('nopt')
 			'arn'        : [ Boolean, null ],
 			'uid'        : [ Boolean, null ],
 			'raw'        : [ Boolean, null ],
+			'pattern'    : [ String, null ],
 			'help'       : [ Boolean, null ]
 		}
 	, description = {
+			// XXX: WHY WHY WHY WHY
+			//
 			'username'   : ' Display usernames (e.g., JaneAvriette)',
 			'arn'        : ' Display arns (e.g., arn:aws:iam::141234512345:user/JaneAvriette)',
 			'uid'        : ' Display uids (e.g., AIXXKLJASDEXEXXASDXXE)',
 			'raw'        : ' Just display the records without json (csv)',
+			'pattern'    : ' Display only usernames matching a (Node RegExp) pattern',
 			'help'       : ' Sets the helpful bit.'
 		}
 	, defaults = {
@@ -70,7 +68,7 @@ iam.listUsers( { },
 		}
 		else {
 			var users = data.Users;
-			var sendak_users = [ ]; // spoiler: these are not really sendak users right now
+			var iam_users = [ ];
 
 			// Transform the AWS IAM data into something more
 			// machine-and-human-readable.
@@ -78,29 +76,48 @@ iam.listUsers( { },
 			// XXX: Since this task was written the schema has changed.
 			//
 			for (var idx in users) { // {{{
-				sendak_users.push( {
-					username : users[idx].UserName,
-					arn      : users[idx].Arn,
-					uid      : users[idx].UserId
-				} );
+				if (parsed['pattern']) {
+					var re = new RegExp( parsed['pattern'] );
+					var un = users[idx].UserName;
+					var matches = re.exec( un );
+
+					if (matches) {
+						// Found a match
+						iam_users.push( {
+							username : users[idx].UserName,
+							arn      : users[idx].Arn,
+							uid      : users[idx].UserId
+						} );
+					}
+					else {
+						// nop
+					}
+				}
+				else {
+					iam_users.push( {
+						username : users[idx].UserName,
+						arn      : users[idx].Arn,
+						uid      : users[idx].UserId
+					} );
+				} // if parsed
 			} // for users }}}
 
 			// Display for the user
 			//
 			var display = [ ];
-			for (var idx in sendak_users) { // {{{
+			for (var idx in iam_users) { // {{{
 				var record = { };
 				if (parsed['username']) {
-					record['username'] = sendak_users[idx]['username']
+					record['username'] = iam_users[idx]['username']
 				}
 				if (parsed['arn']) {
-					record['arn'] = sendak_users[idx]['arn']
+					record['arn'] = iam_users[idx]['arn']
 				}
 				if (parsed['uid']) {
-					record['uid'] = sendak_users[idx]['uid']
+					record['uid'] = iam_users[idx]['uid']
 				}
 				display.push( record )
-			} // iterate sendak_users }}}
+			} // iterate iam_users }}}
 			if (parsed['raw']) { // display raw {{{
 				for (var idx in display) {
 					var output = supp.display_raw( display[ idx ], supp.get_keys( parsed ) );
