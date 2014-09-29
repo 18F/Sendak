@@ -39,12 +39,13 @@ module.exports = {
 			odorm     = require( filename );
 			schema    = odorm.orm;
 			datastore = schema;
+			var obj_types = supps.get_keys( schema );
 
-			for (var objtype in supps.get_keys(schema)) {
+			for (var idx in obj_types) {
 				// Don't pollute 'schema', which is what we are working off, rather
 				// create a new variable and populate that accordingly.
 				//
-				datastore[ schema[objtype] ] = [ ];
+				datastore[ obj_types[idx] ]['data'] = [ ];
 			}
 			datastore[ '_version' ] = _version;
 			return datastore;
@@ -67,7 +68,8 @@ module.exports = {
 			// TODO: This requires a "delete from store" method
 			// TODO: This probably works best with a grep function (which node hasn't)
 			//
-			datastore[ type ].push( object );
+			datastore[ type ]['data'].push( object );
+			return datastore;
 		}
 		else {
 			// We don't actually have objects of this type, so error
@@ -106,7 +108,7 @@ module.exports = {
 			// It looks like the user did not actually give us a valid datatype
 			//
 		}
-	} // }}}
+	}, // }}}
 
 	new_object : function (varname) { // {{{
 		if (schema.hasOwnProperty( varname )) {
@@ -154,7 +156,7 @@ module.exports = {
 
 	object_types : function (datastore) { // {{{
 		var keys = [ ];
-		for (var key in supps.keys(datastore) {
+		for (var key in supps.keys(datastore)) {
 			// Elements of the schema beginning with '_', like '_version', are
 			// reserved. Please don't mess with that.
 			//
@@ -164,6 +166,10 @@ module.exports = {
 		}
 		return keys;
 	}, // }}} object_types()
+
+	get_datastore : function () { // {{{
+		return datastore;
+	}, // }}} get_datastore()
 
 	write_data : function ( filename, datastore, callback ) { // {{{
 		// It would be nice for the objects passed back in new_object were stored
