@@ -64,6 +64,8 @@ module.exports = {
 			// being asked to commit.
 			//
 			// TODO: This needs to check for uniqueness of objects
+			// TODO: This requires a "delete from store" method
+			// TODO: This probably works best with a grep function (which node hasn't)
 			//
 			datastore[ type ].push( object );
 		}
