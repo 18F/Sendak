@@ -26,4 +26,8 @@ else {
 
 var ds = ORM.get_datastore();
 
-ORM.write_data( 'datastore.json', ds, function (stack) { console.log( stack ) } );
+ORM.write_data(
+	process.env.SENDAK_DATASTORE ? process.env.SENDAK_DATASTORE : 'datastore.json',
+	ds,
+	function (stack) { console.log( stack ) }
+);
