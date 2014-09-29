@@ -54,7 +54,7 @@ function usage () { # {{{
   you will execute that. Please police your bin/ dir. Extensions (".js",
   ".py", and so on) are omitted for prettiness.
 
-  $ sendak.sh --list-TASKs
+  $ sendak.sh --list-tasks
 
   This should return the list of available commands and which language they
   are written in (which indicates the directory they reside in).
@@ -69,7 +69,7 @@ if [[ "x${WANTED_TASK}" == "x" ]]; then # {{{
 elif [[ "x${WANTED_TASK}" == "x--help" ]]; then
 	usage
 	exit -255
-elif [[ "x${WANTED_TASK}" == "x--list-TASKs" ]]; then
+elif [[ "x${WANTED_TASK}" == "x--list-tasks" ]]; then
 	echo
 	echo "Available tasks include: "
 	find bin -type f | perl -ne 'm!bin/([^/]+)/([^.]+).\S! and print qq/\t* $2 ($1)\n/'
