@@ -69,6 +69,10 @@ module.exports = {
 		} // filename
 	}, // }}} new_schema()
 
+	update_object : function () { // {{{
+		// TODO: writeme
+	}, // }}}
+
 	add_object : function( type, object ) { // {{{
 		if ( datastore.hasOwnProperty( type )) {
 			// This looks like a datastore that has an object of the type we are
