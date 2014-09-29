@@ -198,6 +198,28 @@ module.exports = {
 		return datastore;
 	}, // }}} get_datastore()
 
+	get_objects : function (type) { // {{{
+		// These two are sanity checks and shouldn't *strictly* be necessary, but
+		// don't hurt neither.
+		//
+		if (schema.hasOwnProperty( type )) {
+			if (datastore.hasOwnProperty( type )) {
+				var data = datastore[type]['data'];
+				if (data) {
+					// Also a sanity check; this should *always* be defined, buuuuut
+					//
+					return data;
+				}
+				else {
+					// If you ask for data and there isn't any, I'm going to give you
+					// something that looks like nothing. Rather than return something
+					// that might break your code.
+					return [ ];
+				}
+			}
+		}
+	}, // }}}
+
 	write_data : function ( filename, datastore, callback ) { // {{{
 		// It would be nice for the objects passed back in new_object were stored
 		// in this.stuff (or something) but for now we can just write this and
