@@ -45,7 +45,7 @@ var nopt = require('nopt')
 	  // defaults, above, can be added to the arguments for noptUsage
 	  // but it makes the response unreasonably wide.
 	  //
-	, usage = noptUsage(knownOpts, shortHands, description )
+	, usage = noptUsage(knownOpts, shortHands, description)
 
 if (parsed['help']) {
 	// Be halpful
