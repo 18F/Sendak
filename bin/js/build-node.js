@@ -3,6 +3,12 @@
 // to the backend, where it should be.
 //
 
+var store = 'var/datastore.json';
+
+if (process.env.SENDAK_DATASTORE) {
+	store = process.env.SENDAK_DATASTORE;
+}
+
 // Largely cribbed from docs
 //
 var nopt = require('nopt')
@@ -58,7 +64,8 @@ if (parsed['help']) {
 // TODO: Add 'self-destruct-upon-task' flag for constructor
 
 var Sendak = require( 'components/aws/run_instance.js' ); // the ec2 calls live here
-var ORM    = require( 'components/odorm/odorm.js' ); // this is our "orm"
+var ORM    = require( 'components/odorm/odorm.js' );      // this is our "orm"
+var DS     = ORM.restore_schema( store );                 // restore from disk rather than create anew
 
 var this_node = Sendak.new_node(
 	{
@@ -76,6 +83,7 @@ var this_node = Sendak.new_node(
 	function (ec2_result, stack) {
 		if (stack) {
 			console.log( 'ohnoes: ' + stack );
+			process.exit(-255);
 		}
 		else {
 			// So we have successfully created an actual node, but let's get its information and
@@ -85,11 +93,14 @@ var this_node = Sendak.new_node(
 			metadata['name']              = ec2_result['hostname'];
 			metadata['instance_id']       = ec2_result['instance_id'];
 			metadata['availability_zone'] = ec2_result['availability_zone'];
-			// console.log( metadata );
 
-			ORM.write_data( 'datastore.json', metadata, function (err) {
+			ORM.add_object( 'Node', metadata );
+			DS = ORM.get_datastore();
+
+			ORM.write_data( store, DS, function (err) {
 				if (err) {
-					console.log( 'fs.write: ', err.stack )
+					console.log( 'fs.write: ', err.stack );
+					process.exit(-255);
 				}
 				else {
 					// was successful so nop
@@ -100,6 +111,7 @@ var this_node = Sendak.new_node(
 						') : ssh ubuntu@' +
 						ec2_result['public_ip']
 					);
+					console.log( 'data stored in ' + store );
 				}
 			} );
 		}
