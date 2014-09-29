@@ -15,13 +15,15 @@ my_node['serial']            = 'b72b4624ac4cbf0d7374d88843edc353eba85651e3527e5c
 my_node['instance_id']       = 'i-f7b8de1c';
 my_node['availability_zone'] = 'us-east-1a';
 my_node['name']              = 'first_node';
-
-if (var r = ORM.add_object( 'Node', my_node )) {
-	// Success.
+var r = ORM.add_object( 'Node', my_node )
+if (r) {
+	console.log( 'Success.' );
 	console.log( r );
 }
 else {
 	console.log( 'Failed to write Node ID ' + my_node['instance_id'] + ' to ORM' );
 }
 
+var ds = ORM.get_datastore();
 
+ORM.write_data( 'datastore.json', ds, function (stack) { console.log( stack ) } );
