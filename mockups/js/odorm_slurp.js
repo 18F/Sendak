@@ -2,7 +2,7 @@
 
 var ORM = require( 'components/odorm/odorm.js' ); // ORM
 
-var schema = ORM.restore_schema( 'datastore.json' );
+var schema = ORM.restore_schema( 'var/datastore.json' );
 
 var nodes = schema['Node']['data'];
 
