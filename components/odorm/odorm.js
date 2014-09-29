@@ -39,6 +39,7 @@ module.exports = {
 		//       but should be low priority.
 		var ds = require( filename );
 		datastore = ds;
+		schema    = datastore; // oooooh, this is a gross hack.
 		return datastore;
 	}, // }}}
 
