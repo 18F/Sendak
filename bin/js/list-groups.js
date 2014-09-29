@@ -61,7 +61,7 @@ iam.listGroups( { },
 			// Transform the AWS IAM data into something more
 			// machine-and-human-readable.
 			//
-			// XXX: Since this atom was written the schema has changed.
+			// XXX: Since this task was written the schema has changed.
 			//
 			for (var idx in groups) { // {{{
 				sendak_groups.push( {
