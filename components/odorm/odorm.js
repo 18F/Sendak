@@ -176,6 +176,10 @@ module.exports = {
 		// in this.stuff (or something) but for now we can just write this and
 		// use it as a placeholder
 		//
+		// TODO: The description for this above is wrong, or the prototype here
+		//       is wrong. If datastore is a singleton, it should not be provided
+		//       as an argument here.
+		//
 		var fs = require( 'fs' );
 		var pass = JSON.stringify( datastore );
 
