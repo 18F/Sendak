@@ -23,6 +23,23 @@ consider it to be a directory on github with a fab file.
 
 * `var` - as per convention your runtime files go here (such as `datastore.json` from the odorm module)
 
+#### Things you will need
+
+For Javascript:
+
+* nopt
+* nopt-usage
+* findit
+* aws-sdk
+
+Just `npm install packagename`.
+
+For Python:
+
+* Fabric
+
+And you will find libraries for use in both languages under `components/common/`.
+
 #### What's a Sendak?
 
 From Wikipedia:
