@@ -15,7 +15,7 @@ consider it to be a directory on github with a fab file.
 
 * `doc` - contains various and sundry documentation and artifacts related to development of Sendak. To be substantially cleaned-up and presentable-made.
 
-* `etc` - config files, keys, and similar. 
+* `etc` - config files, keys, and similar.
 
 * `mockups` - “straw men”/“wireframes” and similar pieces of code designed to demonstrate a functionality or what something would look like If It Really Worked™. None of these should ever be considered functional, safe, or production-ready. If you find yourself using something here more than once, please clean it up and place it in `bin/`.
 
@@ -34,7 +34,7 @@ For Javascript:
 
 Just `npm install packagename`.
 
-For Python:
+For Python (version 2.7):
 
 * Fabric
 
