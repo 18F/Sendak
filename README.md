@@ -40,6 +40,15 @@ For Python (version 2.7):
 
 And you will find libraries for use in both languages under `components/common/`.
 
+#### Installation
+
+1. For the moment, simply pulling Sendak down from github with `git clone git@github.com:18F/Sendak.git sendak` will give you everything you need but the prerequisites and amazon aws credentials.
+2. It is advisable to have the `aws-cli` package from amazon installed. On a Mac, this is `brew install awscli`. I am sure there is an equivalent to Ubuntu and so forth.
+3. You will need the secret key and the api key from your amazon account. This is available from the amazon IAM page. You will need to put this in `~/.aws/config`, as sendak reads its stuff from there.
+4. Your environment will contain various shell variables for configuration's sake; these are defined in `contrib/bash_env.sh`. You are welcome to use the `/Users/jane` directory, but it is recommended you change this to something more appropriate. Each variable is defined with a comment in that file.
+5. Once you have the credentials and environment configured, and your javascript and python packages installed, you should be able to begin using sendak by issuing `bin/sendak.sh --help` and similar. There is a `bin/sendak.sh --list-tasks` command that will show you the available tasks. At present this does not report on their suitability at all and merely indicates their presence in the `bin/` tree.
+6. If you do not have a sendak environment already, you may want to issue `mockups/js/odorm_init.js` which will create a suitable `datastore.js` file. For the moment this is not documented. Its location is configured via the `$SENDAK_DATASTORE` variable but otherwise sendak expects something to be available in `var/datastore.json`.
+
 #### What's a Sendak?
 
 From Wikipedia:

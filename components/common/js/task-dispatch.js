@@ -24,7 +24,38 @@
 // search $SENDAK_ROOT/bin for tasks, fail loudly if there is more than one;
 // otherwise return the task you found as an absolute path to the executable
 //
-var find_tasks = function ( hash, keys ) {
+var find_task = function ( taskname ) {
+	var found_tasks = [ ];
+	if (process.env.SENDAK_ROOT) {
+		var binpath = process.env.SENDAK_ROOT + '/bin';
+		fs.exists( binpath, function (e) {
+			if (e) {
+				var findit = require('findit')(binpath);
+
+				findit.on( 'file', function (file, stat) {
+					var path   = require('path');
+
+					// Lop off the path & extension
+					//
+					var base   = path.basename(file);
+					var dotpos = base.indexOf('.');
+					var poss   = base.substr( 0, dotpos );
+
+					// Test for whether we want this task
+					//
+					if ( poss == taskname ) {
+						found_tasks.push( file ); // should be /foo/bar/bin/js/task-name.js, not 'task-name'
+					}
+					else {
+						// nop
+					}
+				} ); // finder
+			}
+			else {
+				console.log( 'sendak_root needs to be defined in your environment. exiting.' );
+				process.exit( -255 );
+			}
+		} );
 } // find_tasks
 
 exports.find_tasks = find_tasks;
