@@ -5,7 +5,8 @@
       "Action": [
         "s3:Get*",
         "s3:List*",
-        "s3:ListObjects"
+        "s3:ListObjects",
+        "s3:HeadObject"
       ],
       "Effect": "Allow",
       "Resource": "arn:aws:s3:::18f-private-keys"
