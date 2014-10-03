@@ -50,7 +50,7 @@ module.exports = {
 			odorm     = require( filename );
 			schema    = odorm.orm;
 			datastore = schema;
-			var obj_types = supps.get_keys( schema );
+			var obj_types = Object.keys( schema );
 
 			for (var idx in obj_types) {
 				// Don't pollute 'schema', which is what we are working off, rather

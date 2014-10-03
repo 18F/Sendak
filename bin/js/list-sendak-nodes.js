@@ -84,7 +84,7 @@ if (parsed['raw']) { // display raw {{{
 	// XXX: raw is broken until the keys are normalised with -'s instead of _'s.
 	//
 	for (var idx in display) {
-		var output = supp.display_raw( display[ idx ], supp.get_keys( parsed ) );
+		var output = supp.display_raw( display[ idx ], Object.keys( parsed ) );
 		console.log( output ) ;
 	} // iterate display
 } // }}} display raw

@@ -12,7 +12,7 @@ var dict = {
 	'unwanted_key_b' : 'long value for uwb'
 };
 
-var keynames = supp.get_keys( dict );
+var keynames = Object.keys( dict );
 
 // console.log( foo );
 

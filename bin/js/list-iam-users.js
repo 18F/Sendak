@@ -120,7 +120,7 @@ iam.listUsers( { },
 			} // iterate iam_users }}}
 			if (parsed['raw']) { // display raw {{{
 				for (var idx in display) {
-					var output = supp.display_raw( display[ idx ], supp.get_keys( parsed ) );
+					var output = supp.display_raw( display[ idx ], Object.keys( parsed ) );
 					console.log( output ) ;
 				} // iterate display
 			} // }}} display raw

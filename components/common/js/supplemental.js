@@ -33,20 +33,3 @@ var display_raw = function ( hash, keys ) {
 } // display_raw anon function
 
 exports.display_raw = display_raw;
-
-// There are several places where I am reproducing this code which just
-// returns the keys of a dictionary/hash. I got tired of this. Basically
-// synonymous with perl's 'keys %foo' function.
-//
-
-var get_keys = function ( hash ) {
-	var r_keys = [ ];
-	for (var key in hash) { // {{{
-		if (hash.hasOwnProperty( key )) {
-			r_keys.push( key );
-		}
-	} // iterate hash }}}
-	return r_keys;
-} // get_keys anon function
-
-exports.get_keys = get_keys
