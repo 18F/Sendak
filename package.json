@@ -1,37 +1,35 @@
 {
-	'name'         : 'sendak'
-	'version'      : '0.1',
-	'description'  : 'Sendak manages metadata for cloud deployments',
-	'author'       : 'Jane Avriette <jane.avriette@gsa.gov>',
-	'main'         : 'lib/foo.js',
-	'preferGlobal' : false,
-	'private'      : true,
-	'license'      : 'CC0',
+  "name"         : "sendak",
+  "version"      : "0.1.0",
+  "description"  : "Sendak manages metadata for cloud deployments",
+  "author"       : "Jane Avriette <jane.avriette@gsa.gov>",
+  "preferGlobal" : false,
+  "private"      : true,
+  "license"      : "CC0",
 
-	'bin'          : {
-		'sendak' : './bin/sendak.sh'
-	},
+  "bin"          : {
+    "sendak" : "./bin/sendak.sh"
+  },
 
-	'repository'   : {
-		'type' : 'git',
-		'url'  : 'https://github.com/18F/Sendak'
-	},
+  "repository"   : {
+    "type" : "git",
+    "url"  : "https://github.com/18F/Sendak"
+  },
 
-	'bugs'         : {
-	'url' : 'https://github.com/nodejitsu/browsenpm.org/issues'
-	},
+  "bugs"         : {
+  "url" : "https://github.com/nodejitsu/browsenpm.org/issues"
+  },
 
-	'keywords'     : [
-		'aws',
-		'iaas',
-		'sendak'
-	],
+  "keywords"     : [
+    "aws",
+    "iaas",
+    "sendak"
+  ],
 
-	'dependencies' : {
-		'find'    : '*',
-		'usage'   : '*',
-		'nopt'    : '*',
-		'aws-sdk' : '*'
-	}
+  "dependencies" : {
+    "find"    : "*",
+    "usage"   : "*",
+    "nopt"    : "*",
+    "aws-sdk" : "*"
+  }
 }
-
