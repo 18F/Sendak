@@ -29,10 +29,10 @@ For Javascript:
 
 * nopt
 * nopt-usage
-* findit
+* find
 * aws-sdk
 
-Just `npm install packagename`.
+Just `npm install` should automatically install packages and requirements, or you may manually install with `npm install packagename`.
 
 For Python (version 2.7):
 
