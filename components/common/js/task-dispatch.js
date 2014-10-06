@@ -25,65 +25,48 @@
 // otherwise return the task you found as an absolute path to the executable
 //
 var find_task = function ( taskname ) {
-	// We need to wrap this synchronously unfortunately
-	//
-	var wait = require( 'wait.for' );
 
 	var found_tasks = [ ];
+	var found_files = [ ];
 
-	function syncfind () {
-		if (process.env.SENDAK_ROOT) {
-			var binpath = process.env.SENDAK_ROOT + '/bin';
-			var fs      = require( 'fs' );
-			wait.for(fs.exists, binpath, function (e) {
-				if (e) {
-					var findit = require('findit')(binpath);
-					console.log( 'looking for ' + taskname );
+	// We need to wrap this synchronously unfortunately
+	//
+	var find = require('find');
 
-					findit.on( 'file', function (file, stat) {
-						var path   = require('path');
+	if (process.env.SENDAK_ROOT) {
+		var binpath = process.env.SENDAK_ROOT + '/bin';
+		found_files = find.fileSync( /./, binpath );
+	}
+	else {
+		console.log( 'sendak_root needs to be defined in your environment. exiting.' );
+		process.exit( -255 );
+	} // if sendak_root
 
-						// Lop off the path & extension
-						//
-						var base   = path.basename(file);
-						var dotpos = base.indexOf('.');
-						var poss   = base.substr( 0, dotpos );
+	for (var idx in found_files) {
+		var file = found_files[idx];
+		var path   = require('path');
 
-						// Test for whether we want this task
-						//
-						if ( poss == taskname ) {
-							console.log( 'found ' + file )
-							found_tasks.push( file ); // should be /foo/bar/bin/js/task-name.js, not 'task-name'
-						}
-						else {
-							// nop
-						}
-					} ); // finder
-				}
-			} ) // fs.exists
+		// Lop off the path & extension
+		//
+		var base   = path.basename(file);
+		var dotpos = base.indexOf('.');
+		var poss   = base.substr( 0, dotpos );
+
+		// Test for whether we want this task
+		//
+		if ( poss == taskname ) {
+			found_tasks.push( file ); // should be /foo/bar/bin/js/task-name.js, not 'task-name'
 		}
 		else {
-			console.log( 'sendak_root needs to be defined in your environment. exiting.' );
-			process.exit( -255 );
-		} // if sendak_root
+			// nop
+		}
+	} // iterate found_tasks
+
+	if (found_tasks.length > 1) {
+		console.log( 'Error in task tree: too many tasks found.', found_tasks );
+		process.exit(-255);
 	}
 
-/*
-var dns = require("dns"), wait=require('wait.for');
-
-function test(){
-    var addresses = wait.for(dns.resolve4,"google.com");
-    for (var i = 0; i < addresses.length; i++) {
-        var a = addresses[i];
-        console.log("reverse for " + a + ": " + JSON.stringify(wait.for(dns.reverse,a)));
-    }
-}
-
-wait.launchFiber(test);
-
-*/
-
-	wait.launchFiber(syncfind);
 	return found_tasks;
 } // find_tasks
 
