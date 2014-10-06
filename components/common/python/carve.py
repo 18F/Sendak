@@ -8,66 +8,71 @@ import sys
 from fabric.api import run, execute, env
 
 
-#TODO: Figure out how we are handling settings info
-# db, user, pass
-
-def get_users(args):
+def carve(args):
     '''
-    Grab users and creds from the database
+    Setups up new nodes based on the arguments passed.
     '''
 
-    conn = None
 
-    try:
-        conn = psycopg2.connect(database='foo', user='foo-user')
-        cursor = con.cursor()
-        # TODO: Rewrite to grab users
-        cursor.execute('SELECT version()')
-        ver = cur.fetchone()
-        print ver
-
-    except psycopg2.DatabaseError, e:
-        print 'Error %s' % e
-        sys.exit(1)
-
-    finally:
-        if conn:
-            conn.close()
-
-    return ver
+    _create_nodes(None)
+    _get_users(None)
 
 
-def create_server(args):
+def _get_users(args):
     '''
-    Creates EC2 Instances
+    Creates users
     '''
+    # Get or create Users which belong to the IAM group
+    # (not created yet, Python or Node)
 
-    print(_green("Started..."))
-    print(_yellow("...Creating EC2 instance..."))
-
-    conn = boto.ec2.connect_to_region(ec2_region,
-        aws_access_key_id=ec2_key, aws_secret_access_key=ec2_secret)
-
-    image = conn.get_all_images(ec2_amis)
-
-    reservation = image[0].run(1, 1, key_name=ec2_key_pair,
-        security_groups=ec2_security,
-        instance_type=ec2_instancetype)
-
-    instance = reservation.instances[0]
-    conn.create_tags([instance.id],
-        {"Name": config['INSTANCE_NAME_TAG']})
-
-    print(_green("Instance state: %s" % instance.state))
-    print(_green("Public dns: %s" % instance.public_dns_name))
-
-    return instance.public_dns_name
+    #If you create a user it will have an arn.
+    # You can use this to search for users and create groups.
+    # Save groups and users to inventory.json?
+    pass
 
 
-def create_users_on_server(args):
+def _get_or_create_IAM_group(args):
     '''
-        Create users on aws machines
+    Get or create an IAM group (not created yet, Python or Node)
     '''
+    # Get or create an IAM group (not created yet, Python or Node)
+    pass
+
+def _create_nodes(args):
+    '''
+    Creates nodes
+    '''
+    # Create EC2 instandes (nodes) by calling the shell
+    # command that is already written.
+
+    # return
+    # Collect the return information from the nodes to know where
+    # the node are located & dump the info in json to file.
+    pass
+
+def _get_repo(args):
+    '''
+    Pull down github repo for the project that should be deployed.
+    '''
+    #Pull down github repo for the project that should be deployed.
+    pass
+
+def _execute_repo_setup(args):
+    '''
+    Initates applicaiton setup based on deployment set up for repository.
+    '''
+    #Execute fabric script in project directory
+
+    #This should execute the set up of the project itself, like...
+    #Create groups on the machine
+    #Create users on the machine
+    #Setup project datastore
+    #Setup project code
+    # etc....
+
+    #From project fabric script, folks can do the following.
+    #from sendak import who_are_my_machines
+
     pass
 
 
@@ -102,11 +107,9 @@ if __name__ == "__main__":
     if (len(args.users) == 1) and (',' in args.users[0]):
         args.users = args.users[0].split(',')
 
-    print args
-    print args.machine_count
-    print args.users
-    print args.project_name
+    carve(args)
 
-    get_users = get_users(args)
-    server = create_servers(args)
-    result = create_users_on_server(args)
+#    print args
+#    print args.machine_count
+#    print args.users
+#    print args.project_name
