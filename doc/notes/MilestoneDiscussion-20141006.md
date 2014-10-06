@@ -21,7 +21,7 @@ Our most common task right now is that we create new users.
 
 ### Milestone 2
 
-*Creating a new project -- Group/VPC
+* Creating a new project -- Group/VPC
     * Can mean a lot of things -- right now, a VPC is created -- that is new project
     * Requires that the users that are a part of this project.
 * User B has full access to VPC B, but User B needs access to VPC A.
