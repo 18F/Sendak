@@ -28,6 +28,7 @@ var find_task = function ( taskname ) {
 	var found_tasks = [ ];
 	if (process.env.SENDAK_ROOT) {
 		var binpath = process.env.SENDAK_ROOT + '/bin';
+		var fs      = require( 'fs' );
 		fs.exists( binpath, function (e) {
 			if (e) {
 				var findit = require('findit')(binpath);
@@ -51,14 +52,16 @@ var find_task = function ( taskname ) {
 					}
 				} ); // finder
 			}
-			else {
-				console.log( 'sendak_root needs to be defined in your environment. exiting.' );
-				process.exit( -255 );
-			}
-		} );
+		} )
+	}
+	else {
+		console.log( 'sendak_root needs to be defined in your environment. exiting.' );
+		process.exit( -255 );
+	} // if sendak_root
 } // find_tasks
 
-exports.find_tasks = find_tasks;
+exports.find_task = find_task;
+/*
 
 // Because we are literally taking input and running shell commands from it
 // (which is worse than anything ever anywhere), we encapsulate all the logic
@@ -68,6 +71,7 @@ exports.find_tasks = find_tasks;
 //
 
 var compile_command = function ( hash ) {
-} // compile command
+}; // compile command
 
 exports.compile_command = compile_command;
+*/
