@@ -13,8 +13,6 @@ if (process.env.SENDAK_DATASTORE) {
 //
 var nopt = require('nopt')
 	, noptUsage = require('nopt-usage')
-	, Stream    = require('stream').Stream
-	, path      = require('path')
 	, knownOpts = {
 			'ssh-key-name'    : [ String, null ],
 			'security-groups' : [ String, Array, null ],
