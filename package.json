@@ -27,9 +27,9 @@
   ],
 
   "dependencies" : {
-    "find"    : "*",
-    "usage"   : "*",
-    "nopt"    : "*",
-    "aws-sdk" : "*"
+    "nopt-usage" : "*",
+    "find"       : "*",
+    "nopt"       : "*",
+    "aws-sdk"    : "*"
   }
 }
