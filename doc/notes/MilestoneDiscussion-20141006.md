@@ -1,6 +1,6 @@
 # Sendak Milestone Discussion
 
-Date: 10/06/2014
+Date: 10/06/2014 (@noahkunin, @avriette, @jackiekazil)
 
 ### Milestone 1
 
