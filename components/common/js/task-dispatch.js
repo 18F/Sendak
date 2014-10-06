@@ -24,7 +24,7 @@
 // search $SENDAK_ROOT/bin for tasks, fail loudly if there is more than one;
 // otherwise return the task you found as an absolute path to the executable
 //
-var find_task = function ( taskname ) {
+var find_task = function ( taskname ) { // {{{
 
 	var found_tasks = [ ];
 	var found_files = [ ];
@@ -68,7 +68,7 @@ var find_task = function ( taskname ) {
 	}
 
 	return found_tasks;
-} // find_tasks
+} // }}} find_tasks
 
 exports.find_task = find_task;
 
@@ -78,8 +78,14 @@ exports.find_task = find_task;
 //
 // Presumably this reduces our risk profile.
 //
-
-var compile_command = function ( hash ) {
-}; // compile command
+var compile_command = function ( hash ) { // {{{
+	var cmd = '';
+	var args = Object.keys( hash );
+	for (var idx in args) {
+		var argname = args[idx];
+		cmd = cmd + '--' + argname + ' ' + hash[argname] + ' '; // note: single arguments only
+	}
+	return cmd;
+}; // }}} compile command
 
 exports.compile_command = compile_command;
