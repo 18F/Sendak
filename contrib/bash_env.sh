@@ -33,3 +33,5 @@ fi
 
 # And then frob this
 export NODE_PATH="${NODE_PATH}:${SENDAK_ROOT}"
+
+alias sendak="${SENDAK_ROOT}/bin/sendak.sh"
