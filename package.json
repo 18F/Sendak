@@ -30,6 +30,7 @@
     "nopt-usage" : "*",
     "find"       : "*",
     "nopt"       : "*",
+    "riak-js"    : "*",
     "aws-sdk"    : "*"
   }
 }

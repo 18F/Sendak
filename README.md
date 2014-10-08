@@ -31,6 +31,7 @@ For Javascript:
 * nopt-usage
 * find
 * aws-sdk
+* riak-js
 
 Just `npm install` should automatically install packages and requirements, or you may manually install with `npm install packagename`.
 
