@@ -11,12 +11,12 @@ var ORM = {
 		hasmany : [ 'Github_Project', 'User' ]
 	}, // }}} project
 	Github_Project : { // {{{
-		name : {
+		github-project-name : {
 			isa       : 'string', // 'midas-dev' or similar
 			defined   : true,
 			distinct  : true
 		},
-		base_url : {
+		base-url : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
