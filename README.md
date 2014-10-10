@@ -39,6 +39,8 @@ For Python (version 2.7):
 
 * Fabric
 
+To install Fabric, `pip install fabric` should do the trick.
+
 And you will find libraries for use in both languages under `components/common/`.
 
 #### Installation
