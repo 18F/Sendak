@@ -43,6 +43,25 @@ To install Fabric, `pip install fabric` should do the trick.
 
 And you will find libraries for use in both languages under `components/common/`.
 
+You will need Riak.
+
+(this part to be cleaned up when jane has sorted out how to do this better)
+
+````
+jane@mistress:~$ curl https://packagecloud.io/install/repositories/basho/riak/script.deb | sudo bash
+jane@mistress:~$ cat /etc/default/riak 
+ulimit -n 65536
+jane@mistress:~$ sudo service riak start
+jane@mistress:~$ telnet localhost 8098
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+^]close
+
+telnet> close
+Connection closed.
+````
+
 #### Installation
 
 1. For the moment, simply pulling Sendak down from github with `git clone git@github.com:18F/Sendak.git sendak` will give you everything you need but the prerequisites and amazon aws credentials.
