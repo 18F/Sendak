@@ -5,6 +5,8 @@
 // riak don't care dot js
 //
 
+var Sync = require('sync');
+
 var request   = require('common-node').httpclient.HttpClient;
 var riak_host = 'localhost';
 var riak_port = 8098;
@@ -16,10 +18,14 @@ function _http_get (target) {
 	// helper to just return the body of an http request
 	//
 
-	return new request( {
-		url    : target,
-		method : 'GET',
-	} ).finish().body;
+	var rval;
+
+	Sync( function () {
+		rval = new request( {
+			url    : target,
+			method : 'GET',
+		} ).finish().body;
+	} ); // sync+anon function
 
 } // _http_get internal function
 
