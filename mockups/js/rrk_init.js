@@ -96,16 +96,22 @@ for (var idx in Object.keys( schema )) {
 	// things
 	//
 
-	console.log( 'prototype object found (' + key + ')' );
+	// console.log( 'prototype object found (' + key + ')' );
 	// console.log( prototype );
 
-	db.save( 'prototypes', prototype )
+	db.save( 'prototypes', key, prototype )
 }
 
-// var prototypes = db.getAll( 'prototypes' );
-var buckets = db.buckets();
+// db.getAll( 'prototypes' );
+db.keys( function (err) { console.log( 'eep!' , err ) } )
+	.on( 'buckets', function (list) {
+		console.log( 'buckets returned', list );
+	} )
+	.on( 'end', function () {
+		console.log( 'bucket list ended.' );
+	} )
+	.start();
+
 
 // db.save( 'type', serial, object )
 // db.get( 'type', serial )
-
-console.log(db);
