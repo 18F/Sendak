@@ -5,46 +5,41 @@
 // riak don't care dot js
 //
 
-var Sync = require('sync');
+// XXX: I think this is only appearing to be synchronous because it's real fast.
+// If this ever actually gets used enough to slow riak down (fat chance), it will
+// probably break.
+//
 
-var request   = require('common-node').httpclient.HttpClient;
 var riak_host = 'localhost';
 var riak_port = 8098;
-var riak_base = 'http://' + riak_host + ':' + riak_port + '/riak/';
 
-// console.log( request );
-
-function _http_get (target) {
+function get_bucket (bucket, key) {
 	// helper to just return the body of an http request
 	//
 
-	var rval;
+	var gotten = '';
 
-	Sync(
-		function () {
-			// console.log( 'getting ' + target );
-			var req = new request( {
-				url    : target,
-				method : 'GET',
-			} ).finish().body;
-			rval = req;
-			var body = rval;
-			body.end();
-			// console.log(body);
-		},
-		function (err, result) {
-			// This means that Sync() barfed.
-			//
-			if (err) console.error(err)
-			//console.log(result)
-		}
-	); // sync+anon function
+	var req = require('http').request( {
+		host    : riak_host,
+		path    : '/riak/' + bucket + key ? '/' + key : '',
+		port    : riak_port,
+		method  : 'GET'
+	}, function (result) {
+		//console.log(result);
+		result.on('data', function (chunk) {
+			console.log( 'got data' + chunk );
+			gotten += chunk;
+	} ) } )
 
-	return rval;
+	req.on( 'error', function(e) {
+		console.log( 'http request barfed at : ' + e.message )
+	} );
 
-} // _http_get internal function
+	return gotten;
 
-function _http_post (target, payload, headers) {
+} // get_bucket
+
+function put_bucket (target, payload, headers) {
 	// helper to just return the body of an http request
 	//
 
@@ -61,35 +56,13 @@ var init = function ( host, port ) {
 	if (host) riak_host = host;
 	if (port) riak_port = port;
 
-	var riak_base = 'http://' + riak_host + ':' + riak_port + '/riak/';
 	return 200;
 } // init anonymous function
 
-var put = function ( bucket, data ) {
-
-	return rval;
-} // put anonymous function
-
-var get = function ( bucket, phrase ) {
-
-	return rval;
-} // get anonymous function
-
-var del = function ( bucket, serial ) {
-
-	return rval;
-} // del anonymous function
 
 // Export the things
 //
 
 exports.init = init;
 
-// XXX: remove me, these are private
-//
-exports._get  = _http_get;
-exports._post = _http_post;
-
-exports.put = put;
-exports.get = get;
-exports.del = del;
+exports.get_bucket = get_bucket;
