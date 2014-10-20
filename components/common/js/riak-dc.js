@@ -5,62 +5,85 @@
 // riak don't care dot js
 //
 
-// XXX: I think this is only appearing to be synchronous because it's real fast.
-// If this ever actually gets used enough to slow riak down (fat chance), it will
-// probably break.
-//
-
 var riak_host = 'localhost';
 var riak_port = 8098;
 
-function get_bucket (bucket, key) {
-	// Without a key, get_bucket is going to return some json for you that describes the bucket.
-	// with a key, it's going to return the value of that bucket-key tuple.
+var q = require('q'); // promises
+
+function get_tuple (bucket, key) {
+	// get_bucket cannot return to you the stringy value of the bucket/key tuple,
+	// because node. so instead we return to you a promise.
 	//
 
 	var gotten = '';
 	var subpath = key ? bucket + '/' + key : bucket;
 
-	setTimeout( function () {
-		var req = require('http').request( {
-			host    : riak_host,
-			path    : '/riak/' + subpath,
-			port    : riak_port,
-			method  : 'GET'
-		}, function (result) {
-			result.on('data', function (chunk) {
-				gotten += chunk;
-		} ) } )
-  
-		req.on( 'error', function(e) {
-			console.log( 'http request barfed at : ' + e.message )
-		} );
-		req.end();
-	}, 10 ); // settimeout
+	var deferred = q.defer();
 
-	return gotten;
+	var req = require('http').request( {
+		host    : riak_host,
+		path    : '/riak/' + subpath,
+		port    : riak_port,
+		method  : 'GET'
+	}, function (result) {
+		result.on('data', function (chunk) {
+			gotten = gotten + chunk;
+			deferred.resolve( gotten );
+	} ) } ); // request
 
-} // get_bucket
+	req.on( 'error', function(e) {
+		console.log( 'http request barfed at : ' + e.message )
+	} );
+	req.end();
 
-function put_bucket (target, payload, headers) {
-	// helper to just return the body of an http request
+	return deferred.promise;
+
+} // get_tuple
+
+function put_tuple (bucket, key, payload) {
+	// put_bucket will send off your bucket/key tuple and do its best to
+	// let you know if it failed. assuming it succeeds, it will give you back
+	// a promise which should contain the serial that Riak gave it.
 	//
 
-	return new request( {
-		url       : target,
-		method    : 'POST',
-		body      : payload,
-		'headers' : headers ? headers : {}
-	} ).finish().body;
+	var gotten = '';
 
-} // _http_post internal function
+	// Really you should never not have a 'key' here.
+	//
+	var subpath = key ? bucket + '/' + key : bucket;
+
+	var deferred = q.defer();
+
+	var req = require('http').request( {
+		host    : riak_host,
+		path    : '/riak/' + subpath,
+		//port    : riak_port,
+		port    : 8998,
+		method  : 'PUT'
+	}, function (result) {
+		result.on('data', function (chunk) {
+			gotten = gotten + chunk;
+			deferred.resolve( gotten );
+	} ) } ); // request
+
+	req.on( 'error', function(e) {
+		console.log( 'http request barfed at : ' + e.message )
+	} );
+
+	req.write( payload );
+
+	req.end();
+
+	return deferred.promise;
+
+} // put_tuple
 
 var init = function ( host, port ) {
 	if (host) riak_host = host;
 	if (port) riak_port = port;
 
 	return 200;
-} // init anonymous function
+} // init
 
 
 // Export the things
@@ -68,4 +91,5 @@ var init = function ( host, port ) {
 
 exports.init = init;
 
-exports.get_bucket = get_bucket;
+exports.get_tuple = get_tuple;
+exports.put_tuple = put_tuple;
