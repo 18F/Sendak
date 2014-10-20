@@ -12,7 +12,7 @@ var riak_host = 'localhost';
 var riak_port = 8098;
 var riak_base = 'http://' + riak_host + ':' + riak_port + '/riak/';
 
-console.log( request );
+// console.log( request );
 
 function _http_get (target) {
 	// helper to just return the body of an http request
@@ -20,12 +20,27 @@ function _http_get (target) {
 
 	var rval;
 
-	Sync( function () {
-		rval = new request( {
-			url    : target,
-			method : 'GET',
-		} ).finish().body;
-	} ); // sync+anon function
+	Sync(
+		function () {
+			// console.log( 'getting ' + target );
+			var req = new request( {
+				url    : target,
+				method : 'GET',
+			} ).finish().body;
+			rval = req;
+			var body = rval;
+			body.end();
+			// console.log(body);
+		},
+		function (err, result) {
+			// This means that Sync() barfed.
+			//
+			if (err) console.error(err)
+			//console.log(result)
+		}
+	); // sync+anon function
+
+	return rval;
 
 } // _http_get internal function
 
