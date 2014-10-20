@@ -14,26 +14,29 @@ var riak_host = 'localhost';
 var riak_port = 8098;
 
 function get_bucket (bucket, key) {
-	// helper to just return the body of an http request
+	// Without a key, get_bucket is going to return some json for you that describes the bucket.
+	// with a key, it's going to return the value of that bucket-key tuple.
 	//
 
 	var gotten = '';
+	var subpath = key ? bucket + '/' + key : bucket;
 
-	var req = require('http').request( {
-		host    : riak_host,
-		path    : '/riak/' + bucket + key ? '/' + key : '',
-		port    : riak_port,
-		method  : 'GET'
-	}, function (result) {
-		//console.log(result);
-		result.on('data', function (chunk) {
-			console.log( 'got data' + chunk );
-			gotten += chunk;
-	} ) } )
-
-	req.on( 'error', function(e) {
-		console.log( 'http request barfed at : ' + e.message )
-	} );
+	setTimeout( function () {
+		var req = require('http').request( {
+			host    : riak_host,
+			path    : '/riak/' + subpath,
+			port    : riak_port,
+			method  : 'GET'
+		}, function (result) {
+			result.on('data', function (chunk) {
+				gotten += chunk;
+		} ) } )
+  
+		req.on( 'error', function(e) {
+			console.log( 'http request barfed at : ' + e.message )
+		} );
+		req.end();
+	}, 10 ); // settimeout
 
 	return gotten;
 
