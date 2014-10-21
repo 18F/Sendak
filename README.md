@@ -62,6 +62,8 @@ telnet> close
 Connection closed.
 ````
 
+Note that `brew install riak` will work on a Mac, although you'll need to run `ulimit -n 4096` or similar. Mileage varies.
+
 #### Installation
 
 1. For the moment, simply pulling Sendak down from github with `git clone git@github.com:18F/Sendak.git sendak` will give you everything you need but the prerequisites and amazon aws credentials.
