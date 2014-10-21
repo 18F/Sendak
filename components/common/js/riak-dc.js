@@ -24,7 +24,10 @@ function get_tuple (bucket, key) {
 		host    : riak_host,
 		path    : '/riak/' + subpath,
 		port    : riak_port,
-		method  : 'GET'
+		method  : 'GET',
+		headers : {
+			'Content-Type' : 'text/plain'
+		}
 	}, function (result) {
 		result.on('data', function (chunk) {
 			gotten = gotten + chunk;
@@ -57,9 +60,11 @@ function put_tuple (bucket, key, payload) {
 	var req = require('http').request( {
 		host    : riak_host,
 		path    : '/riak/' + subpath,
-		//port    : riak_port,
-		port    : 8998,
-		method  : 'PUT'
+		port    : riak_port,
+		method  : 'PUT',
+		headers : {
+			'Content-Type' : 'text/plain'
+		}
 	}, function (result) {
 		result.on('data', function (chunk) {
 			gotten = gotten + chunk;
@@ -70,6 +75,8 @@ function put_tuple (bucket, key, payload) {
 		console.log( 'http request barfed at : ' + e.message )
 	} );
 
+	// This should be the part that actually posts the data to the server
+	//
 	req.write( payload );
 
 	req.end();
