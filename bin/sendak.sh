@@ -39,6 +39,17 @@ export DEBUG=0
 TASK=""
 WANTED_TASK=$1
 
+# For serious, the bourne shell is literally the worst thing in the history of
+# all things, ever. -ja
+#
+# http://stackoverflow.com/questions/1668649/how-to-keep-quotes-in-args
+#
+ARGS=''
+for i in "$@";do 
+	ARGS="${ARGS} \"${i//\"/\\\"}\""
+done;
+
+
 # Just tells the user what the general form of commands is
 #
 function usage () { # {{{
@@ -50,7 +61,7 @@ function usage () { # {{{
 
   In this example, 'sub-command.js' is found in bin/js/sub-command.js and
   executed with arguments --sub-comand-args. $0 is not real smart and will
-  simply return the first sub-command (internally: "TASKs") it finds and
+  simply return the first sub-command (internally: "tasks") it finds and
   you will execute that. Please police your bin/ dir. Extensions (".js",
   ".py", and so on) are omitted for prettiness.
 
@@ -100,7 +111,7 @@ for possible in `find bin/* -type d`; do # {{{
 		#
 		# bash "arrays" suck, so we need to clean up $* here
 		#
-		DISPATCH="`echo $* | perl -ne 'm!\S+\s(.*)! and print $1'`"
+		DISPATCH="`echo $ARGS | perl -ne 'm!\S+\s(.*)! and print $1'`"
 		DISPATCH="${TASK} ${DISPATCH}"
 		# This is kind of frightening, but this script should be running as the
 		# (unprivileged) user in the shell. Not a web form etc.
