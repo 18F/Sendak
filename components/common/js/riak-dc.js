@@ -10,8 +10,39 @@ var riak_port = 8098;
 
 var q = require('q'); // promises
 
+function get_buckets () {
+	// get_buckets returns a (promise of a ) list of all the buckets riak knows about.
+	//
+
+	var gotten = '';
+
+	var deferred = q.defer();
+
+	var req = require('http').request( {
+		host    : riak_host,
+		path    : '/riak/?buckets=true',
+		port    : riak_port,
+		method  : 'GET',
+		headers : {
+			'Content-Type' : 'application/json'
+		}
+	}, function (result) {
+		result.on('data', function (chunk) {
+			gotten = gotten + chunk;
+			deferred.resolve( gotten );
+	} ) } ); // request
+
+	req.on( 'error', function(e) {
+		console.log( 'http request barfed at : ' + e.message )
+	} );
+	req.end();
+
+	return deferred.promise;
+
+} // get_buckets
+
 function get_tuple (bucket, key) {
-	// get_bucket cannot return to you the stringy value of the bucket/key tuple,
+	// get_tuple cannot return to you the stringy value of the bucket/key tuple,
 	// because node. so instead we return to you a promise.
 	//
 
@@ -113,5 +144,6 @@ var init = function ( host, port ) {
 
 exports.init = init;
 
-exports.get_tuple = get_tuple;
-exports.put_tuple = put_tuple;
+exports.get_tuple   = get_tuple;
+exports.get_buckets = get_buckets;
+exports.put_tuple   = put_tuple;
