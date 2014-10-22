@@ -10,21 +10,25 @@ var nopt = require('nopt')
 	, path      = require('path')
 	, knownOpts = {
 			'list-buckets' : [ Boolean, null ],
-			'list-tuples'  : [ Boolean, null ],
+			'list-keys'    : [ Boolean, null ],
+			'get-tuple'    : [ Boolean, null ],
 			'bucket'       : [ String, null ],
+			'key'          : [ String, null ],
 			'help'         : [ Boolean, null ]
 		}
 	, description = {
 			'list-buckets' : 'Show all the buckets in riak',
-			'list-tuples'  : 'List all tuples in a bucket',
+			'list-keys'    : 'List all keys in a bucket',
+			'get-tuple'    : 'Get a single tuple from a bucket/key pair',
 			'bucket'       : 'Provided as argument to --list-tuples',
-			'help'       : ' Sets the helpful bit.'
+			'key'          : 'Provided as argument to --get-tuple',
+			'help'         : 'Sets the helpful bit.'
 		}
 	, defaults = {
 			'help' : false
 		}
 	, shortHands = {
-			'h'          : [ '--help' ],
+			'h'            : [ '--help' ],
 		}
 	, parsed = nopt(knownOpts, process.argv)
 	, usage = noptUsage(knownOpts, shortHands, description, defaults)
@@ -37,23 +41,24 @@ if (parsed['help']) {
 	process.exit(0); // success
 }
 
-
 var riak_dc = require( 'components/common/js/riak-dc.js' ); // our riak synchronous wrapper
 
 if (parsed['list-buckets']) {
+	// It would be tricky to parse this down and display as raw, so as
+	// Sendak shell tools go, this one is just going to emit json.
+	//
 	var pbuckets = riak_dc.get_buckets();
 	pbuckets.then( console.log );
 }
 
-if (parsed['list-tuples']) {
+if (parsed['list-keys']) {
 	if (parsed['bucket']) {
 		var bucket = parsed['bucket'];
-
-		// Get the tuples for a given bucket here
-		//
+		var pkeys  = riak_dc.get_keys( bucket );
+		pkeys.then( console.log )
 	}
 	else {
-		console.log( 'You need to supply a bucket name if you want to list tuples.' );
+		console.log( 'You need to supply a bucket name if you want to list keys.' );
 		console.log( usage );
 		process.exit( -255 );
 	}

@@ -11,7 +11,7 @@ var riak_port = 8098;
 var q = require('q'); // promises
 
 function get_buckets () {
-	// get_buckets returns a (promise of a ) list of all the buckets riak knows about.
+	// get_buckets returns a (promise of a) list of all the buckets riak knows about.
 	//
 
 	var gotten = '';
@@ -28,8 +28,11 @@ function get_buckets () {
 		}
 	}, function (result) {
 		result.on('data', function (chunk) {
-			gotten = gotten + chunk;
-			deferred.resolve( gotten );
+			// We assume this will be json that looks like:
+			// { buckets: [ 'thing', ... ] }
+			//
+			var bucket_names = JSON.parse(chunk);
+			deferred.resolve( bucket_names['buckets'] );
 	} ) } ); // request
 
 	req.on( 'error', function(e) {
@@ -40,6 +43,43 @@ function get_buckets () {
 	return deferred.promise;
 
 } // get_buckets
+
+function get_keys (bucket) {
+	// get_tuples keys a (promise of a) list of all the keys that Riak knows 
+	// about in a given bucket.
+	//
+
+	var gotten = '';
+
+	var deferred = q.defer();
+
+	var path = '/riak/' + bucket + '?keys=true';
+
+	var req = require('http').request( {
+		host    : riak_host,
+		'path'  : path,
+		port    : riak_port,
+		method  : 'GET',
+		headers : {
+			'Content-Type' : 'application/json'
+		}
+	}, function (result) {
+		result.on('data', function (chunk) {
+			// We assume this will be json that looks like:
+			// { keys: [ 'thing', ... ] }
+			//
+			var key_names = JSON.parse(chunk);
+			deferred.resolve( key_names['keys'] );
+	} ) } ); // request
+
+	req.on( 'error', function(e) {
+		console.log( 'http request barfed at : ' + e.message )
+	} );
+	req.end();
+
+	return deferred.promise;
+
+} // get_keys
 
 function get_tuple (bucket, key) {
 	// get_tuple cannot return to you the stringy value of the bucket/key tuple,
@@ -144,6 +184,7 @@ var init = function ( host, port ) {
 
 exports.init = init;
 
+exports.get_keys    = get_keys;
 exports.get_tuple   = get_tuple;
 exports.get_buckets = get_buckets;
 exports.put_tuple   = put_tuple;
