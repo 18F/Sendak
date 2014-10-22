@@ -63,3 +63,18 @@ if (parsed['list-keys']) {
 		process.exit( -255 );
 	}
 }
+
+if (parsed['get-tuple']) {
+	if (parsed['bucket'] && parsed['key']) {
+		var bucket = parsed['bucket']
+			, key = parsed['key']
+			, ptuple = riak_dc.get_tuple(bucket, key);
+
+		ptuple.then( console.log );
+	}
+	else {
+		console.log( 'You need to supply a bucket & key name if you want a tuple.' );
+		console.log( usage );
+		process.exit( -255 );
+	}
+}
