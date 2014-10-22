@@ -26,6 +26,10 @@ function get_tuple (bucket, key) {
 		port    : riak_port,
 		method  : 'GET',
 		headers : {
+			// this should be switched to json once testing is done
+			//
+			//'Content-Type' : 'application/json'
+
 			'Content-Type' : 'text/plain'
 		}
 	}, function (result) {
@@ -49,35 +53,36 @@ function put_tuple (bucket, key, payload) {
 	// a promise which should contain the serial that Riak gave it.
 	//
 
-	var gotten = '';
+	var serial = '';
 
-	// Really you should never not have a 'key' here.
+	// XXX: Really you should never not have a 'key' here.
 	//
-	var subpath = key ? bucket + '/' + key : bucket;
+	var subpath = bucket + '/' + key;
 
 	var deferred = q.defer();
 
 	var req = require('http').request( {
 		host    : riak_host,
-		path    : '/riak/' + subpath,
+		path    : '/riak/' + subpath + '?returnbody=true',
 		port    : riak_port,
-		method  : 'PUT',
+		method  : 'POST',
 		headers : {
-			'Content-Type' : 'text/plain'
+			'Content-Type' : 'application/json',
 		}
-	}, function (result) {
-		result.on('data', function (chunk) {
-			gotten = gotten + chunk;
-			deferred.resolve( gotten );
-	} ) } ); // request
+	} );
 
 	req.on( 'error', function(e) {
 		console.log( 'http request barfed at : ' + e.message )
 	} );
 
+	req.on( 'response', function ( response ) {
+		var headers = response.headers;
+		req.write( payload );
+		deferred.resolve( headers );
+	} );
+
 	// This should be the part that actually posts the data to the server
 	//
-	req.write( payload );
 
 	req.end();
 
