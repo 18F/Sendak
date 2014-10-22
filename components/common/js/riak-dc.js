@@ -1,6 +1,6 @@
 // Riak is very fancy. Too fancy. This makes it much simpler. Following is
-// a set of simple, synchronous blocking calls to get, put, and delete things
-// from a Riak ring.
+// a set of simple, synchronous-ish calls to get, put, and delete things
+// from a Riak cluster.
 //
 // riak don't care dot js
 //
@@ -87,7 +87,7 @@ function get_tuple (bucket, key) {
 	//
 
 	var gotten = '';
-	var subpath = key ? bucket + '/' + key : bucket;
+	var subpath = bucket + '/' + key;
 
 	var deferred = q.defer();
 
@@ -117,6 +117,39 @@ function get_tuple (bucket, key) {
 	return deferred.promise;
 
 } // get_tuple
+
+function del_tuple (bucket, key) {
+	// del_tuple aims to delete a tuple given a bucket/key pair. The way Riak
+	// works means that we don't /exactly/ delete it, but we mark it for later
+	// deletion (a 'tombstone'). On success, Riak says nothing. If it's not
+	// found, you'll get 'not found'.
+	//
+
+	var subpath = bucket + '/' + key;
+
+	var deferred = q.defer();
+
+	var req = require('http').request( {
+		host    : riak_host,
+		path    : '/riak/' + subpath,
+		port    : riak_port,
+		method  : 'DELETE',
+		headers : {
+			'Content-Type' : 'application/json'
+		}
+	}, function (result) {
+		result.on('data', function (chunk) {
+			gotten = gotten + chunk;
+			deferred.resolve( gotten );
+	} ) } ); // request
+
+	req.on( 'error', function(e) {
+		console.log( 'http request barfed at : ' + e.message )
+	} );
+	req.end();
+
+	return deferred.promise;
+} // del_tuple
 
 function put_tuple (bucket, payload) {
 	// put_tuple will send off your payload and do its best to return a promise
@@ -188,3 +221,4 @@ exports.get_keys    = get_keys;
 exports.get_tuple   = get_tuple;
 exports.get_buckets = get_buckets;
 exports.put_tuple   = put_tuple;
+exports.del_tuple   = del_tuple;

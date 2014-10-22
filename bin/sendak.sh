@@ -45,10 +45,15 @@ WANTED_TASK=$1
 # http://stackoverflow.com/questions/1668649/how-to-keep-quotes-in-args
 #
 ARGS=''
-for i in "$@";do 
-	ARGS="${ARGS} \"${i//\"/\\\"}\""
+for i in "$@"; do 
+	# substr to make sure we're not quoting the argnames
+	if [[ "${i:0:2}" == "--" ]]; then
+		ARGS="${ARGS} $i"
+		# ARGS="${ARGS} \"${i//\"/\\\"}\""
+	else
+		ARGS="${ARGS} \"${i}\""
+	fi
 done;
-
 
 # Just tells the user what the general form of commands is
 #

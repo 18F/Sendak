@@ -4,6 +4,7 @@
 
 // parse opts
 //
+var clean_args = require( 'components/common/js/supplemental.js' ).fix_quoted_array( process.argv );
 var nopt = require('nopt')
 	, noptUsage = require('nopt-usage')
 	, Stream    = require('stream').Stream
@@ -12,16 +13,22 @@ var nopt = require('nopt')
 			'list-buckets' : [ Boolean, null ],
 			'list-keys'    : [ Boolean, null ],
 			'get-tuple'    : [ Boolean, null ],
+			'put-tuple'    : [ Boolean, null ],
+			'del-tuple'    : [ Boolean, null ],
 			'bucket'       : [ String, null ],
 			'key'          : [ String, null ],
+			'tuple'        : [ String ],
 			'help'         : [ Boolean, null ]
 		}
 	, description = {
 			'list-buckets' : 'Show all the buckets in riak',
 			'list-keys'    : 'List all keys in a bucket',
 			'get-tuple'    : 'Get a single tuple from a bucket/key pair',
-			'bucket'       : 'Provided as argument to --list-tuples',
-			'key'          : 'Provided as argument to --get-tuple',
+			'put-tuple'    : 'Attempts to write a tuple to Riak; returns the serial Riak generates',
+			'del-tuple'    : 'Attempts to delete a tuple front Riak; no return value',
+			'bucket'       : 'To specify a bucket for operations',
+			'key'          : 'To specify a key for operations',
+			'tuple'        : 'To specify tuple for operations (likely json, but anything will do)',
 			'help'         : 'Sets the helpful bit.'
 		}
 	, defaults = {
@@ -30,7 +37,7 @@ var nopt = require('nopt')
 	, shortHands = {
 			'h'            : [ '--help' ],
 		}
-	, parsed = nopt(knownOpts, process.argv)
+	, parsed = nopt(knownOpts, shortHands, clean_args)
 	, usage = noptUsage(knownOpts, shortHands, description, defaults)
 
 if (parsed['help']) {
@@ -53,8 +60,8 @@ if (parsed['list-buckets']) {
 
 if (parsed['list-keys']) {
 	if (parsed['bucket']) {
-		var bucket = parsed['bucket'];
-		var pkeys  = riak_dc.get_keys( bucket );
+		var bucket = parsed['bucket']
+			, pkeys  = riak_dc.get_keys( bucket );
 		pkeys.then( console.log )
 	}
 	else {
@@ -74,6 +81,29 @@ if (parsed['get-tuple']) {
 	}
 	else {
 		console.log( 'You need to supply a bucket & key name if you want a tuple.' );
+		console.log( usage );
+		process.exit( -255 );
+	}
+}
+
+if (parsed['put-tuple']) {
+	if (parsed['bucket'] && parsed['tuple']) {
+		if (parsed['key']) {
+			console.log( 'Please let Riak decide the key to use for this tuple.' );
+			console.log( usage );
+			process.exit( -255 );
+		}
+
+		var bucket = parsed['bucket']
+			, tuple = parsed['tuple']
+			, presult = riak_dc.put_tuple(bucket, tuple);
+
+		console.log( 'attempted to place ' + tuple + ' in Riak' );
+
+		presult.then( console.log );
+	}
+	else {
+		console.log( 'You need to supply a bucket and data (a tuple) for this operation.' );
 		console.log( usage );
 		process.exit( -255 );
 	}
