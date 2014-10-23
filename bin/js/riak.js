@@ -37,7 +37,7 @@ var nopt = require('nopt')
 	, shortHands = {
 			'h'            : [ '--help' ],
 		}
-	, parsed = nopt(knownOpts, shortHands, clean_args)
+	, parsed = nopt(knownOpts, clean_args)
 	, usage = noptUsage(knownOpts, shortHands, description, defaults)
 
 if (parsed['help']) {
