@@ -111,7 +111,7 @@ for possible in `find bin/* -type d`; do # {{{
 		# we did not find it
 		#
 		# echo "no ${WANTED_TASK} in ${possible}"
-		:
+		: # nop
 	else
 		# We found it. Let's execute it with the arguments we were given
 		#
