@@ -110,7 +110,8 @@ for possible in `find bin/* -type d`; do # {{{
 	if [[ "${TASK}x" == "x" ]]; then
 		# we did not find it
 		#
-		echo "no ${WANTED_TASK} in ${possible}"
+		# echo "no ${WANTED_TASK} in ${possible}"
+		:
 	else
 		# We found it. Let's execute it with the arguments we were given
 		#
@@ -122,10 +123,13 @@ for possible in `find bin/* -type d`; do # {{{
 		# (unprivileged) user in the shell. Not a web form etc.
 		#
 		${DISPATCH}
+		exit 0
 	fi
 done # }}}
 
-exit 0
+# We should have executed cleanly above. We have not. Tell the user.
+echo "Could not find the task ${WANTED_TASK}. Exiting."
+exit -255
 
 # ps. bash sucks.
 # http://www.linuxjournal.com/content/return-values-bash-functions

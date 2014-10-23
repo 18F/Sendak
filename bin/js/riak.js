@@ -28,7 +28,7 @@ var nopt = require('nopt')
 			'del-tuple'    : 'Attempts to delete a tuple front Riak; no return value',
 			'bucket'       : 'To specify a bucket for operations',
 			'key'          : 'To specify a key for operations',
-			'tuple'        : 'To specify tuple for operations (likely json, but anything will do)',
+			'tuple'        : 'To specify tuple for operations - this must be base64-encoded',
 			'help'         : 'Sets the helpful bit.'
 		}
 	, defaults = {
@@ -95,7 +95,7 @@ if (parsed['put-tuple']) {
 		}
 
 		var bucket = parsed['bucket']
-			, tuple = parsed['tuple']
+			, tuple = new Buffer(parsed['tuple'], 'base64').toString('ascii')
 			, presult = riak_dc.put_tuple(bucket, tuple);
 
 		console.log( 'attempted to place ' + tuple + ' in Riak' );
