@@ -4,7 +4,7 @@
 
 // parse opts
 //
-var clean_args = require( 'components/common/js/supplemental.js' ).fix_quoted_array( process.argv );
+// var clean_args = require( 'components/common/js/supplemental.js' ).fix_quoted_array( process.argv );
 var nopt = require('nopt')
 	, noptUsage = require('nopt-usage')
 	, Stream    = require('stream').Stream
@@ -37,7 +37,7 @@ var nopt = require('nopt')
 	, shortHands = {
 			'h'            : [ '--help' ],
 		}
-	, parsed = nopt(knownOpts, clean_args)
+	, parsed = nopt(knownOpts, process.argv)
 	, usage = noptUsage(knownOpts, shortHands, description, defaults)
 
 if (parsed['help']) {
@@ -62,6 +62,7 @@ if (parsed['list-keys']) {
 	if (parsed['bucket']) {
 		var bucket = parsed['bucket']
 			, pkeys  = riak_dc.get_keys( bucket );
+		console.log( 'bucket: ', bucket );
 		pkeys.then( console.log )
 	}
 	else {

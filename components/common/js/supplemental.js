@@ -62,6 +62,9 @@ And fixed, would look like:
 */
 
 var fix_quoted_array = function ( arglist ) {
+	// nope, this is not working
+	//
+	process.exit(-255);
 	var concat = ''
 		, fixt_argv = [];
 	
@@ -83,12 +86,14 @@ var fix_quoted_array = function ( arglist ) {
 		else if ((firstchar == '"') || (firstchar == "'")) {
 			// This is the beginning of a quoted string in the argument
 			//
-			concat = argument + ' ';
+			var dequoted = argument.substr(1, argument.length);
+			concat = dequoted + ' ';
 		}
 		else if ((lastchar = '"') || (lastchar == "'")) {
 			// This is the end of a quoted string in the argument
 			//
-			concat += argument;
+			var dequoted = argument.substr(0, argument.length - 1);
+			concat += ' ' + dequoted;
 			fixt_argv.push( concat );
 			concat = '';
 		}
