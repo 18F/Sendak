@@ -1,64 +1,49 @@
 var rrm;
-var schema = { };
-var datastore = { };
+var Schema = { };
 var _version = '0.1';
 
 var crypto = require('crypto');
 var supps  = require('components/common/js/supplemental.js');
 
-// 'schema' should be a hash that includes one hash-per-key (so, it is a hash of hashes)
-//
+// XXX: in progress
+// reference: https://github.com/18F/Sendak/issues/20
+
 // methods:
-//   * new_schema - takes optionally a filename. reads (requires!) the
-//     file indicated, constructs a schema from that file, and returns
-//     a copy of the schema. this process re-initliases the singleton
-//     which serves as your in-memory/on-disk database.
+//   * get_schema - returns a hash of objects and their definitions from Riak
 //
-//     you will need to call new_schema before you have objects et cetera.
+//   * update_object - given a serial, will 'update' this object in Riak (which
+//     amounts to a delete & re-insert operation, so consistency may vary).
 //
 //   * add_object - takes a schema, a specified object type, and writes that
 //     object into the appropriate field of the schema.
 //
-//   * object_types - will return a list of bare strings referring to the
-//     types of objects you have access to inside your orm.
+//   * del_object - given a serial, will remove an object from Riak.
 //
 //   * new_object - will return a new object that you specify, providing it's
 //     a key in the hash provided by object_types.
 //
-//   * write_data - provide (filename, callback) and the in-memory datastore
-//     (a singleton) will be written to the disk. If the operation fails, your
-//     callback will be called from fs.writeFile with corresponding error.
-//     out onto disk in json, in a way that can be read back in later;
-//     you should assume it works if your callback is not called.
+//   * object_types - will return a list of bare strings referring to the
+//     types of objects you have access to inside your orm.
 //
+//   * get_objects - will return an array of the objects associated with a given
+//     object type.
+//
+
 module.exports = {
-	restore_schema : function (filename) { // {{{
-		// Read the datastore off disk.
+	get_schema : function (filename) { // {{{
+		// Returns a hash of what the objects look like in Riak
 		//
-
-		return datastore;
-	}, // }}}
-
-	new_schema : function (filename) { // {{{
-		if (filename) {
-
-			return datastore;
-		}
-		else {
-			// This is a request for a clean copy of the schema.
-			//
-
-			return datastore;
-		} // filename
-	}, // }}} new_schema()
+	}, // }}} get_schema()
 
 	update_object : function () { // {{{
+		// Takes an object and a serial, updates Riak to change that object
+		//
 		// TODO: writeme
 	}, // }}}
 
 	add_object : function( type, object ) { // {{{
-		if ( datastore.hasOwnProperty( type )) {
-			// This looks like a datastore that has an object of the type we are
+		if ( Schema.hasOwnProperty( type )) {
+			// This looks like a Schema that has an object of the type we are
 			// being asked to commit.
 			//
 			// TODO: This needs to check for uniqueness of objects
@@ -70,8 +55,8 @@ module.exports = {
 			// TODO: This seems to include a 'data' field inside individual objects
 			//       (cf object tree)
 			//
-			datastore[ type ]['data'].push( object );
-			return datastore;
+			Schema[ type ]['data'].push( object );
+			return Schema;
 		}
 		else {
 			// We don't actually have objects of this type, so error
@@ -84,15 +69,15 @@ module.exports = {
 	// {"name":null,"serial":"b72b4624ac4cbf0d7374d88843edc353eba85651e3527e5c990d8e1c50cf8868","instance_id":"i-f7b8de1c","availability_zone":"us-east-1a"}
 		var serial = object['serial'];
 		var kept = [ ];
-		if (datastore.hasOwnProperty( type )) {
+		if (Schema.hasOwnProperty( type )) {
 			// Looks like we can look at the list of objects of that type in the
 			// store
-			for (var idx in datastore[type]) {
+			for (var idx in Schema[type]) {
 				// This should be an array of hashes
 				//
-				record = datastore[type][idx];
+				record = Schema[type][idx];
 				if (record['serial'] != object['serial']) {
-					// This means you cannot assume that your datastore is going to
+					// This means you cannot assume that your Schema is going to
 					// always-and-forever have a given order of objects; use the
 					// serial attribute to keep track of them.
 					//
@@ -104,7 +89,7 @@ module.exports = {
 					//
 				}
 			} // for idx
-			datastore[type] = kept;
+			Schema[type] = kept;
 		}
 		else {
 			// It looks like the user did not actually give us a valid datatype
@@ -163,13 +148,13 @@ module.exports = {
 		} // if has property etc
 	}, // }}} new_object()
 
-	object_types : function (datastore) { // {{{
+	object_types : function () { // {{{
 		var keys = [ ];
-		for (var key in Object.keys(datastore)) {
+		for (var key in Object.keys(Schema)) {
 			// Elements of the schema beginning with '_', like '_version', are
 			// reserved. Please don't mess with that.
 			//
-			var thiskey = Object.keys(datastore)[ key ];
+			var thiskey = Object.keys(Schema)[ key ];
 			if (thiskey.substr(0,1) != '_') {
 				keys.push(thiskey);
 			}
@@ -177,19 +162,13 @@ module.exports = {
 		return keys;
 	}, // }}} object_types()
 
-	get_datastore : function () { // {{{
-		// return the singleton
-		//
-		return datastore;
-	}, // }}} get_datastore()
-
 	get_objects : function (type) { // {{{
 		// These two are sanity checks and shouldn't *strictly* be necessary, but
 		// don't hurt neither.
 		//
 		if (schema.hasOwnProperty( type )) {
-			if (datastore.hasOwnProperty( type )) {
-				var data = datastore[type]['data'];
+			if (Schema.hasOwnProperty( type )) {
+				var data = Schema[type]['data'];
 				if (data) {
 					// Also a sanity check; this should *always* be defined, buuuuut
 					//
@@ -206,15 +185,4 @@ module.exports = {
 		}
 	}, // }}}
 
-	write_data : function ( filename, datastore, callback ) { // {{{
-		// It would be nice for the objects passed back in new_object were stored
-		// in this.stuff (or something) but for now we can just write this and
-		// use it as a placeholder
-		//
-		// TODO: The description for this above is wrong, or the prototype here
-		//       is wrong. If datastore is a singleton, it should not be provided
-		//       as an argument here.
-		//
-		// TODO: riakify
-	} // }}} write_data()
 }; // exports
