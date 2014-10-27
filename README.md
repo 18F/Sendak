@@ -65,7 +65,7 @@ Host infdb
 
 #### Installation
 
-1. For the moment, simply pulling Sendak down from Git wHubith `git clone git@github.com:18F/Sendak.git sendak` will give you everything you need but the prerequisites and AWS credentials.
+1. For the moment, simply pulling Sendak down from GitHub with `git clone git@github.com:18F/Sendak.git sendak` will give you everything you need but the prerequisites and AWS credentials.
 2. It is advisable to have the `aws-cli` package from Amazon installed. On a Mac, this is `brew install awscli`. On Ubuntu, you will want `apt-get install awscli`.
 3. You will need the secret key and the api key from your Amazon account. This is available from the Amazon IAM page. You will need to put this in `~/.aws/config`, as sendak reads its stuff from there (a secret key and access key is available, but difficult to find, in the AWS console).
 4. Your environment will contain various shell variables for configuration's sake; these are defined in `contrib/bash_env.sh`. Each variable is defined with a comment in that file.
