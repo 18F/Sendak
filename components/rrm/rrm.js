@@ -1,14 +1,18 @@
 var rrm;
 var Schema = { };
-var _version = '0.1';
 
-var crypto = require('crypto');
 var supps  = require('components/common/js/supplemental.js');
+var Riak   = require('components/common/js/riak-dc.js');
+var q      = require('q');
+
+var promise_err_handler = function (err) {
+	console.log( 'promise rejected: ' + err );
+}
 
 // XXX: in progress
 // reference: https://github.com/18F/Sendak/issues/20
 
-// methods:
+// methods: # {{{
 //   * get_schema - returns a hash of objects and their definitions from Riak
 //
 //   * update_object - given a serial, will 'update' this object in Riak (which
@@ -27,12 +31,37 @@ var supps  = require('components/common/js/supplemental.js');
 //
 //   * get_objects - will return an array of the objects associated with a given
 //     object type.
-//
+// # }}}
 
 module.exports = {
-	get_schema : function (filename) { // {{{
-		// Returns a hash of what the objects look like in Riak
+	get_schema : function () { // {{{
+		// Returns a (promise of a) hash of what the objects look like in Riak
 		//
+		var map;
+		var deferred = q.defer();
+
+		Riak.get_keys( 'prototypes' )
+			.then( function (prototypes) {
+				debugger;
+				map = { };
+				prototypes.forEach( function (prototype) {
+					Riak.get_tuple( 'prototypes', prototype ).then( function ( rp ) {
+						console.log( 'tuple gotten: ', rp );
+						map[ prototype ] = rp;
+					}, promise_err_handler );
+					debugger;
+					deferred.resolve( map[ prototype ] );
+				} );
+			}, promise_err_handler  );
+
+    return q.Promise(function(resolve, reject, notify) {
+			console.log( 'inside q' );
+			resolve( map );
+			reject( 'failed in q' );
+			notify( 'notified' );
+		} );
+
+		return deferred.promise;
 	}, // }}} get_schema()
 
 	update_object : function () { // {{{
@@ -66,7 +95,15 @@ module.exports = {
 	}, // }}} add_object()
 
 	del_object : function( type, object ) { // {{{
-	// {"name":null,"serial":"b72b4624ac4cbf0d7374d88843edc353eba85651e3527e5c990d8e1c50cf8868","instance_id":"i-f7b8de1c","availability_zone":"us-east-1a"}
+	/*
+
+fetch:Sendak jane$ sendak riak --list-keys --bucket testing
+[ 'NOqTG7wEamiR0FTGFSLpSt5jstq',
+  'ClQSSGNdaEVDiPyNYykPe6OQvhs',
+
+...
+
+	*/
 		var serial = object['serial'];
 		var kept = [ ];
 		if (Schema.hasOwnProperty( type )) {

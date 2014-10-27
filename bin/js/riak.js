@@ -62,7 +62,6 @@ if (parsed['list-keys']) {
 	if (parsed['bucket']) {
 		var bucket = parsed['bucket']
 			, pkeys  = riak_dc.get_keys( bucket );
-		console.log( 'bucket: ', bucket );
 		pkeys.then( console.log )
 	}
 	else {
