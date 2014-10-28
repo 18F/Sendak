@@ -20,6 +20,10 @@ serial.then( function (tid) {
 } );
 */
 
+var f = rrm.get_schema();
+console.log( f() );
+/*
 rrm.get_schema().then( function (s) {
 	console.log( 's: ', s );
 }, function (e) { console.log( 'e: ', e ) } ).done();
+*/

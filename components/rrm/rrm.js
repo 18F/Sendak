@@ -37,8 +37,8 @@ module.exports = {
 	get_schema : function () { // {{{
 		// Returns a (promise of a) hash of what the objects look like in Riak
 		//
-		var map;
-		var deferred = q.defer();
+		var map = { }
+			, deferred = q.defer();
 
 		Riak.get_keys( 'prototypes' )
 			.then( function (prototypes) {
@@ -54,14 +54,8 @@ module.exports = {
 				} );
 			}, promise_err_handler  );
 
-    return q.Promise(function(resolve, reject, notify) {
-			console.log( 'inside q' );
-			resolve( map );
-			reject( 'failed in q' );
-			notify( 'notified' );
-		} );
-
-		return deferred.promise;
+		return function () { return map };
+		// return deferred.promise;
 	}, // }}} get_schema()
 
 	update_object : function () { // {{{
@@ -84,7 +78,7 @@ module.exports = {
 			// TODO: This seems to include a 'data' field inside individual objects
 			//       (cf object tree)
 			//
-			Schema[ type ]['data'].push( object );
+			Schema[ type ]['data'].push( object ); // obviously this is wrong
 			return Schema;
 		}
 		else {
@@ -104,34 +98,15 @@ fetch:Sendak jane$ sendak riak --list-keys --bucket testing
 ...
 
 	*/
-		var serial = object['serial'];
-		var kept = [ ];
-		if (Schema.hasOwnProperty( type )) {
-			// Looks like we can look at the list of objects of that type in the
-			// store
-			for (var idx in Schema[type]) {
-				// This should be an array of hashes
-				//
-				record = Schema[type][idx];
-				if (record['serial'] != object['serial']) {
-					// This means you cannot assume that your Schema is going to
-					// always-and-forever have a given order of objects; use the
-					// serial attribute to keep track of them.
-					//
-					kept.push( record );
-				}
-				else {
-					// Ostensibly here we have found an object with the serial indicated
-					// and we aren't going to push it. So this is a nop.
-					//
-				}
-			} // for idx
-			Schema[type] = kept;
-		}
-		else {
-			// It looks like the user did not actually give us a valid datatype
-			//
-		}
+		var serial = object['serial']
+			, result
+			, deferred = q.defer();
+
+		Riak.del_tuple( type, serial ).then( function (result) {
+			deferred.resolve( result );
+		} );
+
+		return deferred.promise;
 	}, // }}}
 
 	new_object : function (varname) { // {{{
