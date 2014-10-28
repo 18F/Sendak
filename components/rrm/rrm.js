@@ -1,5 +1,5 @@
 var rrm;
-var Schema = { };
+var Schema = { "defined": 0 };
 
 var supps  = require('components/common/js/supplemental.js');
 var Riak   = require('components/common/js/riak-dc.js');
@@ -12,7 +12,7 @@ var promise_err_handler = function (err) {
 // XXX: in progress
 // reference: https://github.com/18F/Sendak/issues/20
 
-// methods: # {{{
+// exported methods: # {{{
 //   * get_schema - returns a hash of objects and their definitions from Riak
 //
 //   * update_object - given a serial, will 'update' this object in Riak (which
@@ -33,60 +33,73 @@ var promise_err_handler = function (err) {
 //     object type.
 // # }}}
 
-module.exports = {
-	get_schema : function () { // {{{
-		// Returns a (promise of a) hash of what the objects look like in Riak
-		// credit to @rla (#node.js, github) for reworking some of this.
+function get_schema () { // {{{
+	// Returns a (promise of a) hash of what the objects look like in Riak
+	// credit to @rla (#node.js, github) for reworking some of this.
+	//
+	if (Schema['defined']) {
+		// Basically memoize the call to get_schema because it takes a while
 		//
-		return Riak.get_keys('prototypes').then( function( prototypes ) {
-			var map = { };
-			return q.all(
-				prototypes.map( function( prototype ) {
-					return Riak.get_tuple( 'prototypes', prototype ).then(
-						function( rp ) {
-							map[prototype] = rp;
-						}
-					) // then
-				} ) // prototypes.map
-			) // q.all
-		.then( function () {
-			return map;
-		} ) // q.all.then
-		} ) // get_keys.then
-	}, // }}} get_schema()
-
-	update_object : function () { // {{{
-		// Takes an object and a serial, updates Riak to change that object
+		// TODO: Strip the schema from superfluous data before returning
 		//
-		// TODO: writeme
-	}, // }}}
+		// We offer a promise here despite its definedness for purposes of API consistency
+		//
+		var deferred = q.defer();
+		deferred.resolve( Schema );
+		return deferred.promise;
+	}
 
-	add_object : function( type, object ) { // {{{
-		if ( Schema.hasOwnProperty( type )) {
-			// This looks like a Schema that has an object of the type we are
-			// being asked to commit.
-			//
-			// TODO: This needs to check for uniqueness of objects
-			//
-			// TODO: This requires a "delete from store" method
-			//
-			// TODO: This probably works best with a grep function (which node hasn't)
-			//
-			// TODO: This seems to include a 'data' field inside individual objects
-			//       (cf object tree)
-			//
-			Schema[ type ]['data'].push( object ); // obviously this is wrong
-			return Schema;
-		}
-		else {
-			// We don't actually have objects of this type, so error
-			//
-			return null; // this should actually be an exception?
-		}
-	}, // }}} add_object()
+	return Riak.get_keys('prototypes').then( function( prototypes ) {
+		var map = { };
+		return q.all(
+			prototypes.map( function( prototype ) {
+				return Riak.get_tuple( 'prototypes', prototype ).then(
+					function( rp ) {
+						map[prototype] = rp;
+					}
+				) // get_tuple.then
+			} ) // prototypes.map
+		) // q.all
+	.then( function () {
+		Schema = map;
+		Schema['defined'] = 1;
+		return map;
+	} ) // q.all.then
+	} ) // get_keys.then
+} // }}} get_schema()
 
-	del_object : function( type, object ) { // {{{
-	/*
+function update_object (object)  { // {{{
+	// Takes an object and a serial, updates Riak to change that object
+	//
+	// TODO: writeme
+} // }}}
+
+function add_object ( type, object ) { // {{{
+	if ( Schema.hasOwnProperty( type )) {
+		// This looks like a Schema that has an object of the type we are
+		// being asked to commit.
+		//
+		// TODO: This needs to check for uniqueness of objects
+		//
+		// TODO: This requires a "delete from store" method
+		//
+		// TODO: This probably works best with a grep function (which node hasn't)
+		//
+		// TODO: This seems to include a 'data' field inside individual objects
+		//       (cf object tree)
+		//
+		Schema[ type ]['data'].push( object ); // obviously this is wrong
+		return Schema;
+	}
+	else {
+		// We don't actually have objects of this type, so error
+		//
+		return null; // this should actually be an exception?
+	}
+} // }}} add_object()
+
+function del_object ( type, object ) { // {{{
+/*
 
 fetch:Sendak jane$ sendak riak --list-keys --bucket testing
 [ 'NOqTG7wEamiR0FTGFSLpSt5jstq',
@@ -94,104 +107,101 @@ fetch:Sendak jane$ sendak riak --list-keys --bucket testing
 
 ...
 
-	*/
-		var serial = object['serial']
-			, result
-			, deferred = q.defer();
+*/
+	var serial = object['serial']
+		, result
+		, deferred = q.defer();
 
-		Riak.del_tuple( type, serial ).then( function (result) {
-			deferred.resolve( result );
-		} );
+	Riak.del_tuple( type, serial ).then( function (result) {
+		deferred.resolve( result );
+	} );
 
-		return deferred.promise;
-	}, // }}}
+	return deferred.promise;
+} // }}}
 
-	new_object : function (varname) { // {{{
-		if (schema.hasOwnProperty( varname )) {
-			// Well, if we have one of those, let's clone it and send the clone back
-			// to the user.
-			//
-			var map   = schema[ varname ];
-			var clone = { };
-
-			for (var property in map) { // {{{
-				if (
-					map.hasOwnProperty( property ) &&
-					// Don't map the metadata attributes
-					//
-					(property != 'hasone') &&
-					(property != 'hasmany') &&
-					(property != 'data')
-				) {
-					// Need to create a hash with key property and get a serial for it because
-					// this is a new object. XXX: this implies the schema exists somewhere
-					// and doesn't need to be created.
-					//
-
-					// A "serial" (this should be sufficient for a primary key)
-					//
-					var nonce = crypto.randomBytes( Math.ceil(32) ).toString('hex');
-
-					// Create the actual hash, casting it to string or integer based on 
-					// this gross hack.
-					//
-					clone[property] = map[property].isa == 'string' ? '' : 0 ;
-
-					clone.serial    = nonce;
-
-					// And here we would need to set methods for gettrs/settrs that would
-					// push stuff into the database. XXX: does this mean re-casting clone
-					// as a function instead of a hash? How does scoping work on module.exports?
-					//
-					// clone.gettr_method = 
-					// clone.settr_method = 
-					//
-				} // if it's a key and the right key
-			} // walk the hash }}}
-
-			return clone;
-		}
-		else {
-			// We should throw an exception here? Or?
-			//
-		} // if has property etc
-	}, // }}} new_object()
-
-	object_types : function () { // {{{
-		var keys = [ ];
-		for (var key in Object.keys(Schema)) {
-			// Elements of the schema beginning with '_', like '_version', are
-			// reserved. Please don't mess with that.
-			//
-			var thiskey = Object.keys(Schema)[ key ];
-			if (thiskey.substr(0,1) != '_') {
-				keys.push(thiskey);
-			}
-		}
-		return keys;
-	}, // }}} object_types()
-
-	get_objects : function (type) { // {{{
-		// These two are sanity checks and shouldn't *strictly* be necessary, but
-		// don't hurt neither.
+function new_object ( type ) { // {{{
+	if (Schema.hasOwnProperty( type )) {
+		// Well, if we have one of those, let's clone it and send the clone back
+		// to the user.
 		//
-		if (schema.hasOwnProperty( type )) {
-			if (Schema.hasOwnProperty( type )) {
-				var data = Schema[type]['data'];
-				if (data) {
-					// Also a sanity check; this should *always* be defined, buuuuut
-					//
-					return data;
-				}
-				else {
-					// If you ask for data and there isn't any, I'm going to give you
-					// something that looks like nothing. Rather than return something
-					// that might break your code.
-					//
-					return [ ];
-				}
+		// XXX: checking to make sure we actually have this, because it will break otherwise
+		//
+		var map   = Schema[ type ];
+		var clone = { };
+
+		for (var property in map) { // {{{
+			if (
+				map.hasOwnProperty( property ) &&
+				// Don't map the metadata attributes
+				//
+				(property != 'hasone') &&
+				(property != 'hasmany') &&
+				(property != 'data')
+			) {
+				// Need to create a hash with key property and get a serial for it because
+				// this is a new object. XXX: this implies the schema exists somewhere
+				// and doesn't need to be created.
+				//
+
+				// Create the actual hash, casting it to string or integer based on 
+				// this gross hack.
+				//
+				clone[property] = map[property].isa == 'string' ? '' : 0 ;
+
+			} // if it's a key and the right key
+		} // walk the hash }}}
+
+		// Note that this returned object does not have a serial and will only have one upon
+		// being stored in Riak.
+		//
+		return clone;
+	}
+	else {
+		// We should throw an exception here? Or?
+		//
+	} // if has property etc
+} // }}} new_object()
+
+function object_types () { // {{{
+	var keys = [ ];
+	for (var key in Object.keys(Schema)) {
+		// Elements of the schema beginning with '_', like '_version', are
+		// reserved. Please don't mess with that.
+		//
+		var thiskey = Object.keys(Schema)[ key ];
+		if (thiskey.substr(0,1) != '_') {
+			keys.push(thiskey);
+		}
+	}
+	return keys;
+} // }}} object_types()
+
+function get_objects (type) { // {{{
+	// These two are sanity checks and shouldn't *strictly* be necessary, but
+	// don't hurt neither.
+	//
+	if (schema.hasOwnProperty( type )) {
+		if (Schema.hasOwnProperty( type )) {
+			var data = Schema[type]['data'];
+			if (data) {
+				// Also a sanity check; this should *always* be defined, buuuuut
+				//
+				return data;
+			}
+			else {
+				// If you ask for data and there isn't any, I'm going to give you
+				// something that looks like nothing. Rather than return something
+				// that might break your code.
+				//
+				return [ ];
 			}
 		}
-	}, // }}}
+	}
+} // }}}
 
-}; // exports
+exports.get_objects   = get_objects;
+exports.object_types  = object_types;
+exports.new_object    = new_object;
+exports.add_object    = add_object;
+exports.update_object = update_object;
+exports.get_schema    = get_schema;

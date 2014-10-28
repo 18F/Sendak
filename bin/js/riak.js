@@ -29,6 +29,7 @@ var nopt = require('nopt')
 			'bucket'       : 'To specify a bucket for operations',
 			'key'          : 'To specify a key for operations',
 			'tuple'        : 'To specify tuple for operations - this must be base64-encoded',
+			'get-schema'   : 'Return the (Sendak-specific) schema in Riak',
 			'help'         : 'Sets the helpful bit.'
 		}
 	, defaults = {
@@ -49,6 +50,7 @@ if (parsed['help']) {
 }
 
 var riak_dc = require( 'components/common/js/riak-dc.js' ); // our riak synchronous wrapper
+var rrm     = require( 'components/rrm/rrm.js' ); // the 'orm'
 
 if (parsed['list-buckets']) {
 	// It would be tricky to parse this down and display as raw, so as
@@ -56,6 +58,13 @@ if (parsed['list-buckets']) {
 	//
 	var pbuckets = riak_dc.get_buckets();
 	pbuckets.then( console.log );
+}
+
+if (parsed['get-schema']) {
+	// Display the schema for the user. This is kind of messy.
+	//
+	var pschema = rrm.get_schema();
+	pschema.then( console.log );
 }
 
 if (parsed['list-keys']) {

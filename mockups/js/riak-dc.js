@@ -21,9 +21,10 @@ serial.then( function (tid) {
 */
 
 var f = rrm.get_schema();
-var s = f.then( function (schema) {
-	console.log( schema )
-} );
+console.log(f);
+
+var g = rrm.get_schema().then( console.log );
+
 /*
 rrm.get_schema().then( function (s) {
 	console.log( 's: ', s );
