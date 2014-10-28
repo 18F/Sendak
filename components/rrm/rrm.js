@@ -36,26 +36,23 @@ var promise_err_handler = function (err) {
 module.exports = {
 	get_schema : function () { // {{{
 		// Returns a (promise of a) hash of what the objects look like in Riak
+		// credit to @rla (#node.js, github) for reworking some of this.
 		//
-		var map = { }
-			, deferred = q.defer();
-
-		Riak.get_keys( 'prototypes' )
-			.then( function (prototypes) {
-				debugger;
-				map = { };
-				prototypes.forEach( function (prototype) {
-					Riak.get_tuple( 'prototypes', prototype ).then( function ( rp ) {
-						console.log( 'tuple gotten: ', rp );
-						map[ prototype ] = rp;
-					}, promise_err_handler );
-					debugger;
-					deferred.resolve( map[ prototype ] );
-				} );
-			}, promise_err_handler  );
-
-		return function () { return map };
-		// return deferred.promise;
+		return Riak.get_keys('prototypes').then( function( prototypes ) {
+			var map = { };
+			return q.all(
+				prototypes.map( function( prototype ) {
+					return Riak.get_tuple( 'prototypes', prototype ).then(
+						function( rp ) {
+							map[prototype] = rp;
+						}
+					) // then
+				} ) // prototypes.map
+			) // q.all
+		.then( function () {
+			return map;
+		} ) // q.all.then
+		} ) // get_keys.then
 	}, // }}} get_schema()
 
 	update_object : function () { // {{{
