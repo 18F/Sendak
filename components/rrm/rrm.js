@@ -119,6 +119,24 @@ fetch:Sendak jane$ sendak riak --list-keys --bucket testing
 	return deferred.promise;
 } // }}}
 
+// not exported
+//
+function schema_to_object ( definition ) {
+	var clone = { }
+		, map   = JSON.parse(definition);
+
+	Object.keys(map).forEach( function (k, idx, keys) {
+		if ( (k != 'hasone') && (k != 'hasmany') ) {
+			// Create the actual hash, casting it to string or integer based on
+			// this gross hack.
+			//
+			clone[k] = map[k].isa == 'string' ? '' : 0 ;
+		} // if it's a key and the right key
+	} ) // walk the hash }}}
+
+	return clone;
+}
+
 function new_object ( type ) { // {{{
 	if (Schema.hasOwnProperty( type )) {
 		// Well, if we have one of those, let's clone it and send the clone back
@@ -126,30 +144,7 @@ function new_object ( type ) { // {{{
 		//
 		// XXX: checking to make sure we actually have this, because it will break otherwise
 		//
-		var map   = Schema[ type ];
-		var clone = { };
-
-		for (var property in map) { // {{{
-			if (
-				map.hasOwnProperty( property ) &&
-				// Don't map the metadata attributes
-				//
-				(property != 'hasone') &&
-				(property != 'hasmany') &&
-				(property != 'data')
-			) {
-				// Need to create a hash with key property and get a serial for it because
-				// this is a new object. XXX: this implies the schema exists somewhere
-				// and doesn't need to be created.
-				//
-
-				// Create the actual hash, casting it to string or integer based on 
-				// this gross hack.
-				//
-				clone[property] = map[property].isa == 'string' ? '' : 0 ;
-
-			} // if it's a key and the right key
-		} // walk the hash }}}
+		var clone = schema_to_object( Schema[ type ] );
 
 		// Note that this returned object does not have a serial and will only have one upon
 		// being stored in Riak.
@@ -157,8 +152,13 @@ function new_object ( type ) { // {{{
 		return clone;
 	}
 	else {
-		// We should throw an exception here? Or?
+		// It looks like the schema hasn't been populated, so go get it.
 		//
+		var pschema = get_schema();
+		return pschema.then( function (s) {
+			var clone = schema_to_object( s[ type ] );
+			return clone;
+		} ) // return
 	} // if has property etc
 } // }}} new_object()
 
