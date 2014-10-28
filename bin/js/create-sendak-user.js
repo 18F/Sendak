@@ -53,11 +53,33 @@ if (parsed['help']) {
 
 var rrm = require( 'components/rrm/rrm.js' );
 
-var user = rrm.new_object( 'User' );
+if (parsed['name']) {
+	var puser = rrm.new_object( 'User' );
 
-user.then( function (pu) {
-	// Once we have the prototype for a user...
-	console.log( pu );
-} );
+	puser.then( function (user) {
+		// Once we have the prototype for a user...
+		// { name: '', arn: '', amznid: '' }
 
+		// This is a placeholder for now. The object has to change a bit.
+		//
+/*
+fetch:Sendak jane$ sendak riak --put-tuple --bucket testing --tuple $( echo '{ "foo": "bar" }' | perl bin/pl/en64.pl )
+attempted to place { "foo": "bar" }
+ in Riak
+QpQmL1Cz9nGNsDidr4hv53ZlH3
+*/
 
+	// so it's not clear what is not working right in rrm.js, but clearly bin/js/riak.js knows
+	// what's up.
+	//
+		user['name'] = parsed['name'];
+		var pserial = rrm.add_object( 'User', user );
+		pserial.then( function (serial) {
+			console.log( 'Serial seems to be ' + serial );
+		} );
+	} ); // promise of user
+}
+else {
+	console.log( 'You need to provide a user name.' );
+	process.exit( -255 );
+}

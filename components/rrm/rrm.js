@@ -88,8 +88,13 @@ function add_object ( type, object ) { // {{{
 		// TODO: This seems to include a 'data' field inside individual objects
 		//       (cf object tree)
 		//
-		Schema[ type ]['data'].push( object ); // obviously this is wrong
-		return Schema;
+		var pserial = Riak.put_tuple( type, object );
+
+		return Riak.put_tuple(type, object).then( function( pserial ) {
+			return pserial.then( function (serial) {
+				return serial
+			} )
+		} );
 	}
 	else {
 		// We don't actually have objects of this type, so error
@@ -121,7 +126,7 @@ fetch:Sendak jane$ sendak riak --list-keys --bucket testing
 
 // not exported
 //
-function schema_to_object ( definition ) {
+function schema_to_object ( definition ) { // {{{
 	var clone = { }
 		, map   = JSON.parse(definition);
 
@@ -135,7 +140,7 @@ function schema_to_object ( definition ) {
 	} ) // walk the hash }}}
 
 	return clone;
-}
+} // }}}
 
 function new_object ( type ) { // {{{
 	if (Schema.hasOwnProperty( type )) {
