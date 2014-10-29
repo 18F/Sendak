@@ -135,7 +135,7 @@ function schema_to_object ( definition ) { // {{{
 			//
 			clone[k] = map[k].isa == 'string' ? '' : 0 ;
 		} // if it's a key and the right key
-	} ) // walk the hash }}}
+	} ) // walk the hash
 
 	return clone;
 } // }}}
@@ -208,3 +208,4 @@ exports.new_object    = new_object;
 exports.add_object    = add_object;
 exports.update_object = update_object;
 exports.get_schema    = get_schema;
+exports.del_object    = del_object;
