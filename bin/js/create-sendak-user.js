@@ -62,21 +62,13 @@ if (parsed['name']) {
 
 		// This is a placeholder for now. The object has to change a bit.
 		//
-/*
-fetch:Sendak jane$ sendak riak --put-tuple --bucket testing --tuple $( echo '{ "foo": "bar" }' | perl bin/pl/en64.pl )
-attempted to place { "foo": "bar" }
- in Riak
-QpQmL1Cz9nGNsDidr4hv53ZlH3
-*/
-
-	// so it's not clear what is not working right in rrm.js, but clearly bin/js/riak.js knows
-	// what's up.
-	//
 		user['name'] = parsed['name'];
 		var pserial = rrm.add_object( 'User', user );
-		pserial.then( function (serial) {
-			console.log( 'Serial seems to be ' + serial );
-		} );
+
+		// So some kind of display formatting would go here.
+		//
+		pserial.then( console.log );
+
 	} ); // promise of user
 }
 else {

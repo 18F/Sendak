@@ -91,9 +91,7 @@ function add_object ( type, object ) { // {{{
 		var pserial = Riak.put_tuple( type, object );
 
 		return Riak.put_tuple(type, object).then( function( pserial ) {
-			return pserial.then( function (serial) {
-				return serial
-			} )
+			return pserial;
 		} );
 	}
 	else {
