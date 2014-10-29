@@ -180,26 +180,28 @@ function object_types () { // {{{
 } // }}} object_types()
 
 function get_objects (type) { // {{{
-	// These two are sanity checks and shouldn't *strictly* be necessary, but
-	// don't hurt neither.
+	// If you ask for an object type that Riak doesn't have, for now it's
+	// a silent failure rather than an exception. TODO: complain.
 	//
-	if (schema.hasOwnProperty( type )) {
-		if (Schema.hasOwnProperty( type )) {
-			var data = Schema[type]['data'];
-			if (data) {
-				// Also a sanity check; this should *always* be defined, buuuuut
-				//
-				return data;
-			}
-			else {
-				// If you ask for data and there isn't any, I'm going to give you
-				// something that looks like nothing. Rather than return something
-				// that might break your code.
-				//
-				return [ ];
-			}
-		}
-	}
+	var records = [ ];
+
+	// Repeated from get_schema above
+	//
+	return Riak.get_keys(type).then( function( objects ) {
+		return q.all(
+			objects.map( function( object ) {
+				 var ptuple = Riak.get_tuple( type, object );
+				 var tuple  = ptuple.then(
+					function( record ) {
+						records.push( record );
+					}
+				) // get_tuple.then
+			} ) // objects.map
+		) // q.all
+	.then( function () {
+		return records;
+	} ) // q.all.then
+	} ) // get_keys.then
 } // }}}
 
 exports.get_objects   = get_objects;
