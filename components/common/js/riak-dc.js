@@ -99,11 +99,10 @@ function get_tuple (bucket, key) {
 		headers : {
 			// this should be switched to json once testing is done
 			//
-			//'Content-Type' : 'application/json'
-
-			'Content-Type' : 'text/plain'
+			'Content-Type' : 'application/json'
 		}
 	}, function (result) {
+		debugger;
 		result.on('data', function (chunk) {
 			gotten = gotten + chunk;
 			deferred.resolve( gotten );
@@ -151,7 +150,7 @@ function del_tuple (bucket, key) {
 	return deferred.promise;
 } // del_tuple
 
-function put_tuple (bucket, payload) {
+function put_tuple (bucket, payload, forced_key) {
 	// put_tuple will send off your payload and do its best to return a promise
 	// which contains a serial from the Riak you may use in the future to refer to it.
 	//
@@ -159,6 +158,12 @@ function put_tuple (bucket, payload) {
 	var serial = '';
 
 	var deferred = q.defer();
+
+	// Never do this.
+	//
+	if (forced_key) {
+		bucket = bucket + '/' + forced_key;
+	}
 
 	var req = require('http').request( {
 		host    : riak_host,
@@ -187,8 +192,14 @@ function put_tuple (bucket, payload) {
 		//
 		// so we clean it up by taking the key off and then zapping the tick.
 		//
-		var key = headers['location'].split('/')[3];
-		key = key.substr( 0, key.length - 1 );
+		var key;
+		if (forced_key && headers['location']) {
+			key = headers['location'].split('/')[3];
+			key = key.substr( 0, key.length - 1 );
+		}
+		else {
+			key = forced_key;
+		}
 
 		// And hand it off to q.
 		//

@@ -97,15 +97,17 @@ if (parsed['get-tuple']) {
 
 if (parsed['put-tuple']) {
 	if (parsed['bucket'] && parsed['tuple']) {
-		if (parsed['key']) {
+		if (parsed['key'] && !parsed['i-mean-it']) {
 			console.log( 'Please let Riak decide the key to use for this tuple.' );
 			console.log( usage );
 			process.exit( -255 );
 		}
 
+		var third_arg = parsed['key'] ? parsed['key'] : undefined;
+
 		var bucket = parsed['bucket']
 			, tuple = new Buffer(parsed['tuple'], 'base64').toString('ascii')
-			, presult = riak_dc.put_tuple(bucket, tuple);
+			, presult = riak_dc.put_tuple(bucket, tuple, third_arg);
 
 		console.log( 'attempted to place ' + tuple + ' in Riak' );
 
