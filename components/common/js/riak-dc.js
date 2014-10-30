@@ -38,6 +38,11 @@ function get_buckets () {
 	req.on( 'error', function(e) {
 		console.log( 'http request barfed at : ' + e.message )
 	} );
+
+	req.on( 'connect', function (response) {
+		// console.log( 'http connect' );
+	} );
+
 	req.end();
 
 	return deferred.promise;
@@ -75,6 +80,11 @@ function get_keys (bucket) {
 	req.on( 'error', function(e) {
 		console.log( 'http request barfed at : ' + e.message )
 	} );
+
+	req.on( 'connect', function (response) {
+		// console.log( 'http connect' );
+	} );
+
 	req.end();
 
 	return deferred.promise;
@@ -101,16 +111,21 @@ function get_tuple (bucket, key) {
 			//
 			'Content-Type' : 'application/json'
 		}
-	}, function (result) {
-		debugger;
-		result.on('data', function (chunk) {
+	}, function (response) {
+		response.on('data', function (chunk) {
 			gotten = gotten + chunk;
 			deferred.resolve( gotten );
-	} ) } ); // request
+		}
+	) } ); // request
+
+	req.on( 'connect', function (response) {
+		console.log( 'http connect' );
+	} );
 
 	req.on( 'error', function(e) {
 		console.log( 'http request barfed at : ' + e.message )
 	} );
+
 	req.end();
 
 	return deferred.promise;
@@ -141,6 +156,10 @@ function del_tuple (bucket, key) {
 			gotten = gotten + chunk;
 			deferred.resolve( gotten );
 	} ) } ); // request
+
+	req.on( 'connect', function (response) {
+		// console.log( 'http connect' );
+	} );
 
 	req.on( 'error', function(e) {
 		console.log( 'http request barfed at : ' + e.message )
@@ -177,6 +196,10 @@ function put_tuple (bucket, payload, forced_key) {
 
 	req.on( 'error', function(e) {
 		console.log( 'http request barfed at : ' + e.message )
+	} );
+
+	req.on( 'connect', function (response) {
+		// console.log( 'http connect' );
 	} );
 
 	req.on( 'response', function ( response ) {
