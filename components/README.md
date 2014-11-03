@@ -2,8 +2,6 @@
 * `common` - this is helper code that various backend components will need to use (so you can `require (‘./components/common/precious_stuff.js’)` and re-use code between your pieces
 * `fabfile` - so far this doesn’t have anything in it but it is the pieces that interact with Fabric.
 * `github` - this is where the backend parts that interact with (a) Github go. For now this is javascript that writes shell, eventually should be native API calls to github.
-* `orm` - abandoned for the moment; this directory contains what should be the interface to an Amazon RDB instance.
-* `odorm` - contains the place-holder for the `orm` stuff. This is actually a hack that uses an on-disk json store instead of a Legit Database™ to store Things.
 
 #### Planning for the future
 
