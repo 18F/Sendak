@@ -29,6 +29,7 @@
   "dependencies" : {
     "nopt-usage"  : "*",
     "nopt"        : "*",
+    "jagrep"      : "*",
     "common-node" : "*",
     "aws-sdk"     : "*",
     "riak-dc"     : "*",
