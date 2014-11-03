@@ -1,9 +1,9 @@
 var rrm;
 var Schema = { "defined": 0 };
 
-var supps  = require('components/common/js/supplemental.js');
-var Riak   = require('riak-dc');
-var q      = require('q');
+var Riak   = require('riak-dc')
+	, jgrep  = require('jagrep')
+	, q      = require('q');
 
 var promise_err_handler = function (err) {
 	console.log( 'promise rejected: ' + err );
@@ -167,16 +167,38 @@ function new_object ( type ) { // {{{
 
 function object_types () { // {{{
 	var keys = [ ];
-	for (var key in Object.keys(Schema)) {
-		// Elements of the schema beginning with '_', like '_version', are
-		// reserved. Please don't mess with that.
-		//
-		var thiskey = Object.keys(Schema)[ key ];
-		if (thiskey.substr(0,1) != '_') {
-			keys.push(thiskey);
+	var deferred = q.defer();
+	if (Schema['defined']) {
+		for (var key in Object.keys(Schema)) {
+			// Elements of the schema beginning with '_', like '_version', are
+			// reserved. Please don't mess with that.
+			//
+			var thiskey = Object.keys(Schema)[ key ];
+			if (thiskey.substr(0,1) != '_') {
+				keys.push(thiskey);
+			}
 		}
+		return deferred.promise( keys );
 	}
-	return keys;
+	else {
+		// Haven't seen the schema yet
+		//
+		var pschema = get_schema();
+		return pschema.then( function (s) {
+			for (var key in jgrep.sync(
+				{ 'function' : function (t) { if (t != 'defined' ) return 1 } }
+				, Object.keys(Schema) ) ) {
+				// Elements of the schema beginning with '_', like '_version', are
+				// reserved. Please don't mess with that.
+				//
+				var thiskey = Object.keys(Schema)[ key ];
+				if (thiskey.substr(0,1) != '_') {
+					keys.push(thiskey);
+				}
+			}
+			return keys;
+		} );
+	}
 } // }}} object_types()
 
 function get_objects (type) { // {{{

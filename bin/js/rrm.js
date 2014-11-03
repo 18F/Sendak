@@ -8,10 +8,12 @@ var nopt = require('nopt')
 	, path      = require('path')
 	, knownOpts = {
 			'get-schema'   : [ Boolean, null ],
+			'object-types' : [ Boolean, null ],
 			'help'         : [ Boolean, null ]
 		}
 	, description = {
-			'get-schema'   : 'Return the (Sendak-specific) schema in Riak',
+			'get-schema'   : 'Return the full (Sendak-specific) schema in Riak',
+			'object-types' : 'List the Sendak object types',
 			'help'         : 'Sets the helpful bit.'
 		}
 	, defaults = {
@@ -37,4 +39,10 @@ if (parsed['get-schema']) {
 	// Display the schema for the user. This is kind of messy.
 	//
 	rrm.get_schema().then( console.log );
+}
+
+if (parsed['object-types']) {
+	// Display the schema for the user. This is kind of messy.
+	//
+	rrm.object_types().then( console.log );
 }
