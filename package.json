@@ -28,10 +28,10 @@
 
   "dependencies" : {
     "nopt-usage"  : "*",
-    "find"        : "*",
     "nopt"        : "*",
     "common-node" : "*",
     "aws-sdk"     : "*",
+    "riak-dc"     : "*",
     "q"           : "*"
   }
 }

@@ -2,7 +2,7 @@ var rrm;
 var Schema = { "defined": 0 };
 
 var supps  = require('components/common/js/supplemental.js');
-var Riak   = require('components/common/js/riak-dc.js');
+var Riak   = require('riak-dc');
 var q      = require('q');
 
 var promise_err_handler = function (err) {
