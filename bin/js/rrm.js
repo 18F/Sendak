@@ -7,14 +7,16 @@ var nopt = require('nopt')
 	, Stream    = require('stream').Stream
 	, path      = require('path')
 	, knownOpts = {
-			'get-schema'   : [ Boolean, null ],
-			'object-types' : [ Boolean, null ],
-			'help'         : [ Boolean, null ]
+			'get-schema'      : [ Boolean, null ],
+			'object-types'    : [ Boolean, null ],
+			'describe-object' : [ String, null ],
+			'help'            : [ Boolean, null ]
 		}
 	, description = {
-			'get-schema'   : 'Return the full (Sendak-specific) schema in Riak',
-			'object-types' : 'List the Sendak object types',
-			'help'         : 'Sets the helpful bit.'
+			'get-schema'      : 'Return the full (Sendak-specific) schema in Riak',
+			'object-types'    : 'List the Sendak object types',
+			'describe-object' : 'Describe a specified object from the schema',
+			'help'            : 'Sets the helpful bit.'
 		}
 	, defaults = {
 			'help' : false
@@ -40,9 +42,13 @@ if (parsed['get-schema']) {
 	//
 	rrm.get_schema().then( console.log );
 }
-
-if (parsed['object-types']) {
+else if (parsed['object-types']) {
 	// Display the schema for the user. This is kind of messy.
 	//
 	rrm.object_types().then( console.log );
+}
+else if (parsed['describe-object']) {
+	// Describe what we know about an object's prototype
+	//
+	rrm.new_object( parsed['describe-object'] ).then( console.log );
 }
