@@ -51,7 +51,7 @@ if (parsed['help']) {
 	process.exit(0); // success
 }
 
-var rrm = require( 'components/rrm/rrm.js' );
+var rrm = require( 'rrm' );
 
 if (parsed['name']) {
 	var puser = rrm.new_object( 'User' );

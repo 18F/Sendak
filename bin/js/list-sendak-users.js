@@ -39,7 +39,7 @@ if (parsed['help']) {
 	process.exit(0); // success
 }
 
-var rrm = require( 'components/rrm/rrm.js' );
+var rrm = require( 'rrm' );
 
 var results = [ ];
 

@@ -30,6 +30,7 @@
     "nopt-usage"  : "*",
     "nopt"        : "*",
     "jagrep"      : "*",
+    "rrm"         : "*",
     "common-node" : "*",
     "aws-sdk"     : "*",
     "riak-dc"     : "*",

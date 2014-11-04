@@ -1,16 +1,12 @@
 #!/usr/bin/env node
-// The stuff that was here in the previous revision is being moved (has been moved)
-// to the backend, where it should be.
-//
 
-var store = 'var/datastore.json';
+/*
 
-if (process.env.SENDAK_DATASTORE) {
-	store = process.env.SENDAK_DATASTORE;
-}
+	task to build a node with aws-sdk using runInstances, storing the resulting
+	information where Sendak can use it.
 
-// Largely cribbed from docs
-//
+*/
+
 var nopt = require('nopt')
 	, noptUsage = require('nopt-usage')
 	, knownOpts = {
@@ -46,9 +42,6 @@ var nopt = require('nopt')
 			'h'          : [ '--help' ]
 		}
 	, parsed = nopt(knownOpts, process.argv)
-	  // defaults, above, can be added to the arguments for noptUsage
-	  // but it makes the response unreasonably wide.
-	  //
 	, usage = noptUsage(knownOpts, shortHands, description)
 
 if (parsed['help']) {
@@ -61,13 +54,161 @@ if (parsed['help']) {
 
 // TODO: Add 'self-destruct-upon-task' flag for constructor
 
-var Sendak = require( 'components/aws/run_instance.js' ); // the ec2 calls live here
-var ORM    = require( 'components/odorm/odorm.js' );      // this is our "orm"
-var DS     = ORM.restore_schema( store );                 // restore from disk rather than create anew
+var build_instance = function( args, callback ) { // {{{
+	// 'args' should be a dictionary containing
+	//   required:
+	//   * ssh_key_name (a string, from the aws console; NOT the name of a keyfile on disk)
+	//   * security_groups (a list of strings, e.g., 'sg-5ca8f939')
+	//   * subnet (a string, e.g., 'subnet-bd4d85ca')
+	//
+	//   optional:
+	//   * ami_id (defaults to ami-020bc76a)
+	//   * instance_type ('t1.micro' and similar; defaults to t1.micro)
+	//   * protect (termination; true | false, defaults to false)
+	//
+	// NOTE: Your subnet is associated with a VPC. Accordingly you do not (can not) specify
+	// a VPC with this call. However, please ensure that the supplied security group(s) are
+	// relevant to the subnet you provide or you will not be able to reach your node. If
+	// your call fails, unfortunately all you will get is the error from Amazon. Which is
+	// not always helpful.
+	//
 
-var this_node = Sendak.new_node(
+	// Sendak will return to your callback a dictionary containing the information you 
+	// need to talk to your new ec2 node:
+	//  * public hostname
+	//  * public ip address
+	//  * aws ec2 instance id (e.g., 'i-87bd676c')
+	//
+
+	// This is just used to generate a noncely thing for nodename
+	//
+	var t = new Date().getTime() ; var frag = t.toString().substr(-4) ;
+
+	var return_value = {
+		hostname          : '',
+		public_ip         : '',
+		instance_id       : '',
+		availability_zone : ''
+	};
+
+	// This is the 18f hardened ubuntu image
+	//
+	var ami_id   = 'ami-020bc76a';
+	
+	// This is the infrastructure cloud, where Sendak lives.
+	//
+	var vpc_id   = 'vpc-c03d95a5';
+	var hostname = 'sendak-subnode-' + frag;
+	
+	// console.log( args ); // XXX: broken in references below
+
+	var launch_params = {
+		// Required:
+		//
+		KeyName                           : args.ssh_key_name,
+
+		// Optional:
+		//
+		ImageId                           : args.ami_id ? args.ami_id : ami_id,
+		DisableApiTermination             : args.protect ? args.protect : false,
+		InstanceType                      : args.instance_type ? args.instance_type : 't1.micro',
+
+		// Not user-serviceable
+		//
+		EbsOptimized                      : false,
+		InstanceInitiatedShutdownBehavior : 'terminate',
+		Monitoring                        : { Enabled : false },
+		MinCount                          : 1,
+		MaxCount                          : 1,
+		Placement                         : { AvailabilityZone : 'us-east-1a' },
+		
+		// DryRun                            : true,
+	
+		NetworkInterfaces : [
+			{
+				// Required
+				//
+				Groups                          : args.security_groups ? args.security_groups : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
+				SubnetId                        : args.subnet ? args.subnet : 'subnet-bd4d85ca',
+
+				// Not user-serviceable
+				//
+				AssociatePublicIpAddress        : true,
+				DeleteOnTermination             : true,
+				Description                     : hostname + '-public',
+				DeviceIndex                     : 0,
+				SecondaryPrivateIpAddressCount  : 1
+			},
+		], // NetworkInterfaces
+	
+	}; // params for runInstances
+
+
+	// console.log( launch_params ); // XXX: broken in references below
+
+	ec2.runInstances( launch_params, function(ri_err, data) {
+		if (ri_err) {
+			callback( ri_err, ri_err.stack );
+		}
+		else {
+
+			return_value.instance_id = data.Instances[0].InstanceId;
+
+			// To get the public dns name and public ip address we need to actually make
+			// additional calls out to aws as the node "settles down". See "$AMAZON_DERP_DELAY"
+			// at https://github.com/avriette/misc/blob/master/joshsz/challenge.sh#L91
+			//
+			ec2.describeInstances( { InstanceIds : [ return_value.instance_id ] }, function ( di_err, di_data ) {
+				if (di_err) {
+					callback( di_err, di_err.stack );
+				}
+				else {
+					// XXX: note that this explicitly assumes ONE AND ONLY ONE instance is spun up
+					// and accordingly is not "really" asychronous. Whatever. Fix later.
+					//
+					// XXX: We need to break out of this if we are using dry run, as this will
+					// dutifully block synchronously until forever
+					//
+					ec2.waitFor( 'instanceRunning', { InstanceIds : [ return_value.instance_id ] }, function ( wait_for_err, instance_data ) {
+						if (wait_for_err) {
+							callback( wait_for_err, wait_for_err.stack );
+						}
+						else {
+							var reservation_zero = instance_data.Reservations[0];
+							var instance_zero    = reservation_zero.Instances[0];
+
+							return_value.hostname          = instance_zero.PublicDnsName;
+							return_value.public_ip         = instance_zero.PublicIpAddress;
+							return_value.availability_zone = instance_zero.Placement.AvailabilityZone;
+
+							// console.log( instance_zero )
+
+							callback( return_value );
+						} // if wait_for_err
+					} ) // ec2.waitFor
+				} // if di_err
+			} ) // describeInstances
+		} // if ri_err
+	} ) // runInstances
+} // }}} build_instance
+
+// Load the AWS SDK for Node.js & grab an ec2 interface
+//
+var AWS = require('aws-sdk');
+var ec2 = new AWS.EC2(
+	{
+		region: 'us-east-1'  // per @mhart at https://github.com/aws/aws-sdk-js/issues/350
+	}
+);
+var rrm = require( 'rrm' );
+
+var this_node = build_instance(
 	{
 		// TODO: Fix this to use a map from the defaults hash use with nopt, above
+		//
+		// TODO: autoburn
+		//
+		// TODO: optionally list associated volumes
 		//
 		ssh_key_name    : parsed[ 'ssh-key-name' ]    ? parsed[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
 		security_groups : parsed[ 'security-groups' ] ? parsed[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
@@ -76,42 +217,30 @@ var this_node = Sendak.new_node(
 		ami_id          : parsed[ 'ami-id' ]          ? parsed[ 'ami-id' ]          : 'ami-020bc76a',
 		instance_type   : parsed[ 'instance-type' ]   ? parsed[ 'instance-type' ]   : 't1.micro',
 		protect         : parsed[ 'protect' ]         ? parsed[ 'protect' ]         : false
-		// TODO: autoburn
 	},
 	function (ec2_result, stack) {
 		if (stack) {
-			console.log( 'ohnoes: ' + stack );
+			console.log( 'error during node creation: ' + stack );
 			process.exit(-255);
 		}
 		else {
 			// So we have successfully created an actual node, but let's get its information and
-			// put it in the datastore
+			// put it in Riak
 			//
-			var metadata = ORM.new_object( 'Node' );
+			var metadata = rrm.new_object( 'Node' );
+
 			metadata['name']              = ec2_result['hostname'];
 			metadata['instance_id']       = ec2_result['instance_id'];
 			metadata['availability_zone'] = ec2_result['availability_zone'];
 
-			ORM.add_object( 'Node', metadata );
-			DS = ORM.get_datastore();
-
-			ORM.write_data( store, DS, function (err) {
-				if (err) {
-					console.log( 'fs.write: ', err.stack );
-					process.exit(-255);
-				}
-				else {
-					// was successful so nop
-					//
-					console.log(
-						'Node created (' +
-						metadata['instance_id'] +
-						') : ssh ubuntu@' +
-						ec2_result['public_ip']
-					);
-					console.log( 'data stored in ' + store );
-				}
-			} );
+			rrm.add_object( 'Node', metadata ).then( function (serial) {
+				console.log(
+					'Node ' + metadata['instance_id'] + ' created (Riak ID: ' + serial +
+					') : ssh ubuntu@' +
+					ec2_result['public_ip']
+				)
+			} )
 		}
-	} // callback function
-); // new_node()
+	} // callback to build_instance
+); // this_node = build_instance
+
