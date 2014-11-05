@@ -1,0 +1,43 @@
+{ Project: 
+   { name: { isa: 'string', defined: true, distinct: true },
+     hasmany: [ 'Github_Project', 'User' ] },
+  User: 
+   { name: { isa: 'string', defined: true, distinct: true },
+     arn: 
+      { isa: 'string',
+        defined: true,
+        distinct: true,
+        verified: 'RESERVED' },
+     amznid: 
+      { isa: 'string',
+        defined: true,
+        distinct: true,
+        verified: 'RESERVED' },
+     hasmany: [ 'Project', 'Group' ] },
+  Github_Project: 
+   { 'github-project-name': { isa: 'string', defined: true, distinct: true },
+     'base-url': 
+      { isa: 'string',
+        defined: true,
+        distinct: true,
+        verified: 'RESERVED' },
+     hasmany: [ 'User' ],
+     hasone: [ 'Project' ] },
+  Node: 
+   { hasone: [ 'Project', 'GithubProject' ],
+     name: 
+      { isa: 'string',
+        defined: true,
+        distinct: true,
+        verified: 'RESERVED' },
+     instance_id: 
+      { isa: 'string',
+        defined: true,
+        distinct: true,
+        verified: 'RESERVED' },
+     availability_zone: 
+      { isa: 'string',
+        defined: true,
+        distinct: true,
+        verified: 'RESERVED' } },
+  defined: 1 }
