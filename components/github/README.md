@@ -1,16 +1,22 @@
-* github_shell - calls out to shell from node to pull a github repo by name with branch
+Your Sendak environment
+====
 
-your environment should look like:
+* `SENDAK_HOME`
 
-````
-fetch:node-sendak jane$ env | grep -i sendak
-SENDAK_HOME=/tmp
-SENDAK_DRY_RUN=true
-PWD=/Users/jane/dev/DevOps/sendak/node/node-sendak
-SENDAK_IDENTITY=/Users/jane/.ssh/sendak_dsa
-SENDAK_SSH=~/.ssh/sendak_dsa
-SENDAK_USER=18f-sendak
-fetch:node-sendak jane$ 
-````
+Where Sendak lives. This might be `/usr/local/sendak` or `/tmp`, but should be
+fully-qualified.
 
-* github_node - (TODO) uses native api calls to fetch a repo
+* `SENDAK_DRY_RUN`
+
+If this is variable is set, Sendak will just show you would it would be doing.
+Note some operations cannot be dry-run.
+
+* `SENDAK_IDENTITY`
+
+Sendak uses ssh keys for git deploys. This variable should be an ssh private
+key like `${HOME}/.ssh/keyname_dsa`, and needs to be something Github trusts
+for the user you are using with Sendak.
+
+* `SENDAK_USER`
+
+The name of the github user that Sendak is to log in to repositories with.
