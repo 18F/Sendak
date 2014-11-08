@@ -1,11 +1,5 @@
 // probably :colo koehler, jane
 
-// so this doesn't actually do anything. it was written to just dip toes into the iam api in node.
-// as it happens the api is kind of icky and doesn't do the right thing. or rather, only does the right thing some of the time.
-// which is to say it does the wrong thing some of the time. and that is why i have trust issues.
-// 20 aug 2014
-//
-
 // Load the AWS SDK for Node.js
 var AWS = require('aws-sdk');
 AWS.config.region = 'us-east-1';
@@ -19,7 +13,7 @@ iam.listGroups( ls_group_params, function( err, groups ) {
 	if (err) console.log(err, err.stack); // oops
 	else {
 		for (groupindex in groups.Groups) {
-			// at this point we ask it to 
+			// at this point we ask it to
 			//     aws iam list-group-policies --group-name
 			// http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IAM.html#listGroupPolicies-property
 			//
