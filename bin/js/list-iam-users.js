@@ -75,18 +75,18 @@ iam.listUsers( { },
 			//
 			// XXX: Since this task was written the schema has changed.
 			//
-			for (var idx in users) { // {{{
+			users.forEach( function (user) { // {{{
 				if (parsed['pattern']) {
 					var re = new RegExp( parsed['pattern'] );
-					var un = users[idx].UserName;
+					var un = user.UserName;
 					var matches = re.exec( un );
 
 					if (matches) {
 						// Found a match
 						iam_users.push( {
-							username : users[idx].UserName,
-							arn      : users[idx].Arn,
-							uid      : users[idx].UserId
+							username : user.UserName,
+							arn      : user.Arn,
+							uid      : user.UserId
 						} );
 					}
 					else {
@@ -95,32 +95,32 @@ iam.listUsers( { },
 				}
 				else {
 					iam_users.push( {
-						username : users[idx].UserName,
-						arn      : users[idx].Arn,
-						uid      : users[idx].UserId
+						username : user.UserName,
+						arn      : user.Arn,
+						uid      : user.UserId
 					} );
 				} // if parsed
-			} // for users }}}
+			} // users.forEach }}}
 
 			// Display for the user
 			//
 			var display = [ ];
-			for (var idx in iam_users) { // {{{
+			iam_users.forEach( function (iam_user) { // {{{
 				var record = { };
 				if (parsed['username']) {
-					record['username'] = iam_users[idx]['username']
+					record['username'] = iam_user['username']
 				}
 				if (parsed['arn']) {
-					record['arn'] = iam_users[idx]['arn']
+					record['arn'] = iam_user['arn']
 				}
 				if (parsed['uid']) {
-					record['uid'] = iam_users[idx]['uid']
+					record['uid'] = iam_user['uid']
 				}
 				display.push( record )
 			} // iterate iam_users }}}
 			if (parsed['raw']) { // display raw {{{
-				for (var idx in display) {
-					var output = supp.display_raw( display[ idx ], Object.keys( parsed ) );
+				display.forEach( function (line) {
+					var output = supp.display_raw( line, Object.keys( parsed ) );
 					console.log( output ) ;
 				} // iterate display
 			} // }}} display raw
