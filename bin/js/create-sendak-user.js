@@ -9,7 +9,7 @@
 
   --create-iam-user
   --with-vpc
-  --username
+  --user-name
 
 */
 
@@ -25,14 +25,16 @@ var nopt = require('nopt')
 	, knownOpts = {
 			'create-iam-user'   : [ Boolean, null ],
 			'with-vpc'          : [ String, null ],
-			'username'          : [ String, null ],
+			'user-name'         : [ String, null ],
 			'name'              : [ String, null ],
+			'dry-run'           : [ Boolean ]
 		}
 	, description = {
 			'create-iam-user'   : 'Specify that you would like an IAM user created.',
 			'with-vpc'          : 'Specify a VPC to which this user should have access.',
-			'username'          : 'Specify the username',
-			'name'              : 'Specify the person\'s name'
+			'user-name'         : 'Specify the username',
+			'name'              : 'Specify the person\'s name',
+			'dry-run'           : 'don\'t actually do it.'
 		}
 	, defaults = {
 			'help' : false
@@ -53,7 +55,7 @@ if (parsed['help']) {
 
 var rrm = require( 'rrm' );
 
-if (parsed['name']) {
+if (parsed['user-name']) {
 	var puser = rrm.new_object( 'User' );
 
 	puser.then( function (user) {
@@ -62,12 +64,18 @@ if (parsed['name']) {
 
 		// This is a placeholder for now. The object has to change a bit.
 		//
-		user['name'] = parsed['name'];
-		var pserial = rrm.add_object( 'User', user );
+		user['user-name'] = parsed['user-name'];
+		if (! parsed['dry-run']) {
+			var pserial = rrm.add_object( 'User', user );
+		}
+
+		console.log( 'User object to create: ', user )
 
 		// So some kind of display formatting would go here.
 		//
-		pserial.then( console.log );
+		pserial.then( function (serial) {
+			console.log( 'Serial returned ' + serial );
+		} );
 
 	} ); // promise of user
 }

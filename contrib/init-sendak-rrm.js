@@ -11,10 +11,6 @@ var Riak = require( 'riak-dc' );
 	default will be applied.
 */
 
-// Yes, this is a schema in js, not json.
-// {{{
-//
-
 var schema = {
 	Project : { // {{{
 		name : {
@@ -82,19 +78,13 @@ var schema = {
 	}, // }}} node
 }
 
-// }}}
-
 Object.keys( schema ).forEach( function ( type ) {
 	// Walk the schema and put prototypes in the prototypes bucket
 	//
-	var prototype = schema[ key ];
+	var prototype = schema[ type ];
 
-	// Riak will generate keys for us so we don't need to create any nonce type
-	// things
-	//
+	console.log( 'prototype object found (' + type + ')' );
+	console.log( prototype );
 
-	// console.log( 'prototype object found (' + key + ')' );
-	// console.log( prototype );
-
-	Riak.put_tuple( 'prototypes', prototype, key );
-}
+	Riak.put_tuple( 'prototypes', prototype, type ).then( console.log );
+} );
