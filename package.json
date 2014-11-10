@@ -1,39 +1,45 @@
 {
-  "name"         : "sendak",
-  "version"      : "0.1.0",
-  "description"  : "Sendak manages metadata for cloud deployments",
-  "author"       : "Jane Avriette <jane.avriette@gsa.gov>",
-  "preferGlobal" : false,
-  "private"      : true,
-  "license"      : "CC0",
-
-  "bin"          : {
-    "sendak" : "./bin/sendak.sh"
+  "name": "sendak",
+  "version": "0.1.0",
+  "description": "Sendak manages metadata for cloud deployments",
+  "author": "Jane Avriette <jane.avriette@gsa.gov>",
+  "preferGlobal": false,
+  "private": true,
+  "license": "CC0-1.0",
+  "bin": {
+    "sendak": "./bin/sendak.sh"
   },
-
-  "repository"   : {
-    "type" : "git",
-    "url"  : "https://github.com/18F/Sendak"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/18F/Sendak"
   },
-
-  "bugs"         : {
-    "url" : "https://github.com/18F/Sendak/issues"
+  "bugs": {
+    "url": "https://github.com/18F/Sendak/issues"
   },
-
-  "keywords"     : [
+  "keywords": [
     "aws",
     "iaas",
     "sendak"
   ],
-
-  "dependencies" : {
-    "nopt-usage"  : "*",
-    "nopt"        : "*",
-    "jagrep"      : "*",
-    "rrm"         : "*",
-    "common-node" : "*",
-    "aws-sdk"     : "*",
-    "riak-dc"     : "*",
-    "q"           : "*"
+  "dependencies": {
+    "nopt-usage": "*",
+    "nopt": "*",
+    "jagrep": "*",
+    "rrm": "*",
+    "common-node": "*",
+    "aws-sdk": "*",
+    "riak-dc": "*",
+    "mocha" : "*",
+    "chai"  : "*",
+    "chai-as-promised" : "*",
+    "q": "*"
+  },
+  "homepage": "https://github.com/18F/Sendak",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
