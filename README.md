@@ -1,4 +1,4 @@
-Sendak, or Infrastructure-as-a-service-as-a-servic
+Sendak, or Infrastructure-as-a-service-as-a-service
 ===
 
 Sendak's primary purpose in life is to manage the cloud provisioning process
