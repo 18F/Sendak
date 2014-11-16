@@ -7,44 +7,53 @@
 
 */
 
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, knownOpts = {
-			'ssh-key-name'    : [ String, null ],
-			'security-groups' : [ String, Array, null ],
-			'subnet'          : [ String, null ],
-			'ami-id'          : [ String, null ],
-			'instance-type'   : [ String, null ],
-			'protect'         : [ Boolean, null ],
-			'autoburn'        : [ Boolean, null ],
-			'help'            : [ Boolean, null ]
-		}
-	, description = {
-			'ssh-key-name'    : ' The ssh key name (not filename) you would use to log into this node with.',
-			'security-groups' : ' A security group or several security groups that apply to this node.',
-			'subnet'          : ' The subnet [implies vpc] where this node should reside.',
-			'ami-id'          : ' The amazon AMI you would have burned onto this node.',
-			'instance-type'   : ' The type of instance for the node.',
-			'protect'         : ' Whether this node should have instance termination protection.',
-			'autoburn'        : ' Whether this node should be terminated upon launch (useful for "burner" nodes).',
-			'help'            : ' Halp the user.'
-		}
-	, defaults = {
-			'ssh-key-name'    : 'jane-fetch-aws-root',
-			'security-groups' : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
-			'subnet'          : 'subnet-bd4d85ca',
-			'ami-id'          : 'ami-020bc76a',
-			'instance-type'   : 't1.micro',
-			'protect'         : false,
-			'autoburn'        : false
-		}
-	, shortHands = {
-			'h'          : [ '--help' ]
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, shortHands, description)
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'ssh-key-name' : {
+		'long-args'   : [ 'ssh-key-name' ],
+		'description' : 'The ssh key name (not filename) you would use to log into this node with.',
+		'type'        : [ String ]
+	},
+	'security-groups' : {
+		'long-args'   : [ 'security-groups' ],
+		'description' : 'A security group or several security groups that apply to this node.',
+		'type'        : [ String, Array ]
+	},
+	'subnet' : {
+		'long-args'   : [ 'subnet' ],
+		'description' : 'The subnet [implies vpc] where this node should reside.',
+		'type'        : [ String ]
+	},
+	'ami-id' : {
+		'long-args'   : [ 'ami-id' ],
+		'description' : 'The amazon AMI you would have burned onto this node.',
+		'type'        : [ String ]
+	},
+	'instance-type' : {
+		'long-args'   : [ 'instance-type' ],
+		'description' : 'The type of instance for the node.',
+		'type'        : [ String ]
+	},
+	'protect' : {
+		'long-args'   : [ 'protect' ],
+		'description' : 'Whether this node should have instance termination protection.',
+		'type'        : [ Boolean ]
+	},
+	'autoburn' : {
+		'long-args'   : [ 'autoburn' ],
+		'description' : 'Whether this node should be terminated upon launch (useful for "burner" nodes).'
+		'type'        : [ Boolean ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	},
+}, process.argv )
+	, nopt  = parsed[0],
+	, usage = parsed[1];
 
-if (parsed['help']) {
+
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -210,13 +219,13 @@ var this_node = build_instance(
 		//
 		// TODO: optionally list associated volumes
 		//
-		ssh_key_name    : parsed[ 'ssh-key-name' ]    ? parsed[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
-		security_groups : parsed[ 'security-groups' ] ? parsed[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
-		subnet          : parsed[ 'subnet' ]          ? parsed[ 'subnet' ]          : 'subnet-bd4d85ca',
+		ssh_key_name    : nopt[ 'ssh-key-name' ]    ? nopt[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
+		security_groups : nopt[ 'security-groups' ] ? nopt[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
+		subnet          : nopt[ 'subnet' ]          ? nopt[ 'subnet' ]          : 'subnet-bd4d85ca',
 
-		ami_id          : parsed[ 'ami-id' ]          ? parsed[ 'ami-id' ]          : 'ami-020bc76a',
-		instance_type   : parsed[ 'instance-type' ]   ? parsed[ 'instance-type' ]   : 't1.micro',
-		protect         : parsed[ 'protect' ]         ? parsed[ 'protect' ]         : false
+		ami_id          : nopt[ 'ami-id' ]          ? nopt[ 'ami-id' ]          : 'ami-020bc76a',
+		instance_type   : nopt[ 'instance-type' ]   ? nopt[ 'instance-type' ]   : 't1.micro',
+		protect         : nopt[ 'protect' ]         ? nopt[ 'protect' ]         : false
 	},
 	function (ec2_result, stack) {
 		if (stack) {
