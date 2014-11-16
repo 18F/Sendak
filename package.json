@@ -27,6 +27,7 @@
     "jagrep": "*",
     "rrm": "*",
     "common-node": "*",
+    "sendak-usage": "*",
     "aws-sdk": "*",
     "riak-dc": "*",
     "mocha" : "*",
