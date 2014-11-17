@@ -20,34 +20,40 @@ var iam = new AWS.IAM(
 
 // parse opts
 //
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, Stream    = require('stream').Stream
-	, path      = require('path')
-	, knownOpts = {
-			'groupname'  : [ Boolean, null ],
-			'createdate' : [ Boolean, null ],
-			'arn'        : [ Boolean, null ],
-			'gid'        : [ Boolean, null ],
-			'raw'        : [ Boolean, null ]
-		}
-	, description = {
-			'groupname'  : 'Display groupname (e.g., Hubot)',
-			'createdate' : 'Display creation date (e.g., 2014-09-18T13:10:52Z)',
-			'arn'        : 'Display arns (e.g., arn:aws:iam::155555555553:group/hubot)',
-			'gid'        : 'Display gids (e.g., AIXXKLJASDEXEXXASDXXE)',
-			'raw'        : 'Just display the records without json (csv)'
-		}
-	, defaults = {
-			'groupname'  : true,
-			'createdate' : false,
-			'arn'        : false,
-			'gid'        : false,
-			'raw'        : false
-		}
-	, shortHands = { }
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, description, defaults)
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'groupname' : {
+		'type'        : [ Boolean ],
+		'description' : 'Display groupname (e.g., Hubot)',
+		'long-args'   : [ 'group-name' ]
+	},
+	'create-date' : {
+		'type'        : [ Boolean ],
+		'description' : 'Display creation date (e.g., 2014-09-18T13:10:52Z)',
+		'long-args'   : [ 'create-date' ]
+	},
+	'arn' : {
+		'type'        : [ Boolean ],
+		'description' : 'Display arns (e.g., arn:aws:iam::155555555553:group/hubot)',
+		'long-args'   : [ 'arn' ]
+	},
+	'gid' : {
+		'type'        : [ Boolean ],
+		'description' : 'Display gids (e.g., AIXXKLJASDEXEXXASDXXE)',
+		'long-args'   : [ 'gid' ]
+	},
+	'raw' : {
+		'type'        : [ Boolean ],
+		'description' : 'Just display the records without json (csv)',
+		'long-args'   : [ 'raw' ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	}
+}, process.argv )
+	, usage = parsed[1]
+	, nopt  = parsed[0];
 
 iam.listGroups( { },
 	function( err, data ) {
@@ -65,10 +71,10 @@ iam.listGroups( { },
 			//
 			for (var idx in groups) { // {{{
 				sendak_groups.push( {
-					groupname  : groups[idx].GroupName,
-					arn        : groups[idx].Arn,
-					gid        : groups[idx].GroupId,
-					createdate : groups[idx].CreateDate
+					'group-name'  : groups[idx].GroupName,
+					'arn'         : groups[idx].Arn,
+					'gid'         : groups[idx].GroupId,
+					'create-date' : groups[idx].CreateDate
 				} );
 			} // for groups }}}
 
@@ -77,21 +83,21 @@ iam.listGroups( { },
 			var display = [ ];
 			for (var idx in sendak_groups) { // {{{
 				var record = { };
-				if (parsed['groupname']) {
-					record['groupname'] = sendak_groups[idx]['groupname']
+				if (nopt['group-name']) {
+					record['group-name'] = sendak_groups[idx]['group-name']
 				}
-				if (parsed['createdate']) {
-					record['createdate'] = sendak_groups[idx]['createdate']
+				if (nopt['create-date']) {
+					record['create-date'] = sendak_groups[idx]['create-date']
 				}
-				if (parsed['arn']) {
+				if (nopt['arn']) {
 					record['arn'] = sendak_groups[idx]['arn']
 				}
-				if (parsed['gid']) {
+				if (nopt['gid']) {
 					record['gid'] = sendak_groups[idx]['gid']
 				}
 				display.push( record )
 			} // iterate sendak_groups }}}
-			if (parsed['raw']) {
+			if (nopt['raw']) {
 				// TODO: use raw_display() from Sendak.supplemental
 				//
 				var raw_display = '';
@@ -99,26 +105,26 @@ iam.listGroups( { },
 					// Construct the raw display, element by element, and give the user
 					// (which we assume to be a shell script).
 					//
-					if (display[idx]['groupname']) {
-						if (raw_display != '') {
+					if (display[idx]['group-name']) {
+						if (raw_display.length) {
 							raw_display = raw_display + ',' ;
 						}
-						raw_display = raw_display + display[idx]['groupname'] ;
+						raw_display = raw_display + display[idx]['group-name'] ;
 					}
-					if (display[idx]['createdate']) {
-						if (raw_display != '') {
+					if (display[idx]['create-date']) {
+						if (raw_display.length) {
 							raw_display = raw_display + ',' ;
 						}
-						raw_display = raw_display + display[idx]['createdate'] ;
+						raw_display = raw_display + display[idx]['create-date'] ;
 					}
 					if (display[idx]['arn']) {
-						if (raw_display != '') {
+						if (raw_display.length) {
 							raw_display = raw_display + ',' ;
 						}
 						raw_display = raw_display + display[idx]['arn'] ;
 					}
 					if (display[idx]['gid']) {
-						if (raw_display != '') {
+						if (raw_display.length) {
 							raw_display = raw_display + ',' ;
 						}
 						raw_display = raw_display + display[idx]['gid'] ;
