@@ -12,38 +12,32 @@ var iam = new AWS.IAM(
 	}
 );
 
-// Import sendak supplemental functions
-//
-var supp = require( 'components/common/js/supplemental.js' );
-
 // parse opts
 //
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, Stream    = require('stream').Stream
-	, path      = require('path')
-	, knownOpts = {
-			'username'   : [ Boolean, null ],
-			'raw'        : [ Boolean, null ],
-			'pattern'    : [ String, null ],
-			'help'       : [ Boolean, null ]
-		}
-	, description = {
-			'username'   : ' Specify username (e.g., JaneAvriette)',
-			'raw'        : ' Just display the records without json (csv)',
-			'pattern'    : ' Display only usernames matching a (Node RegExp) pattern',
-			'help'       : ' Sets the helpful bit.'
-		}
-	, defaults = {
-			'username'   : true,
-			'raw'        : false
-		}
-	, shortHands = {
-			'h'          : [ '--help' ],
-			'halp'       : [ '--help' ]
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, shortHands, description, defaults)
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'username'   : {
+		'long-args' : [ 'username' ],
+		'description' : 'Specify username (e.g., JaneAvriette)',
+		'type'        : [ String ]
+	},
+	'raw' : {
+		'type'        : [ Boolean ],
+		'description' : 'Just display the records without json (csv)',
+		'long-args'   : [ 'raw' ],
+	},
+	'pattern' : {
+		'type'        : [ String ],
+		'description' : 'Display only usernames matching a (Node RegExp) pattern',
+		'long-args'   : [ 'pattern' ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	},
+}, process.argv )
+	, nopt  = parsed[0]
+	, usage = parsed[1]
 
 if (parsed['help']) {
 	// Be halpful
