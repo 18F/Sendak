@@ -40,7 +40,7 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	},
 	'autoburn' : {
 		'long-args'   : [ 'autoburn' ],
-		'description' : 'Whether this node should be terminated upon launch (useful for "burner" nodes).'
+		'description' : 'Whether this node should be terminated upon launch (useful for "burner" nodes).',
 		'type'        : [ Boolean ]
 	},
 	'help' : {
@@ -49,7 +49,7 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 		'type'        : [ Boolean ]
 	},
 }, process.argv )
-	, nopt  = parsed[0],
+	, nopt  = parsed[0]
 	, usage = parsed[1];
 
 
