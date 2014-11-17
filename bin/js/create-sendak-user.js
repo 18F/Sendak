@@ -18,34 +18,37 @@
 
 // parse opts
 //
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, Stream    = require('stream').Stream
-	, path      = require('path')
-	, knownOpts = {
-			'create-iam-user'   : [ Boolean, null ],
-			'with-vpc'          : [ String, null ],
-			'user-name'         : [ String, null ],
-			'name'              : [ String, null ],
-			'dry-run'           : [ Boolean ]
-		}
-	, description = {
-			'create-iam-user'   : 'Specify that you would like an IAM user created.',
-			'with-vpc'          : 'Specify a VPC to which this user should have access.',
-			'user-name'         : 'Specify the username',
-			'name'              : 'Specify the person\'s name',
-			'dry-run'           : 'don\'t actually do it.'
-		}
-	, defaults = {
-			'help' : false
-		}
-	, shortHands = {
-			'h' : [ '--help' ]
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, shortHands, description, defaults)
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'create-iam-user' : {
+		'type'        : [ Boolean ],
+		'description' : 'Specify that you would like an IAM user created.',
+		'long-args'   : [ 'create-iam-user' ]
+	},
+	'with-vpc' : {
+		'type'        : [ String ],
+		'description' : 'Specify a VPC to which this user should have access.',
+		'long-args'   : [ 'with-vpc' ]
+	},
+	'user-name' : {
+		'type'        : [ String ],
+		'description' : 'Specify the username',
+		'long-args'   : [ 'user-name' ]
+	},
+	'name' : {
+		'description' : 'Specify the person\'s (given, sur) name',
+		'type'        : [ String ],
+		'long-args'   : [ 'name' ]
+	},
+	'dry-run' : {
+		'type'        : [ Boolean ],
+		'description' : 'don\'t actually do it.',
+		'long-args'   : [ 'dry-run' ]
+	}
+}, process.argv )
+	, nopt  = parsed[0]
+	, usage = parsed[1];
 
-if (parsed['help']) {
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -55,7 +58,7 @@ if (parsed['help']) {
 
 var rrm = require( 'rrm' );
 
-if (parsed['user-name']) {
+if (nopt['user-name']) {
 	var puser = rrm.new_object( 'User' );
 
 	puser.then( function (user) {
@@ -64,8 +67,8 @@ if (parsed['user-name']) {
 
 		// This is a placeholder for now. The object has to change a bit.
 		//
-		user['user-name'] = parsed['user-name'];
-		if (! parsed['dry-run']) {
+		user['user-name'] = nopt['user-name'];
+		if (! nopt['dry-run']) {
 			var pserial = rrm.add_object( 'User', user );
 		}
 

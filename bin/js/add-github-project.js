@@ -9,30 +9,31 @@ if (process.env.SENDAK_DATASTORE) {
 	store = process.env.SENDAK_DATASTORE;
 }
 
-var ORM      = require( 'components/odorm/odorm.js' );
-var schema   = ORM.restore_schema( store );
-var metadata = ORM.new_object( 'Github_Project' );
+var rrm      = require( 'rrm' );
+var metadata = rrm.new_object( 'Github_Project' );
 
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, knownOpts = {
-			'github-project-name' : [ String ], // So this is "midas-prod" not "Midas".
-			'base-url'            : [ String ]
-		}
-	, description = {
-			'github-project-name' : 'What is the name of this github project',
-			'base-url'            : 'The url to be used for a `git clone` operation'
-		}
-	, shortHands = {
-			'h' : [ '--help' ]
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	// XXX: for some reason adding shortHands here causes concatentation.
-	// there is an open issue at nopt-usage about this.
-	//
-	, usage = noptUsage(knownOpts, description)
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'github-project-name' : {
+		'long-args'   : [ 'github-project-name' ],
+		'description' : 'What is the name of this github project',
+		'type'        : [ String ]
+	},
+	'base-url' : {
+		'long-args'  : [ 'github-project-name' ],
+		'description': 'The url to be used for a `git clone` operation',
+		'type'       : [ String ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	},
 
-if (parsed['help']) {
+}, process.argv )
+	, nopt  = parsed[0]
+	, usage = parsed[1];
+
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -40,9 +41,9 @@ if (parsed['help']) {
 	process.exit(0); // success
 }
 
-if (parsed['github-project-name'] && parsed['base-url']) {
-	metadata['github-project-name'] = parsed['github-project-name'];
-	metadata['base-url']            = parsed['base-url'];
+if (nopt['github-project-name'] && nopt['base-url']) {
+	metadata['github-project-name'] = nopt['github-project-name'];
+	metadata['base-url']            = nopt['base-url'];
 	ORM.add_object( 'Github_Project', metadata )
 	console.log( metadata );
 	process.exit(0); // success

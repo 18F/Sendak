@@ -1,47 +1,54 @@
 #!/usr/bin/env node
-// parse opts
-//
-// var clean_args = require( 'components/common/js/supplemental.js' ).fix_quoted_array( process.argv );
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, Stream    = require('stream').Stream
-	, path      = require('path')
-	, knownOpts = {
-			'get-schema'      : [ Boolean, null ],
-			'object-types'    : [ Boolean, null ],
-			'describe-object' : [ String, null ],
 
-			'get-objects'     : [ Boolean, null ],
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'get-schema' : {
+		'type'        : [ Boolean ],
+		'description' : 'Return the full (Sendak-specific) schema in Riak',
+		'long-args'   : [ 'get-schema' ]
+	},
+	'object-types' : {
+		'type'        : [ Boolean ],
+		'description' : 'List the Sendak object types',
+		'long-args'   : [ 'object-types' ]
+	},
+	'describe-object' : {
+		'type'        : [ String ],
+		'description' : 'Describe a specified object from the schema',
+		'long-args'   : [ 'describe-object' ]
+	},
 
-			'add-object'      : [ Boolean, null ],
-			'object-type'     : [ String, null ],
-			'tuple'           : [ String, null ],
+	'get-objects' : {
+		'type'        : [ Boolean ],
+		'description' : 'Lists all the objects of a specified type in Riak, by key',
+		'long-args'   : [ 'get-objects' ]
+	},
 
-			'help'            : [ Boolean, null ]
-		}
-	, description = {
-			'get-schema'      : 'Return the full (Sendak-specific) schema in Riak',
-			'object-types'    : 'List the Sendak object types',
-			'describe-object' : 'Describe a specified object from the schema',
+	'add-object' : {
+		'type'        : [ Boolean ],
+		'description' : 'Attempts to place an object in rrm',
+		'long-args'   : [ 'add-object' ]
+	},
+	'object-type' : {
+		'type'        : [ String ],
+		'description' : 'Used with add-object/get-objects to specify the type of object',
+		'long-args'   : [ 'object-type' ]
+	},
 
-			'get-objects'     : 'Lists all the objects of a specified type in Riak, by key',
+	'tuple' : {
+		'type'        : [ String ],
+		'description' : 'The base64-encoded object you wish to store with add-object',
+		'long-args'   : [ 'tuple' ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	}
+}, process.argv )
+	, usage = parsed[1]
+	, nopt  = parsed[0];
 
-			'add-object'      : 'Attempts to place an object in rrm',
-			'object-type'     : 'Used with add-object/get-objects to specify the type of object',
-			'tuple'           : 'The base64-encoded object you wish to store with add-object',
-
-			'help'            : 'Sets the helpful bit.'
-		}
-	, defaults = {
-			'help' : false
-		}
-	, shortHands = {
-			'h'            : [ '--help' ],
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, shortHands, description, defaults)
-
-if (parsed['help']) {
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -51,39 +58,39 @@ if (parsed['help']) {
 
 var rrm  = require( 'rrm' );
 
-if (parsed['get-schema']) {
+if (nopt['get-schema']) {
 	// Display the schema for the user. This is kind of messy.
 	//
 	rrm.get_schema().then( console.log );
 }
-else if (parsed['object-types']) {
+else if (nopt['object-types']) {
 	// Display the schema for the user. This is kind of messy.
 	//
 	rrm.object_types().then( console.log );
 }
-else if (parsed['describe-object']) {
+else if (nopt['describe-object']) {
 	// Describe what we know about an object's prototype
 	//
-	rrm.new_object( parsed['describe-object'] ).then( console.log );
+	rrm.new_object( nopt['describe-object'] ).then( console.log );
 }
-else if (parsed['add-object']) {
-	if ((! parsed['tuple'] ) || (! parsed['object-type'])) {
+else if (nopt['add-object']) {
+	if ((! nopt['tuple'] ) || (! nopt['object-type'])) {
 		console.log( 'Usage: ' );
 		console.log( usage );
 		process.exit( -255 ); // oops
 	}
 	
-	var tuple = new Buffer(parsed['tuple'], 'base64').toString('ascii');
+	var tuple = new Buffer(nopt['tuple'], 'base64').toString('ascii');
 
 	// this should be a serial from Riak.
 	//
-	rrm.add_object( parsed['object-type'], tuple ); // .then( console.log );
+	rrm.add_object( nopt['object-type'], tuple ); // .then( console.log );
 }
-else if (parsed['get-objects']) {
-	if (! parsed['object-type']) {
+else if (nopt['get-objects']) {
+	if (! nopt['object-type']) {
 		console.log( 'Usage: ' );
 		console.log( usage );
 		process.exit( -255 ); // oops
 	}
-	rrm.get_objects( parsed['object-type'] ).then( console.log );
+	rrm.get_objects( nopt['object-type'] ).then( console.log );
 }

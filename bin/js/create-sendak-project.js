@@ -1,32 +1,44 @@
 #!/usr/bin/env node
 
-var store = 'var/datastore.json';
-if (process.env.SENDAK_DATASTORE) {
-	store = process.env.SENDAK_DATASTORE;
-}
+var rrm      = require( 'rrm' );
+var metadata = rrm.new_object( 'Project' );
 
-var ORM      = require( 'components/odorm/odorm.js' );
-var metadata = ORM.new_object( 'Project' );
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'project-name' : {
+		'description' : 'The ssh key name (not filename) you would use to log into this node with.',
+		'long-args'   : [ 'project-name' ],
+		'type'        : [ String ]
+	},
+	'with-github-project' : {
+		'description' : 'The github project name associated with this',
+		'type'        : [ String, Array ],
+		'long-args'   : [ 'with-github-project' ]
+	},
+	'with-user' : {
+		'type'        : [ String ],
+		'description' : 'A security group or several security groups that apply to this node.',
+		'long-args'   : [ 'with-user' ]
+	},
+	'with-vpc' : {
+		'type'        : [ String ],
+		'description' : 'Specify the vpc this project should be associated with',
+		'long-args'   : [ 'with-vpc' ]
+	},
+	'create-vpc' : {
+		'description' : 'Create a VPC specifically for this project (this is an IAM call)',
+		'type'        : [ Boolean ],
+		'long-args'   : [ 'create-vpc' ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	}
+}, process.argv )
+	, nopt  = parsed[0]
+	, usage = parsed[1];
 
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, knownOpts = {
-			'project-name'        : [ String ],
-			'with-github-project' : [ String, Array ],
-			'with-user'           : [ String, Array ],
-			'with-vpc'            : [ String, null ],
-			'create-vpc'          : [ Boolean ]
-		}
-	, description = {
-			'project-name'        : 'The ssh key name (not filename) you would use to log into this node with.',
-			'with-github-project' : 'The github project name associated with this',
-			'with-user'           : 'A security group or several security groups that apply to this node.',
-			'with-vpc'            : 'Create a VPC specifically for this project (this is an IAM call)'
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, description)
-
-if (parsed['help']) {
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );

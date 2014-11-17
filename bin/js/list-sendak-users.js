@@ -5,33 +5,37 @@
 
 */
 
+// XXX: clearly this is 107% broken/not-finished. fixy.
 
 // parse opts
 //
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, Stream    = require('stream').Stream
-	, path      = require('path')
-	, knownOpts = {
-			'username' : [ String, null ],
-			'arn'      : [ String, null ],
-			'amznid'   : [ String, null ]
-		}
-	, description = {
-			'username' : 'Specify an expression to match against username',
-			'arn'      : 'Specify an expression to match against the arn',
-			'amznid'   : 'Specify an expression to match against the amznid'
-		}
-	, defaults = {
-			'help' : false
-		}
-	, shortHands = {
-			'h' : [ '--help' ]
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, shortHands, description, defaults)
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'username' : {
+		'type'        : [ String ],
+		'description' : 'Specify an expression to match against username',
+		'long-args'   : [ 'long-args' ]
+	},
+	'arn' : {
+		'type'        : [ String ],
+		'description' : 'Specify an expression to match against the arn',
+		'long-args'   : [ 'arn' ]
+	},
+	'amznid' : {
+		'type'        : [ String ],
+		'description' : 'Specify an expression to match against the amznid',
+		'long-args'   : [ 'amznid' ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	}
+}, process.argv )
+	, usage = parsed[1]
+	, nopt  = parsed[0];
 
-if (parsed['help']) {
+
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -44,7 +48,7 @@ var rrm = require( 'rrm' );
 var results = [ ];
 
 var pusers = rrm.get_objects( 'User' ).then( function ( userids ) {
-	if (parsed['name']) {
+	if (nopt['name']) {
 		// push matching records into results
 		//
 	}

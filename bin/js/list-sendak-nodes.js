@@ -4,40 +4,42 @@
 
 // parse opts
 //
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, Stream    = require('stream').Stream
-	, path      = require('path')
-	, knownOpts = {
-			'name'              : [ Boolean, null ],
-			'serial'            : [ Boolean, null ],
-			'instance-id'       : [ Boolean, null ],
-			'availability-zone' : [ Boolean, null ],
-			'raw'               : [ Boolean, null ],
-			'help'              : [ Boolean, null ]
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'name' : {
+		'type'         : [ Boolean ],
+		'description'  : 'display name (production Project node foo)',
+		'long-args'    : [ 'name' ]
+	},
+	'serial' : {
+		'type'         : [ Boolean ],
+		'description'  : 'display serial (a7e13e2ead5803c43e9dc1c73259402e2feb47c10aeec55a37c6526c75dd2112)',
+		'long-args'    : [ 'serial' ]
+	},
+	'instance-id' : {
+		'type'         : [ Boolean ],
+		'description'  : 'display instance id (i-3f81fcd4)',
+		'long-args'    : [ 'instance-id' ]
+	},
+	'availability-zone' : {
+		'type'         : [ Boolean ],
+		'description'  : 'display availability zone (us-east-1a)',
+		'long-args'    : [ 'availability-zone' ]
+	},
+	'raw' : {
+		'type'         : [ Boolean ],
+		'description'  : 'display as csv instead of json',
+		'long-args'    : [ 'raw' ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	}
+}, process.argv )
+	, nopt  = parsed[0]
+	, usage = parsed[1];
 
-		}
-	, description = {
-			'name'              : ' display name (production Project node foo)',
-			'serial'            : ' display serial (a7e13e2ead5803c43e9dc1c73259402e2feb47c10aeec55a37c6526c75dd2112)',
-			'instance-id'       : ' display instance id (i-3f81fcd4)',
-			'availability-zone' : ' display availability zone (us-east-1a)',
-			'raw'               : ' display as csv instead of json',
-			'help'              : ' Sets the helpful bit.'
-		}
-	, defaults = {
-			'username'   : true,
-			'arn'        : true,
-			'uid'        : true,
-			'raw'        : false
-		}
-	, shortHands = {
-			'h'          : [ '--help' ]
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, shortHands, description, defaults)
-
-if (parsed['help']) {
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -45,46 +47,39 @@ if (parsed['help']) {
 	process.exit(0); // success
 }
 
-var store = 'var/datastore.json';
-
-if (process.env.SENDAK_DATASTORE) {
-	store = process.env.SENDAK_DATASTORE;
-}
-
 // ORM &c
 //
-var ORM = require( 'components/odorm/odorm.js' ); // ORM
-var schema = ORM.restore_schema( store );
+var rrm = require( 'rrm' );
 
 // Supplemental Sendak stuff
 //
 var supp = require( 'components/common/js/supplemental.js' );
 
-var nodes = ORM.get_objects( 'Node' );
+var nodes = rrm.get_objects( 'Node' );
 
 var display = [ ];
 
 for (var idx in nodes) { // {{{
 	var record = { };
-	if (parsed['name']) {
+	if (nopt['name']) {
 		record['name'] = nodes[idx]['name']
 	}
-	if (parsed['serial']) {
+	if (nopt['serial']) {
 		record['serial'] = nodes[idx]['serial']
 	}
-	if (parsed['instance-id']) {
+	if (nopt['instance-id']) {
 		record['instance_id'] = nodes[idx]['instance_id']
 	}
-	if (parsed['availability-zone']) {
+	if (nopt['availability-zone']) {
 		record['availability_zone'] = nodes[idx]['availability_zone']
 	}
 	display.push( record )
 } // iterate nodes }}}
-if (parsed['raw']) { // display raw {{{
+if (nopt['raw']) { // display raw {{{
 	// XXX: raw is broken until the keys are normalised with -'s instead of _'s.
 	//
 	for (var idx in display) {
-		var output = supp.display_raw( display[ idx ], Object.keys( parsed ) );
+		var output = supp.display_raw( display[ idx ], Object.keys( nopt ) );
 		console.log( output ) ;
 	} // iterate display
 } // }}} display raw
