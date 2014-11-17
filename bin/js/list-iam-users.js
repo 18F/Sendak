@@ -12,48 +12,44 @@ var iam = new AWS.IAM(
 	}
 );
 
-// Import sendak supplemental functions
-//
-var supp = require( 'components/common/js/supplemental.js' );
-
 // parse opts
 //
-var nopt = require('nopt')
-	, noptUsage = require('nopt-usage')
-	, Stream    = require('stream').Stream
-	, path      = require('path')
-	, knownOpts = {
-			'username'   : [ Boolean, null ],
-			'arn'        : [ Boolean, null ],
-			'uid'        : [ Boolean, null ],
-			'raw'        : [ Boolean, null ],
-			'pattern'    : [ String, null ],
-			'help'       : [ Boolean, null ]
-		}
-	, description = {
-			// XXX: WHY WHY WHY WHY
-			//
-			'username'   : ' Display usernames (e.g., JaneAvriette)',
-			'arn'        : ' Display arns (e.g., arn:aws:iam::141234512345:user/JaneAvriette)',
-			'uid'        : ' Display uids (e.g., AIXXKLJASDEXEXXASDXXE)',
-			'raw'        : ' Just display the records without json (csv)',
-			'pattern'    : ' Display only usernames matching a (Node RegExp) pattern',
-			'help'       : ' Sets the helpful bit.'
-		}
-	, defaults = {
-			'username'   : true,
-			'arn'        : true,
-			'uid'        : true,
-			'raw'        : false
-		}
-	, shortHands = {
-			'h'          : [ '--help' ],
-			'halp'       : [ '--help' ]
-		}
-	, parsed = nopt(knownOpts, process.argv)
-	, usage = noptUsage(knownOpts, shortHands, description, defaults)
+var parsed = require( 'sendak-usage' ).parsedown( {
+	'user-name' : {
+		'type'        : [ Boolean ],
+		'description' : 'Display user-names (e.g., JaneAvriette)',
+		'long-args'   : [ 'user-name' ]
+	},
+	'arn' : {
+		'type'        : [ Boolean ],
+		'description' : 'Display arns (e.g., arn:aws:iam::141234512345:user/JaneAvriette)',
+		'long-args'   : [ 'arn' ]
+	},
+	'uid' : {
+		'type'        : [ Boolean ],
+		'description' : 'Display uids (e.g., AIXXKLJASDEXEXXASDXXE)',
+		'long-args'   : [ 'uid' ]
+	},
+	'pattern' : {
+		'type'        : [ String ],
+		'description' : 'Display only user-names matching a (Node RegExp) pattern',
+		'long-args'   : [ 'pattern' ]
+	},
+	'raw' : {
+		'type'        : [ Boolean ],
+		'description' : 'Just display the records without json (csv)',
+		'long-args'   : [ 'raw' ]
+	},
+	'help' : {
+		'long-args'   : [ 'help' ],
+		'description' : 'Halp the user.',
+		'type'        : [ Boolean ]
+	},
+}, process.argv )
+	, nopt  = parsed[0]
+	, usage = parsed[1];
 
-if (parsed['help']) {
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -76,17 +72,17 @@ iam.listUsers( { },
 			// XXX: Since this task was written the schema has changed.
 			//
 			users.forEach( function (user) { // {{{
-				if (parsed['pattern']) {
-					var re = new RegExp( parsed['pattern'] );
-					var un = user.UserName;
+				if (nopt['pattern']) {
+					var re = new RegExp( nopt['pattern'] );
+					var un = user.user-name;
 					var matches = re.exec( un );
 
 					if (matches) {
 						// Found a match
 						iam_users.push( {
-							username : user.UserName,
-							arn      : user.Arn,
-							uid      : user.UserId
+							'user-name' : user.UserName,
+							'arn'       : user.Arn,
+							'uid'       : user.UserId
 						} );
 					}
 					else {
@@ -95,38 +91,30 @@ iam.listUsers( { },
 				}
 				else {
 					iam_users.push( {
-						username : user.UserName,
-						arn      : user.Arn,
-						uid      : user.UserId
+						'user-name' : user.UserName,
+						'arn'       : user.Arn,
+						'uid'       : user.UserId
 					} );
-				} // if parsed
-			} // users.forEach }}}
+				} // if nopt
+			} ); // users.forEach }}}
 
 			// Display for the user
 			//
 			var display = [ ];
 			iam_users.forEach( function (iam_user) { // {{{
 				var record = { };
-				if (parsed['username']) {
-					record['username'] = iam_user['username']
+				if (nopt['user-name']) {
+					record['user-name'] = iam_user['user-name']
 				}
-				if (parsed['arn']) {
+				if (nopt['arn']) {
 					record['arn'] = iam_user['arn']
 				}
-				if (parsed['uid']) {
+				if (nopt['uid']) {
 					record['uid'] = iam_user['uid']
 				}
 				display.push( record )
-			} // iterate iam_users }}}
-			if (parsed['raw']) { // display raw {{{
-				display.forEach( function (line) {
-					var output = supp.display_raw( line, Object.keys( parsed ) );
-					console.log( output ) ;
-				} // iterate display
-			} // }}} display raw
-			else {
-				console.log( display )
-			} // if raw
+			} ); // iterate iam_users }}}
+			console.log( display );
 		} // if err
 	} // callback
 ) // listUsers
