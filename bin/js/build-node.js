@@ -71,7 +71,7 @@ var build_instance = function( args, callback ) { // {{{
 	//   * subnet (a string, e.g., 'subnet-bd4d85ca')
 	//
 	//   optional:
-	//   * ami_id (defaults to ami-020bc76a)
+	//   * ami_id (defaults to ami-2eee5d46)
 	//   * instance_type ('t1.micro' and similar; defaults to t1.micro)
 	//   * protect (termination; true | false, defaults to false)
 	//
@@ -102,7 +102,7 @@ var build_instance = function( args, callback ) { // {{{
 
 	// This is the 18f hardened ubuntu image
 	//
-	var ami_id   = 'ami-020bc76a';
+	var ami_id   = 'ami-2eee5d46';
 	
 	// This is the infrastructure cloud, where Sendak lives.
 	//
