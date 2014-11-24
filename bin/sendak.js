@@ -66,7 +66,7 @@ else if (nopt['list-tasks']) {
 
 function get_tasks () {
 	var jgrep    = require( 'jagrep' )
-    , dg       = require( 'deep-grep' )
+		, dg       = require( 'deep-grep' )
 		, cwd      = process.cwd()
 		, bindir   = cwd + '/bin'
 		, files    = jgrep.sync( { 'function': function (f) { return is_dir(f) } },
