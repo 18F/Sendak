@@ -73,12 +73,33 @@ else {
 	//
 	// the first element of this structure is going to be 'flag-we-dont-use',
 	// not a task.
+	//
 	var child_task = parsed[0].argv.original.shift()
 		, child_args = parsed[0].argv.original.join( ' ' );
 
-	console.log( 'invoke: ' + child_task + ' with ' + child_args );
+	var tasks   = get_tasks()
+		, taskmap = { };
+
+	var jgrep = require( 'jagrep' );
+
+	// Do we actually have a task named this?
+	//
+	if (jgrep.in( tasks[1], child_task )) {
+		// One day I will have coalesce or hashslices. Until then, this is "okay."
+		//
+		for (var idx in tasks[1]) { taskmap[tasks[1][idx]] = tasks[0][idx] }
+		console.log( 'Looks like we found ' + child_task + ' at ' + taskmap[child_task] );
+	}
+	else {
+		console.log( 'Sorry, I could not find this task, \'' + child_task + '\'' );
+		process.exit( -255 );
+	}
 }
 
+// Traipse through the bin dir, and return binary ('task') names along with
+// their associated filename, flattening the directory structure into one
+// list.
+//
 function get_tasks () {
 	var jgrep    = require( 'jagrep' )
 		, dg       = require( 'deep-grep' )
