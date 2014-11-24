@@ -59,9 +59,24 @@ if (nopt['help']) {
 	process.exit(0);
 }
 else if (nopt['list-tasks']) {
-		var tasks = get_tasks()
-		console.log( 'Available tasks:' );
-		console.log( tasks[1].map( function (t) { return ' * ' + t } ).join( "\n" ) );
+	var tasks = get_tasks()
+	console.log( 'Available tasks:' );
+	console.log( tasks[1].map( function (t) { return ' * ' + t } ).join( "\n" ) );
+}
+else {
+	// So we don't have any additional directives for us specifically, we can
+	// assume everything after this point belongs to our childrens.
+
+	// XXX: This is a cheat. If somebody says to $0,
+	//
+	//   dispatcher --flag-we-dont-use argument-we-dont-know
+	//
+	// the first element of this structure is going to be 'flag-we-dont-use',
+	// not a task.
+	var child_task = parsed[0].argv.original.shift()
+		, child_args = parsed[0].argv.original.join( ' ' );
+
+	console.log( 'invoke: ' + child_task + ' with ' + child_args );
 }
 
 function get_tasks () {
