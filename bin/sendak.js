@@ -53,8 +53,42 @@ var fs = require( 'fs' );
 function is_dir( f ) {  return fs.statSync( f ).isDirectory() }
 function is_file( f ) { return fs.statSync( f ).isFile()      }
 
-if (nopt['help']) {
-	console.log( 'Usage:' );
+if (parsed[0].argv.original[0].substr(0, 2) != '--') {
+	// So we don't have any additional directives for us specifically, we can
+	// assume everything after this point belongs to our childrens.
+
+	var child_task = parsed[0].argv.original.shift()
+		, child_args = parsed[0].argv.original
+
+	var tasks   = get_tasks()
+		, taskmap = { };
+
+	var jgrep      = require( 'jagrep' )
+		, stdhandler = function (buf) { console.log( buf.toString() ) };
+
+	// Do we actually have a task named this?
+	//
+	if (jgrep.in( tasks[1], child_task )) {
+		// One day I will have coalesce or hashslices. Until then, this is "okay."
+		//
+		for (var idx in tasks[1]) { taskmap[tasks[1][idx]] = tasks[0][idx] }
+
+		// Let somebody know if they care
+		//
+		default_logger( 'Looks like we found ' + child_task + ' at ' + taskmap[child_task] );
+
+		var child = require( 'child_process' ).spawn( taskmap[child_task], child_args );
+		child.stdout.on( 'data', stdhandler );
+		child.stderr.on( 'data', stdhandler );
+		child.on( 'close', function () { console.log( 'child process exited <3' ) } );
+	}
+	else {
+		console.log( 'Sorry, I could not find this task, \'' + child_task + '\'' );
+		process.exit( -255 );
+	}
+}
+else if (nopt['help']) {
+	console.log( 'Understood commands are:' );
 	console.log( usage );
 	process.exit(0);
 }
@@ -64,36 +98,9 @@ else if (nopt['list-tasks']) {
 	console.log( tasks[1].map( function (t) { return ' * ' + t } ).join( "\n" ) );
 }
 else {
-	// So we don't have any additional directives for us specifically, we can
-	// assume everything after this point belongs to our childrens.
-
-	// XXX: This is a cheat. If somebody says to $0,
-	//
-	//   dispatcher --flag-we-dont-use argument-we-dont-know
-	//
-	// the first element of this structure is going to be 'flag-we-dont-use',
-	// not a task.
-	//
-	var child_task = parsed[0].argv.original.shift()
-		, child_args = parsed[0].argv.original.join( ' ' );
-
-	var tasks   = get_tasks()
-		, taskmap = { };
-
-	var jgrep = require( 'jagrep' );
-
-	// Do we actually have a task named this?
-	//
-	if (jgrep.in( tasks[1], child_task )) {
-		// One day I will have coalesce or hashslices. Until then, this is "okay."
-		//
-		for (var idx in tasks[1]) { taskmap[tasks[1][idx]] = tasks[0][idx] }
-		console.log( 'Looks like we found ' + child_task + ' at ' + taskmap[child_task] );
-	}
-	else {
-		console.log( 'Sorry, I could not find this task, \'' + child_task + '\'' );
-		process.exit( -255 );
-	}
+	console.log( 'Sorry, not sure where you\'re going with that. Try:' );
+	console.log( usage );
+	process.exit(0);
 }
 
 // Traipse through the bin dir, and return binary ('task') names along with
@@ -121,4 +128,12 @@ function get_tasks () {
 		} )
 
 		return [ tasks, names ];
+}
+
+// TODO: Replace with log4js
+//
+function default_logger (s) {
+	if (process.env['DEBUG']) {
+		console.log(s);
+	}
 }
