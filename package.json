@@ -25,6 +25,7 @@
     "nopt-usage": "*",
     "nopt": "*",
     "jagrep": "*",
+    "deep-grep": "*",
     "rrm": "*",
     "common-node": "*",
     "sendak-usage": "*",
