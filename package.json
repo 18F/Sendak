@@ -22,7 +22,6 @@
     "sendak"
   ],
   "dependencies": {
-    "nopt-usage": "*",
     "nopt": "*",
     "jagrep": "*",
     "deep-grep": "*",
