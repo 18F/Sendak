@@ -24,7 +24,7 @@
   "dependencies": {
     "nopt": "*",
     "jagrep": "*",
-    "deep-grep": "*",
+    "deep-grep": ">=0.0.2",
     "rrm": "*",
     "common-node": "*",
     "sendak-usage": "*",
