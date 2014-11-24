@@ -49,6 +49,8 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	, nopt  = parsed[0]
 	, usage = parsed[1];
 
+var thx = '💝';
+
 var fs = require( 'fs' );
 function is_dir( f ) {  return fs.statSync( f ).isDirectory() }
 function is_file( f ) { return fs.statSync( f ).isFile()      }
@@ -80,7 +82,8 @@ if (parsed[0].argv.original[0].substr(0, 2) != '--') {
 		var child = require( 'child_process' ).spawn( taskmap[child_task], child_args );
 		child.stdout.on( 'data', stdhandler );
 		child.stderr.on( 'data', stdhandler );
-		child.on( 'close', function () { console.log( 'child process exited <3' ) } );
+		child.on( 'close', function () { console.log( 'child process exited ' + thx ) } );
+
 	}
 	else {
 		console.log( 'Sorry, I could not find this task, \'' + child_task + '\'' );
