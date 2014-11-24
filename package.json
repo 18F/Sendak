@@ -22,9 +22,9 @@
     "sendak"
   ],
   "dependencies": {
-    "nopt-usage": "*",
     "nopt": "*",
-    "jagrep": "*",
+    "jagrep": ">=0.2.0",
+    "deep-grep": ">=0.0.2",
     "rrm": "*",
     "common-node": "*",
     "sendak-usage": "*",
