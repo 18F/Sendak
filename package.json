@@ -7,7 +7,7 @@
   "private": true,
   "license": "CC0-1.0",
   "bin": {
-    "sendak": "./bin/sendak.sh"
+    "sendak": "./bin/sendak.js"
   },
   "repository": {
     "type": "git",

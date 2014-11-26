@@ -19,4 +19,4 @@ Configure your environment:
 
 * Sendak environment:
   - `export SENDAK_DRY_RUN=true # to test the environment`
-  - `alias sendak="$(pwd)/node_modules/sendak/bin/sendak.sh"`
+  - `alias sendak="$(pwd)/node_modules/sendak/bin/sendak.js"`
