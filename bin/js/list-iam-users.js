@@ -74,7 +74,7 @@ iam.listUsers( { },
 			users.forEach( function (user) { // {{{
 				if (nopt['pattern']) {
 					var re = new RegExp( nopt['pattern'] );
-					var un = user.user-name;
+					var un = user.UserName;
 					var matches = re.exec( un );
 
 					if (matches) {
