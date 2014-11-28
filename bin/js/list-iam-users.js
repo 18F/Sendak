@@ -18,30 +18,24 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	'user-name' : {
 		'type'        : [ Boolean ],
 		'description' : 'Display user names (e.g., JaneAvriette)',
-		'long-args'   : [ 'user-name' ]
 	},
 	'arn' : {
 		'type'        : [ Boolean ],
 		'description' : 'Display arns (e.g., arn:aws:iam::141234512345:user/JaneAvriette)',
-		'long-args'   : [ 'arn' ]
 	},
 	'uid' : {
 		'type'        : [ Boolean ],
 		'description' : 'Display uids (e.g., AIXXKLJASDEXEXXASDXXE)',
-		'long-args'   : [ 'uid' ]
 	},
 	'pattern' : {
 		'type'        : [ String ],
 		'description' : 'Display only user names matching a (Node RegExp) pattern',
-		'long-args'   : [ 'pattern' ]
 	},
 	'raw' : {
 		'type'        : [ Boolean ],
 		'description' : 'Just display the records without json (csv)',
-		'long-args'   : [ 'raw' ]
 	},
 	'help' : {
-		'long-args'   : [ 'help' ],
 		'description' : 'Halp the user.',
 		'type'        : [ Boolean ]
 	},

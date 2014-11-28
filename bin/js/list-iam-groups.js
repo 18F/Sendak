@@ -24,36 +24,32 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	'groupname' : {
 		'type'        : [ Boolean ],
 		'description' : 'Display groupname (e.g., Hubot)',
-		'long-args'   : [ 'group-name' ]
 	},
 	'create-date' : {
 		'type'        : [ Boolean ],
 		'description' : 'Display creation date (e.g., 2014-09-18T13:10:52Z)',
-		'long-args'   : [ 'create-date' ]
 	},
 	'arn' : {
 		'type'        : [ Boolean ],
 		'description' : 'Display arns (e.g., arn:aws:iam::155555555553:group/hubot)',
-		'long-args'   : [ 'arn' ]
 	},
 	'gid' : {
 		'type'        : [ Boolean ],
 		'description' : 'Display gids (e.g., AIXXKLJASDEXEXXASDXXE)',
-		'long-args'   : [ 'gid' ]
 	},
 	'raw' : {
 		'type'        : [ Boolean ],
 		'description' : 'Just display the records without json (csv)',
-		'long-args'   : [ 'raw' ]
 	},
 	'help' : {
-		'long-args'   : [ 'help' ],
 		'description' : 'Halp the user.',
 		'type'        : [ Boolean ]
 	}
 }, process.argv )
 	, usage = parsed[1]
 	, nopt  = parsed[0];
+
+if (nopt['help']) { console.log( 'Usage:' + "\n" + usage ); process.exit(0) }
 
 iam.listGroups( { },
 	function( err, data ) {

@@ -22,27 +22,22 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	'create-iam-user' : {
 		'type'        : [ Boolean ],
 		'description' : 'Specify that you would like an IAM user created.',
-		'long-args'   : [ 'create-iam-user' ]
 	},
 	'with-vpc' : {
 		'type'        : [ String ],
 		'description' : 'Specify a VPC to which this user should have access.',
-		'long-args'   : [ 'with-vpc' ]
 	},
 	'user-name' : {
 		'type'        : [ String ],
 		'description' : 'Specify the username',
-		'long-args'   : [ 'user-name' ]
 	},
 	'name' : {
 		'description' : 'Specify the person\'s (given, sur) name',
 		'type'        : [ String ],
-		'long-args'   : [ 'name' ]
 	},
 	'dry-run' : {
 		'type'        : [ Boolean ],
 		'description' : 'don\'t actually do it.',
-		'long-args'   : [ 'dry-run' ]
 	}
 }, process.argv )
 	, nopt  = parsed[0]

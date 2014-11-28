@@ -4,43 +4,35 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	'get-schema' : {
 		'type'        : [ Boolean ],
 		'description' : 'Return the full (Sendak-specific) schema in Riak',
-		'long-args'   : [ 'get-schema' ]
 	},
 	'object-types' : {
 		'type'        : [ Boolean ],
 		'description' : 'List the Sendak object types',
-		'long-args'   : [ 'object-types' ]
 	},
 	'describe-object' : {
 		'type'        : [ String ],
 		'description' : 'Describe a specified object from the schema',
-		'long-args'   : [ 'describe-object' ]
 	},
 
 	'get-objects' : {
 		'type'        : [ Boolean ],
 		'description' : 'Lists all the objects of a specified type in Riak, by key',
-		'long-args'   : [ 'get-objects' ]
 	},
 
 	'add-object' : {
 		'type'        : [ Boolean ],
 		'description' : 'Attempts to place an object in rrm',
-		'long-args'   : [ 'add-object' ]
 	},
 	'object-type' : {
 		'type'        : [ String ],
 		'description' : 'Used with add-object/get-objects to specify the type of object',
-		'long-args'   : [ 'object-type' ]
 	},
 
 	'tuple' : {
 		'type'        : [ String ],
 		'description' : 'The base64-encoded object you wish to store with add-object',
-		'long-args'   : [ 'tuple' ]
 	},
 	'help' : {
-		'long-args'   : [ 'help' ],
 		'description' : 'Halp the user.',
 		'type'        : [ Boolean ]
 	}

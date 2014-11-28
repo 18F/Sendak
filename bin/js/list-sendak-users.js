@@ -13,20 +13,16 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	'username' : {
 		'type'        : [ String ],
 		'description' : 'Specify an expression to match against username',
-		'long-args'   : [ 'long-args' ]
 	},
 	'arn' : {
 		'type'        : [ String ],
 		'description' : 'Specify an expression to match against the arn',
-		'long-args'   : [ 'arn' ]
 	},
 	'amznid' : {
 		'type'        : [ String ],
 		'description' : 'Specify an expression to match against the amznid',
-		'long-args'   : [ 'amznid' ]
 	},
 	'help' : {
-		'long-args'   : [ 'help' ],
 		'description' : 'Halp the user.',
 		'type'        : [ Boolean ]
 	}

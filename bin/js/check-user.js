@@ -16,22 +16,18 @@ var iam = new AWS.IAM(
 //
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'username'   : {
-		'long-args' : [ 'username' ],
 		'description' : 'Specify username (e.g., JaneAvriette)',
 		'type'        : [ String ]
 	},
 	'raw' : {
 		'type'        : [ Boolean ],
 		'description' : 'Just display the records without json (csv)',
-		'long-args'   : [ 'raw' ],
 	},
 	'pattern' : {
 		'type'        : [ String ],
 		'description' : 'Display only usernames matching a (Node RegExp) pattern',
-		'long-args'   : [ 'pattern' ]
 	},
 	'help' : {
-		'long-args'   : [ 'help' ],
 		'description' : 'Halp the user.',
 		'type'        : [ Boolean ]
 	},
@@ -39,7 +35,7 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	, nopt  = parsed[0]
 	, usage = parsed[1]
 
-if (parsed['help']) {
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -57,11 +53,11 @@ iam.listUsers( { },
 			var iam_users = [ ];
 
 			require( 'jagrep' ).sync( { 'function': function (t) {
-				if (parsed['username']) {
-					return (t == parsed['username']) ? t : false
+				if (nopt['username']) {
+					return (t == nopt['username']) ? t : false
 				}
-				else if (parsed['pattern']) {
-					if ( new RegExp( parsed['pattern'] ).exec( t.UserName ) ) {
+				else if (nopt['pattern']) {
+					if ( new RegExp( nopt['pattern'] ).exec( t.UserName ) ) {
 						return t;
 					}
 					else {
