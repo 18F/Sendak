@@ -17,7 +17,7 @@ var iam = new AWS.IAM(
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'user-name' : {
 		'type'        : [ Boolean ],
-		'description' : 'Display user-names (e.g., JaneAvriette)',
+		'description' : 'Display user names (e.g., JaneAvriette)',
 		'long-args'   : [ 'user-name' ]
 	},
 	'arn' : {
@@ -32,7 +32,7 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	},
 	'pattern' : {
 		'type'        : [ String ],
-		'description' : 'Display only user-names matching a (Node RegExp) pattern',
+		'description' : 'Display only user names matching a (Node RegExp) pattern',
 		'long-args'   : [ 'pattern' ]
 	},
 	'raw' : {
@@ -69,15 +69,9 @@ iam.listUsers( { },
 			// Transform the AWS IAM data into something more
 			// machine-and-human-readable.
 			//
-			// XXX: Since this task was written the schema has changed.
-			//
 			users.forEach( function (user) { // {{{
 				if (nopt['pattern']) {
-					var re = new RegExp( nopt['pattern'] );
-					var un = user.UserName;
-					var matches = re.exec( un );
-
-					if (matches) {
+					if (new RegExp( nopt['pattern'], 'i' ).exec( user.UserName )) {
 						// Found a match
 						iam_users.push( {
 							'user-name' : user.UserName,
