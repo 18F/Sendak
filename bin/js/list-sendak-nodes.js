@@ -8,30 +8,24 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	'name' : {
 		'type'         : [ Boolean ],
 		'description'  : 'display name (production Project node foo)',
-		'long-args'    : [ 'name' ]
 	},
 	'serial' : {
 		'type'         : [ Boolean ],
 		'description'  : 'display serial (a7e13e2ead5803c43e9dc1c73259402e2feb47c10aeec55a37c6526c75dd2112)',
-		'long-args'    : [ 'serial' ]
 	},
 	'instance-id' : {
 		'type'         : [ Boolean ],
 		'description'  : 'display instance id (i-3f81fcd4)',
-		'long-args'    : [ 'instance-id' ]
 	},
 	'availability-zone' : {
 		'type'         : [ Boolean ],
 		'description'  : 'display availability zone (us-east-1a)',
-		'long-args'    : [ 'availability-zone' ]
 	},
 	'raw' : {
 		'type'         : [ Boolean ],
 		'description'  : 'display as csv instead of json',
-		'long-args'    : [ 'raw' ]
 	},
 	'help' : {
-		'long-args'   : [ 'help' ],
 		'description' : 'Halp the user.',
 		'type'        : [ Boolean ]
 	}
