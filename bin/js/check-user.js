@@ -16,22 +16,18 @@ var iam = new AWS.IAM(
 //
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'username'   : {
-		'long-args' : [ 'username' ],
 		'description' : 'Specify username (e.g., JaneAvriette)',
 		'type'        : [ String ]
 	},
 	'raw' : {
 		'type'        : [ Boolean ],
 		'description' : 'Just display the records without json (csv)',
-		'long-args'   : [ 'raw' ],
 	},
 	'pattern' : {
 		'type'        : [ String ],
 		'description' : 'Display only usernames matching a (Node RegExp) pattern',
-		'long-args'   : [ 'pattern' ]
 	},
 	'help' : {
-		'long-args'   : [ 'help' ],
 		'description' : 'Halp the user.',
 		'type'        : [ Boolean ]
 	},
