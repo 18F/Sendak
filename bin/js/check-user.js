@@ -35,7 +35,7 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	, nopt  = parsed[0]
 	, usage = parsed[1]
 
-if (parsed['help']) {
+if (nopt['help']) {
 	// Be halpful
 	//
 	console.log( 'Usage: ' );
@@ -53,11 +53,11 @@ iam.listUsers( { },
 			var iam_users = [ ];
 
 			require( 'jagrep' ).sync( { 'function': function (t) {
-				if (parsed['username']) {
-					return (t == parsed['username']) ? t : false
+				if (nopt['username']) {
+					return (t == nopt['username']) ? t : false
 				}
-				else if (parsed['pattern']) {
-					if ( new RegExp( parsed['pattern'] ).exec( t.UserName ) ) {
+				else if (nopt['pattern']) {
+					if ( new RegExp( nopt['pattern'] ).exec( t.UserName ) ) {
 						return t;
 					}
 					else {
