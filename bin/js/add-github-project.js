@@ -14,20 +14,14 @@ var metadata = rrm.new_object( 'Github_Project' );
 
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'github-project-name' : {
-		'long-args'   : [ 'github-project-name' ],
 		'description' : 'What is the name of this github project',
 		'type'        : [ String ]
 	},
 	'base-url' : {
-		'long-args'  : [ 'github-project-name' ],
 		'description': 'The url to be used for a `git clone` operation',
 		'type'       : [ String ]
 	},
-	'help' : {
-		'long-args'   : [ 'help' ],
-		'description' : 'Halp the user.',
-		'type'        : [ Boolean ]
-	},
+	'help' : { 'type' : [ Boolean ] },
 
 }, process.argv )
 	, nopt  = parsed[0]
