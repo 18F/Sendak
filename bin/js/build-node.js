@@ -9,42 +9,34 @@
 
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'ssh-key-name' : {
-		'long-args'   : [ 'ssh-key-name' ],
 		'description' : 'The ssh key name (not filename) you would use to log into this node with.',
 		'type'        : [ String ]
 	},
 	'security-groups' : {
-		'long-args'   : [ 'security-groups' ],
 		'description' : 'A security group or several security groups that apply to this node.',
 		'type'        : [ String, Array ]
 	},
 	'subnet' : {
-		'long-args'   : [ 'subnet' ],
 		'description' : 'The subnet [implies vpc] where this node should reside.',
 		'type'        : [ String ]
 	},
 	'ami-id' : {
-		'long-args'   : [ 'ami-id' ],
 		'description' : 'The amazon AMI you would have burned onto this node.',
 		'type'        : [ String ]
 	},
 	'instance-type' : {
-		'long-args'   : [ 'instance-type' ],
 		'description' : 'The type of instance for the node.',
 		'type'        : [ String ]
 	},
 	'protect' : {
-		'long-args'   : [ 'protect' ],
 		'description' : 'Whether this node should have instance termination protection.',
 		'type'        : [ Boolean ]
 	},
 	'autoburn' : {
-		'long-args'   : [ 'autoburn' ],
 		'description' : 'Whether this node should be terminated upon launch (useful for "burner" nodes).',
 		'type'        : [ Boolean ]
 	},
 	'help' : {
-		'long-args'   : [ 'help' ],
 		'description' : 'Halp the user.',
 		'type'        : [ Boolean ]
 	},
