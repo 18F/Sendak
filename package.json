@@ -27,16 +27,17 @@
     "deep-grep": ">=0.0.2",
     "rrm": "*",
     "common-node": "*",
-    "sendak-usage": ">=0.0.3",
+    "sendak-usage": ">=0.0.6",
     "aws-sdk": "*",
-    "riak-dc": "*",
+    "riak-dc": ">=0.2.3",
     "mocha" : "*",
     "chai"  : "*",
     "chai-as-promised" : "*",
+    "github" : "*",
     "q": "*"
   },
   "homepage": "https://github.com/18F/Sendak",
-  "main": "index.js",
+  "main": "bin/sendak.js",
   "directories": {
     "doc": "doc"
   },
