@@ -64,12 +64,11 @@ var checks = {
 		deferred.resolve( health );
 		return q.all( function () {
 			G.user.getFollowingFromUser( { 'user': 'octocat' }, function (e,r) {
-			console.log( 'octocat has ' + r + ' followers' );
-			if (e) { health = false; }
-			if (r) { health = true;  }
-			return deferred.promise;
-		} ) } );
-
+				if (e) { health = false; }
+				if (r) { health = true;  }
+				return deferred.promise;
+			} )
+		} );
 	},
 	'aws' : function () {
 		var AWS    = require('aws-sdk')
@@ -102,14 +101,17 @@ var checks = {
 		deferred.resolve( rvals );
 
 		return deferred.promise;
-
 	},
 	'rrm' : function () {
-		// XXX: rrm has no ping() or anything. Probably best to just check for
-		//      rrm.get_object_types() -- which checks for an extant schema.
+		// This is not a very useful test.
 		//
+		var rrm      = require( 'rrm' )
+			, q        = require( 'q' )
+			, deferred = q.defer();
 
-		// TODO: writeme
+		return q.all( function () {
+			return rrm.get_schema().then( function (f) { return f } )
+		} );
 	}
 };
 
