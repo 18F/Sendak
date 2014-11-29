@@ -43,7 +43,7 @@ you would instead say:
 
 ```
 fetch:sendak jane$ sendak list-iam-groups --arn --gid --groupname
-[ { arn: 'arn:aws:iam::144433228153:group/default-group',
+[ { arn: 'arn:aws:iam::144555555553:group/default-group',
     gid: 'AGPAXXXXXXXXXXXXXXLXG' },
 
 # ...
