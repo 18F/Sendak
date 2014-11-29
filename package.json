@@ -29,14 +29,14 @@
     "common-node": "*",
     "sendak-usage": ">=0.0.3",
     "aws-sdk": "*",
-    "riak-dc": "*",
+    "riak-dc": ">=0.2.1",
     "mocha" : "*",
     "chai"  : "*",
     "chai-as-promised" : "*",
     "q": "*"
   },
   "homepage": "https://github.com/18F/Sendak",
-  "main": "index.js",
+  "main": "bin/sendak.js",
   "directories": {
     "doc": "doc"
   },
