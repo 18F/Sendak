@@ -33,6 +33,7 @@
     "mocha" : "*",
     "chai"  : "*",
     "chai-as-promised" : "*",
+    "github" : "*",
     "q": "*"
   },
   "homepage": "https://github.com/18F/Sendak",
