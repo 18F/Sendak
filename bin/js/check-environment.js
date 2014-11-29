@@ -4,15 +4,15 @@
 
 
 var parsed = require( 'sendak-usage' ).parsedown( {
-	'riak'   : { 'type' : [ String ] },
-	'github' : { 'type' : [ String ] },
-	'rrm'    : { 'type' : [ Boolean ] },
-	'aws'    : { 'type' : [ Boolean ] },
+	'riak'   : { 'type' : [ Boolean ], 'description' : 'check the riak'   },
+	'github' : { 'type' : [ Boolean ], 'description' : 'check the github' },
+	'rrm'    : { 'type' : [ Boolean ], 'description' : 'check the rrm'    },
+	'aws'    : { 'type' : [ Boolean ], 'description' : 'check the aws'    },
 
-	'help'   : { 'type' : [ Boolean ], 'description': 'halps for users.' }
+	'help'   : { 'type' : [ Boolean ], 'description': 'halps for users.'  }
 }, process.argv )
 	, nopt  = parsed[0]
-	, usage = parsed[1]
+	, usage = parsed[1];
 
 if (nopt['help']) {
 	// Be halpful
@@ -41,7 +41,10 @@ var checks = {
 			protocol : 'https',
 			timeout  : 5000,
 			headers  : { 'user-agent': '18F/Sendak' }
-		} );
+		} )
+			, q        = require('q')
+			, deferred = q.defer()
+			, health   = undefined;
 
 		if (process.env.GH_TOKEN) {
 			G.authenticate( {
@@ -58,18 +61,23 @@ var checks = {
 		}
 		// And of course octocat has followers.
 		//
-		return G.user.getFollowingFromUser( { 'user': 'octocat' }, function (e,r) {
-			if (e) { return false }
-			if (r) { return true }
-			return false;
-		} );
-	}
+		deferred.resolve( health );
+		return q.all( function () {
+			G.user.getFollowingFromUser( { 'user': 'octocat' }, function (e,r) {
+			console.log( 'octocat has ' + r + ' followers' );
+			if (e) { health = false; }
+			if (r) { health = true;  }
+			return deferred.promise;
+		} ) } );
+
+	},
 	'aws' : function () {
 		var AWS    = require('aws-sdk')
 			, region = { region: 'us-east-1' }
 			, iam    = new AWS.IAM( region )
 			, ec2    = new AWS.EC2( region )
 			, rvals  = [ undefined, undefined ]
+			, q      = require('q')
 
 		deferred = q.defer();
 
@@ -105,11 +113,12 @@ var checks = {
 	}
 };
 
-Object.keys( parsed ).forEach( function (check) {
-	if ( check === 'help' ) { return }
+Object.keys( checks ).forEach( function (check) {
 
-	checks[check] = false;
-
-	var deferred = q.defer();
-	
+	if (nopt[check]) {
+		checks[check]().then( function (r) {
+			if (r) { console.log( 'Check [' + check + '] seems superficially healthy.' ) }
+			else { console.log( 'Failed healthcheck for ' + check + '.' ) }
+		} );
+	}
 } );
