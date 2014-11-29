@@ -27,7 +27,7 @@
     "deep-grep": ">=0.0.2",
     "rrm": "*",
     "common-node": "*",
-    "sendak-usage": ">=0.0.4",
+    "sendak-usage": ">=0.0.6",
     "aws-sdk": "*",
     "riak-dc": ">=0.2.3",
     "mocha" : "*",
