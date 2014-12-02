@@ -40,12 +40,6 @@ invoked by `sendak build-node --long-arg param` and similar. All these tasks
 take `--long-arguments` to include `--help` (and are quite helpful,
 so&hellip;).
 
-* `components` - this directory is broken out by functionality and language;
-the Riak interface for Sendak's javascript components live in
-`components/common/js`; the Sendak deploy libraries that use
-Fabric live in `components/python/fabfile.py`, et cetera. These should
-(generally) not be executables but rather libraries/shared code.
-
 * `doc` - contains usage documentation and design documentation
 
 * `contrib` - these things are helpful but not really "officially part of the
