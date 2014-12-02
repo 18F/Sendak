@@ -36,7 +36,6 @@
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'help'       : { 'type' : [ Boolean ], 'description' : 'is halpful.'           },
 	'list-tasks' : { 'type' : [ Boolean ], 'description' : 'List available tasks.' }
-
 }, process.argv )
 	, nopt  = parsed[0]
 	, usage = parsed[1];
@@ -44,7 +43,7 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 var thx = '💝';
 
 var fs = require( 'fs' );
-function is_dir( f ) {  return fs.statSync( f ).isDirectory() }
+function is_dir( f )  { return fs.statSync( f ).isDirectory() }
 function is_file( f ) { return fs.statSync( f ).isFile()      }
 
 if (parsed[0].argv.original[0].substr(0, 2) != '--') {
@@ -71,11 +70,24 @@ if (parsed[0].argv.original[0].substr(0, 2) != '--') {
 		//
 		default_logger( 'Looks like we found ' + child_task + ' at ' + taskmap[child_task] );
 
-		var child = require( 'child_process' ).spawn( taskmap[child_task], child_args );
+		// Spawn a foo
+		//
+		var child     = require( 'child_process' ).spawn( taskmap[child_task], child_args )
+			, my_stdin  = process.stdin
+			, her_stdin = child.stdin
+
+		// Set up our pipes
+		//
+		my_stdin.setEncoding('utf8');
+		my_stdin.resume();
+		my_stdin.on( 'data', function (chunk) { her_stdin.write( chunk ) } );
+		my_stdin.on( 'end', function () { her_stdin.end() } ); // placeholder
+
+		// Set up their pipes
+		//
 		child.stdout.on( 'data', stdhandler );
 		child.stderr.on( 'data', stdhandler );
 		child.on( 'close', function () { console.log( 'child process exited ' + thx ) } );
-
 	}
 	else {
 		console.log( 'Sorry, I could not find this task, \'' + child_task + '\'' );
