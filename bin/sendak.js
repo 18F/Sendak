@@ -34,17 +34,8 @@
 */
 
 var parsed = require( 'sendak-usage' ).parsedown( {
-	'help' : {
-		'long-args'   : [ 'help' ],
-		'description' : 'is halpful.',
-		'type'        : [ Boolean ]
-	},
-	'list-tasks' : {
-		'long-args'   : [ 'list-tasks' ],
-		'description' : 'List available tasks.',
-		'type'        : [ Boolean ]
-	}
-
+	'help'       : { 'type' : [ Boolean ], 'description' : 'is halpful.' },
+	'list-tasks' : { 'type' : [ Boolean ], 'description' : 'List available tasks.' }
 }, process.argv )
 	, nopt  = parsed[0]
 	, usage = parsed[1];
