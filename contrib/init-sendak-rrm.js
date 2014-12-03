@@ -57,19 +57,19 @@ var schema = {
 	}, // }}} user
 	'node' : { // {{{
 		hasone : [ 'project', 'github-project' ], // must reference a distinct key in these tables
-		name : {
+		'user-name' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
 			verified  : 'RESERVED',
 		},
-		instance_id : { // I am thinking this should actually be an object with hooks into aws that also speaks sql.
+		'instance-id' : { // I am thinking this should actually be an object with hooks into aws that also speaks sql.
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
 			verified  : 'RESERVED', // is there a way to say "verified by stored procedure"
 		},
-		availability_zone : { // sooooo, we can identify instances by their availability zone (which gives us their region) and their instanceid but we can't do it with a single unique identifier like an arn.
+		'availability-zone' : { // sooooo, we can identify instances by their availability zone (which gives us their region) and their instanceid but we can't do it with a single unique identifier like an arn.
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
