@@ -1,26 +1,17 @@
 #!/usr/bin/env node
 
-var AWS = require('aws-sdk');
-
-var iam = new AWS.IAM( { region: process.env.AWS_REGION });
-
-// parse opts
-//
-var parsed = require( 'sendak-usage' ).parsedown( {
-	'dont' : { 'type' : [ Boolean ], 'description' : 'don\'t actually do this thing.' },
-	'help' : { 'type' : [ Boolean ], 'description' : 'Halp the user.' }
-	},
+var AWS    = require( 'aws-sdk' )
+	, iam    = new AWS.IAM( { region: process.env.AWS_REGION })
+	, rrm    = require( 'rrm' )
+	, parsed = require( 'sendak-usage' ).parsedown( {
+		'dont' : { 'type' : [ Boolean ], 'description' : 'don\'t actually do this thing.' },
+		'help' : { 'type' : [ Boolean ], 'description' : 'Halp the user.' }
 }, process.argv )
-	, nopt  = parsed[0]
-	, usage = parsed[1];
+	, nopt   = parsed[0]
+	, usage  = parsed[1]
+	, susers = [ ]
 
-if (nopt['help']) {
-	// Be halpful
-	//
-	console.log( 'Usage: ' );
-	console.log( usage );
-	process.exit(0); // success
-}
+if (nopt['help']) { console.log( 'Usage: ', usage ); process.exit(0); }
 
 iam.listUsers( { },
 	function( err, data ) {
@@ -29,9 +20,14 @@ iam.listUsers( { },
 		}
 		else {
 			data.Users.forEach( function (user) { // {{{
-				// do things
-			} ); // users.forEach }}}
+				var suser = rrm.new_object( 'user' );
+				suser['user-name'] = user.UserName;
+				suser['arn']       = user.Arn;
+				suser['user-id']   = user.UserId;
 
+				susers.push( suser );
+			} ); // }}} iam.listUsers.Users.forEach
 		} // if err
-	} // callback
+		console.log( JSON.stringify( susers ) );
+	} // callback from listUsers
 ) // listUsers
