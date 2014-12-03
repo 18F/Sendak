@@ -13,7 +13,7 @@ var Riak = require( 'riak-dc' );
 
 var schema = {
 	'project' : { // {{{
-		name : {
+		'name' : {
 			isa       : 'string', // varchar(256)?
 			defined   : true,     // must be not-null
 			distinct  : true      // can be indexed as distinct
@@ -36,18 +36,18 @@ var schema = {
 		hasone  : [ 'project' ]
 	}, // }}} github_project
 	'user' : { // {{{
-		name : {
+		'user-name' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true
 		},
-		arn : {
+		'arn' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
 			verified  : 'RESERVED', // is there a way to say "verified by stored procedure"
 		},
-		amznid : {
+		'user-id' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
