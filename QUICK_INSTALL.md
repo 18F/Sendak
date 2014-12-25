@@ -6,8 +6,8 @@ Sendak Installation
 * create an alias for `sendak=bin/sendak.js`
 * you may want to check your environment with `sendak check-environment --{riak,rrm,github,aws}`
 
-The configuration of [`rrm`](https://github.com/avriette/rrm) and
-[`riak-dc`](https://github.com/avriette/riak-dc) are beyond the scope of
+The configuration of [`rrm`](https://github.com/janearc/rrm) and
+[`riak-dc`](https://github.com/janearc/riak-dc) are beyond the scope of
 this document. Please see documentation there for installation & configuration
 instructions. It is assumed you have a connection to a working Riak; the
 default is localhost on port 8098.

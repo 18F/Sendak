@@ -12,15 +12,15 @@ var Riak = require( 'riak-dc' );
 */
 
 var schema = {
-	Project : { // {{{
-		name : {
+	'project' : { // {{{
+		'name' : {
 			isa       : 'string', // varchar(256)?
 			defined   : true,     // must be not-null
 			distinct  : true      // can be indexed as distinct
 		},
-		hasmany : [ 'Github_Project', 'User' ]
+		hasmany : [ 'github-project', 'user' ]
 	}, // }}} project
-	Github_Project : { // {{{
+	'github-project' : { // {{{
 		'github-project-name' : {
 			isa       : 'string', // 'midas-dev' or similar
 			defined   : true,
@@ -32,44 +32,44 @@ var schema = {
 			distinct  : true,
 			verified  : 'RESERVED' // we probably want to check for url-ness of this
 		},
-		hasmany : [ 'User' ],
-		hasone  : [ 'Project' ]
+		hasmany : [ 'user' ],
+		hasone  : [ 'project' ]
 	}, // }}} github_project
-	User : { // {{{
-		name : {
+	'user' : { // {{{
+		'user-name' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true
 		},
-		arn : {
+		'arn' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
 			verified  : 'RESERVED', // is there a way to say "verified by stored procedure"
 		},
-		amznid : {
+		'user-id' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
 			verified  : 'RESERVED',
 		},
-		hasmany   : [ 'Project', 'Group' ],
+		hasmany   : [ 'project', 'group' ],
 	}, // }}} user
-	Node : { // {{{
-		hasone : [ 'Project', 'GithubProject' ], // must reference a distinct key in these tables
-		name : {
+	'node' : { // {{{
+		hasone : [ 'project', 'github-project' ], // must reference a distinct key in these tables
+		'user-name' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
 			verified  : 'RESERVED',
 		},
-		instance_id : { // I am thinking this should actually be an object with hooks into aws that also speaks sql.
+		'instance-id' : { // I am thinking this should actually be an object with hooks into aws that also speaks sql.
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
 			verified  : 'RESERVED', // is there a way to say "verified by stored procedure"
 		},
-		availability_zone : { // sooooo, we can identify instances by their availability zone (which gives us their region) and their instanceid but we can't do it with a single unique identifier like an arn.
+		'availability-zone' : { // sooooo, we can identify instances by their availability zone (which gives us their region) and their instanceid but we can't do it with a single unique identifier like an arn.
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,

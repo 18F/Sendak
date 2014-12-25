@@ -29,7 +29,7 @@ There is substantially more lengthy documentation under `doc/`. See
 `QUICK_INSTALL.md` for directions to get working if there is an extant
 Sendak environment.
 
-[@avriette](https://github.com/avriette), jane.avriette@gsa.gov
+[@janearc](https://github.com/janearc), jane.arc@gsa.gov
 
 What is all this stuff
 ===

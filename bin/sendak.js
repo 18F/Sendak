@@ -87,7 +87,10 @@ if (parsed[0].argv.original[0].substr(0, 2) != '--') {
 		//
 		child.stdout.on( 'data', stdhandler );
 		child.stderr.on( 'data', stdhandler );
-		child.on( 'close', function () { console.log( 'child process exited ' + thx ) } );
+		child.on( 'close', function () {
+			console.log( 'child process exited ' + thx );
+			process.exit(0);
+		} );
 	}
 	else {
 		console.log( 'Sorry, I could not find this task, \'' + child_task + '\'' );
