@@ -157,7 +157,7 @@ var build_instance = function( args, callback ) { // {{{
 
 			// To get the public dns name and public ip address we need to actually make
 			// additional calls out to aws as the node "settles down". See "$AMAZON_DERP_DELAY"
-			// at https://github.com/avriette/misc/blob/master/joshsz/challenge.sh#L91
+			// at https://github.com/janearc/misc/blob/master/joshsz/challenge.sh#L91
 			//
 			ec2.describeInstances( { InstanceIds : [ return_value.instance_id ] }, function ( di_err, di_data ) {
 				if (di_err) {
