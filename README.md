@@ -1,7 +1,8 @@
 # Sendak, or Infrastructure-as-a-service-as-a-service
 
-Sendak was built for the [18F](https://18f.gsa.gov) DevOps team to manage its
-projects, users, and deployment processes across Amazon Web Services.
+Sendak gives the [18F](https://18f.gsa.gov) DevOps team a single interface
+to manage its projects, users, and deployments across Amazon Web Services and
+GitHub.
 
 Sendak lets teams specify **projects**, which can be linked to:
 
