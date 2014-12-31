@@ -19,7 +19,8 @@
   "keywords": [
     "aws",
     "iaas",
-    "sendak"
+    "sendak",
+    "cloud"
   ],
   "dependencies": {
     "nopt": "*",
@@ -42,6 +43,6 @@
     "doc": "doc"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "node test/*"
   }
 }
