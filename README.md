@@ -8,7 +8,6 @@ Sendak lets teams specify **projects**, which can be linked to:
 * AWS IAM users
 * AWS resources in VPCs
 * Git/GitHub repositories
-* A deployment command
 
 Sendak also enables **team permission management**. For example:
 
