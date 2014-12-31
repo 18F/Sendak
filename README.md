@@ -95,7 +95,9 @@ npm install
 alias sendak=/path/to/bin/sendak.js
 ```
 
-* Configure your AWS credentials. Sendak first looks for config files in your `~/.aws` directory, as created by the [AWS Node SDK](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html) or the [AWS CLI tool](https://aws.amazon.com/cli/).
+* Configure your AWS credentials. Sendak first looks for config files in your
+`~/.aws` directory, as created by the [AWS Node
+SDK](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html) or the [AWS CLI tool](https://aws.amazon.com/cli/).
 
 * If you don't have `~/.aws` config files, Sendak looks for environment variables:
 
