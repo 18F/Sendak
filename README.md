@@ -97,9 +97,11 @@ alias sendak=/path/to/bin/sendak.js
 
 * Configure your AWS credentials. Sendak first looks for config files in your
 `~/.aws` directory, as created by the [AWS Node
-SDK](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html) or the [AWS CLI tool](https://aws.amazon.com/cli/).
+SDK](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html)
+or the [AWS CLI tool](https://aws.amazon.com/cli/).
 
-* If you don't have `~/.aws` config files, Sendak looks for environment variables:
+* If you don't have `~/.aws` config files, Sendak looks for environment
+variables:
 
 ```
 export AWS_ACCESS_KEY_ID=[your-access-key]
@@ -107,7 +109,9 @@ export AWS_SECRET_ACCESS_KEY=[your-secret-key]
 export AWS_REGION=us-east-1
 ```
 
-* If you'll be using GitHub private repositories, you'll need to provide GitHub credentials. The simplest way to authenticate is to create a **personal access token** in your [GitHub application settings](https://github.com/settings/applications) and set it to an environment variable:
+* If you'll be using GitHub private repositories, you'll need to provide
+GitHub credentials. The simplest way to authenticate is to create a **personal
+access token** in your [GitHub application settings](https://github.com/settings/applications) and set it to an environment variable:
 
 ```
 export GH_TOKEN=[your-app-token]
@@ -117,7 +121,8 @@ You can also use
 [full application OAuth](https://developer.github.com/v3/oauth/) credentials
 by setting `GH_KEY` and `GH_SECRET`.
 
-* You will need a [Riak](https://github.com/basho/riak) instance. Sendak will expect Riak at `localhost:8098` by default.
+* You will need a [Riak](https://github.com/basho/riak) instance. Sendak will
+expect Riak at `localhost:8098` by default.
 
 * Check that your environment is working:
 
