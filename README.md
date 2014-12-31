@@ -1,14 +1,25 @@
 # Sendak, or Infrastructure-as-a-service-as-a-service
 
-Sendak's primary purpose in life is to manage the cloud provisioning process
-for medium-to-large organisations.
-
 Sendak was originally built for [18F](https://18f.gsa.gov) to manage its
-extensive surface area in Amazon Web Services.
+provisioning process for Amazon Web Services.
 
-To get started using Sendak:
+Sendak lets teams specify **projects**, which can be linked to:
 
-* [What Sendak does](#what-sendak-does)
+* AWS IAM users
+* AWS resources in VPCs
+* Git/GitHub repositories
+* A deployment command
+
+Sendak also enables **team permission management**. For example:
+
+* Granting individual permissions (e.g. importing SSH keys)
+* Checking for whether multi-factor authentication is enabled
+
+Finally, Sendak provides a **consistent deployment interface** that wraps a
+project's existing deployment and configuration process.
+
+To get started:
+
 * [Usage](#usage)
 * [Setting up Sendak](#setting-up-sendak)
 * [What's a Sendak?](#whats-a-sendak)
@@ -16,30 +27,6 @@ To get started using Sendak:
 If you're _developing_ Sendak, check out the [developing guide](DEVELOPING.md).
 
 Primary author: [@janearc](https://github.com/janearc), jane.arc@gsa.gov
-
-## What Sendak does
-
-With Sendak, users become associated with groups in IAM as well as with
-software projects on GitHub (or other git repositories); by their association
-with software projects it is possible to see which EC2 machines a user is
-nominally (although there is no hard link) associated with.
-
-These projects are typically associated with a Virtual Private Cloud (VPC),
-allowing users within that project to have super-user-ish powers over assets
-that are specific to their project, while not requiring greater access to the
-assets under the larger realm of the AWS account under management.
-
-Additionally, Sendak allows operators to better manage onboarding of users and
-verification of, for example, their use of multifactor authentication (MFA).
-
-Lastly, Sendak allows operators to, from the command-line, bring up new EC2
-instances with software via git and automatically deploy these in a way that
-is consistent, repeatable, and assumedly as safely as when the project was
-tagged and committed. This last process is "pluggable," and could be as simple
-as patching `/etc/hosts` to include the names/addresses of its neighbors, or
-as complex as joining a database cluster, running an automated build/test
-procedure, or basically anything else that can be executed over `ssh`. The
-documentation for this "pluggability" is in the `bin/` directory.
 
 ## Usage
 
@@ -79,8 +66,8 @@ sendak --list-tasks
 * Check out the project. (`npm`-based installation forthcoming.)
 
 ```bash
-git clone git@github.com:18F/Sendak.git
-cd Sendak
+git clone git@github.com:18F/Sendak.git sendak
+cd sendak
 ```
 
 * Install dependencies:
@@ -128,16 +115,14 @@ expect Riak at `localhost:8098` by default.
 * Check that your environment is working:
 
 ```bash
-sendak check-environment --riak
-sendak check-environment --github
-sendak check-environment --aws
+sendak check-environment --riak --github --aws
 ```
 
 You should now be able to run [Sendak commands](#usage).
 
 ## What's a Sendak
 
-From Wikipedia:
+From [Wikipedia](https://en.wikipedia.org/wiki/Maurice_Sendak):
 
 **Maurice Bernard Sendak** (/ˈsɛndæk/; June 10, 1928 – May 8, 2012) was
 an American illustrator and writer of children's books. He became widely
