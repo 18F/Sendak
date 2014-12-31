@@ -1,7 +1,7 @@
 # Sendak, or Infrastructure-as-a-service-as-a-service
 
-Sendak was originally built for [18F](https://18f.gsa.gov) to manage its
-provisioning process for Amazon Web Services.
+Sendak was built for the [18F](https://18f.gsa.gov) DevOps team to manage its
+projects, users, and deployment processes across Amazon Web Services.
 
 Sendak lets teams specify **projects**, which can be linked to:
 
@@ -108,8 +108,9 @@ export GH_TOKEN=[your-app-token]
 [full application OAuth](https://developer.github.com/v3/oauth/) credentials
 by setting `GH_KEY` and `GH_SECRET`.)
 
-* You will need a [Riak](https://github.com/basho/riak) instance. Sendak will
-expect Riak at `localhost:8098` by default.
+* If you plan to work with your team's project metadata, you'll need access to
+your team's [Riak](https://github.com/basho/riak) instance. Sendak will expect Riak at
+`localhost:8098` by default.
 
 * Check that your environment is working:
 
