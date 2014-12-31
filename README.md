@@ -57,6 +57,7 @@ sendak list-iam-groups --arn --gid
 
 This returns something like:
 
+```
 [ { arn: 'arn:aws:iam::1234567890:group/default-group',
     gid: 'XXXXXXXXXXXXXXXXXXXXXX' } ]
 ```
