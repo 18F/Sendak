@@ -80,6 +80,7 @@ sendak --list-tasks
 
 ```bash
 git clone git@github.com:18F/Sendak.git
+cd Sendak
 ```
 
 * Install dependencies:
@@ -117,9 +118,9 @@ access token** in your [GitHub application settings](https://github.com/settings
 export GH_TOKEN=[your-app-token]
 ```
 
-You can also use
+(You can also use
 [full application OAuth](https://developer.github.com/v3/oauth/) credentials
-by setting `GH_KEY` and `GH_SECRET`.
+by setting `GH_KEY` and `GH_SECRET`.)
 
 * You will need a [Riak](https://github.com/basho/riak) instance. Sendak will
 expect Riak at `localhost:8098` by default.
