@@ -7,6 +7,7 @@
 // shell rather than passing expressions and transformations to this tool.
 //
 
+"use strict";
 
 // Load aws-sdk & iam
 //

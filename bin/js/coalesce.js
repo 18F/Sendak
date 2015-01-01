@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 var AWS      = require( 'aws-sdk' )
 	, iam      = new AWS.IAM( { region: process.env.AWS_REGION })
 	, rrm      = require( 'rrm' )
@@ -7,7 +9,7 @@ var AWS      = require( 'aws-sdk' )
 	, parsed   = require( 'sendak-usage' ).parsedown( {
 		'dont'   : { 'type' : [ Boolean ], 'description' : 'don\'t actually do this thing.' },
 		'help'   : { 'type' : [ Boolean ], 'description' : 'Halp the user.' }
-}, process.argv )
+} , process.argv )
 	, nopt     = parsed[0]
 	, usage    = parsed[1]
 	, susers   = [ ]

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 var AWS = require('aws-sdk')
 	, iam = new AWS.IAM( { region: 'us-east-1' } );
 

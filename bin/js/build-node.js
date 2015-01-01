@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 /*
 
 	task to build a node with aws-sdk using runInstances, storing the resulting

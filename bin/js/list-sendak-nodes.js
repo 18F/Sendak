@@ -2,6 +2,8 @@
 // List the Sendak nodes in the (od)ORM.
 //
 
+"use strict";
+
 // parse opts
 //
 var parsed = require( 'sendak-usage' ).parsedown( {

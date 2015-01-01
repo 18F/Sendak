@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 /*
   This tool goes and grabs the prototype for 'User' from Riak, and inserts
   the values for this user supplied on the commandline.

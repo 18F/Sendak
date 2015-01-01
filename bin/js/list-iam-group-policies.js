@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 // This is not written right now because the policies are very complicated objects.
 //
 
