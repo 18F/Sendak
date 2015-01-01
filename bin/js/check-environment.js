@@ -2,6 +2,8 @@
 // (very) simple healthchecks for the sendak environment
 //
 
+"use strict":
+
 
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'riak'   : { 'type' : [ Boolean ], 'description' : 'check the riak'   },

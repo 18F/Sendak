@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'get-schema' : {
 		'type'        : [ Boolean ],

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 /*
 
   The Sendak dispatcher. Was originally written in shell; there proved to be

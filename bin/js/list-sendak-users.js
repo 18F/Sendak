@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 /*
   Simply report on the users in Riak.
 

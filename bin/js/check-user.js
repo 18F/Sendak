@@ -2,6 +2,8 @@
 // Check to see if a supplied user has the requisite attributes.
 //
 
+"use strict";
+
 // Load aws-sdk & iam
 //
 var AWS = require('aws-sdk');

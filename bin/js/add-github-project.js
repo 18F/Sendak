@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 /*
  https://github.com/18F/18f-slack
 */

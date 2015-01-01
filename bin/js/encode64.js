@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+"use strict";
+
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'help'     : { 'type': [ Boolean ], 'description': 'halp me'                     },
 	'filename' : { 'type': [ String  ], 'description': 'specify a file for output'   },
