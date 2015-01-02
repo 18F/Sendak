@@ -3,6 +3,7 @@
 "use strict";
 
 var AWS      = require( 'aws-sdk' )
+	, dg       = require( 'deep-grep' )
 	, iam      = new AWS.IAM( { region: process.env.AWS_REGION })
 	, rrm      = require( 'rrm' )
 	, fs       = require( 'fs' )
@@ -22,9 +23,7 @@ if (fs.existsSync( 'etc/excludes.json' )) {
 		} )
 }
 
-console.log( excludes );
-
-if (nopt['help']) { console.log( 'Usage: ', usage ); process.exit(0); }
+if (nopt['help']) { console.log(  usage ); process.exit(0); }
 
 iam.listUsers( { },
 	function( err, data ) {
@@ -33,7 +32,7 @@ iam.listUsers( { },
 		}
 		else {
 			data.Users.forEach( function (user) { // {{{
-				if (! excludes[user.UserName]) {
+				if (!excludes[user.UserName]) {
 					var suser = rrm.new_object( 'user' );
 					suser['user-name'] = user.UserName;
 					suser['arn']       = user.Arn;
@@ -50,32 +49,71 @@ iam.listUsers( { },
 ) // listUsers
 
 function name_split ( name ) {
-	// Note because we have CM, we need to actually index on the last-most
-	// capital latter, so:
-	//   JMAvriette -> [ 'JM', 'Avriette' ]
-	//
-	// Also we have names like:
-	//   Cruella de Ville / Cruella DeVille / Prince LaFontaine / Prince la Fontaine
-	// & so forth.
-	//
+	var nothing_found = true;
+	var found;
 
-	var uppercase = /[A-Z]/
-		, splode    = name.split( '' )
-		, last_idx_char
-		, given_name
-		, sur_name ;
-
-	for (var index in splode) {
-		if (uppercase.test( splode[index] )) { last_idx_char = splode[index] }
+	var name_struct = function (gn, sn, ac) {
+		// If you wanted to l10n this you could make it return something like
+		// ARC Jane vs Jane Arc and so on. Or add honorifics.
+		//
+		return {
+			'first': gn,
+			'last' : sn,
+			'name' : gn + ' ' + sn,
+			'acct' : ac
+		}
 	}
 
-	given_name = name.substr( 0, name.lastIndexOf( last_idx_char ) );
-	sur_name  = name.substr( name.lastIndexOf( last_idx_char ), name.length )
+	var regexen = [ // {{{
+		// JMArc
+		//
+		[ /^[A-Z]{3}[a-z]+$/, function (n) { return new name_struct(n.substr(0,2), n.substr(2, n.length), n) } ],
 
-	return {
-		'first': given_name,
-		'last' : sur_name,
-		'name' : given_name + ' ' + sur_name,
-		'acct' : name
-	};
+		// CruellaDeVille, CruellaDeLaVille
+		//
+		[ /^([A-Z][a-z]+)([^AEIOU][aeiou][^aeiou]?)([^AEIOU][aeiou][^aeiou]?)?([A-Z][a-z]+)$/, function (n) {
+			var name_parts = n.match( /^([A-Z][a-z]+)([^AEIOU][aeiou][^aeiou]?)([^AEIOU][aeiou][^aeiou]?)?([A-Z][a-z]+)$/ );
+			// This is the name we were passed
+			//
+			var orig  = name_parts.shift();
+
+			// This is the given name, Cruella
+			//
+			var given = name_parts.shift();
+
+			// This is to become the surname with fragment
+			//
+			var restructd = '';
+
+			// Take apart the regex
+			//
+			while (name_parts.length) {
+				var sur_trunc = name_parts.pop();
+				// And put it together back to front
+				//
+				if (sur_trunc != undefined) {
+					restructd = sur_trunc + restructd;
+					// restructd = [ sur_trunc, restructd ].join(' ');
+				}
+			}
+
+			// Send it back to caller
+			//
+			return new name_struct( given, restructd, orig );
+		} ],
+	]; // }}}
+
+	while (nothing_found && (found == undefined)) {
+		regexen.forEach( function (r) {
+			var re     = r.shift()
+				, parser = r.pop();
+
+			if (new RegExp( re ).test( name )) {
+				// console.log( name + ' is truthy against ' + re );
+				found = parser( name );
+				nouthing_found = false;
+			}
+		} );
+	}
+	return found;
 }
