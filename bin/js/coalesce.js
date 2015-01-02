@@ -3,7 +3,6 @@
 "use strict";
 
 var AWS      = require( 'aws-sdk' )
-	, dg       = require( 'deep-grep' )
 	, iam      = new AWS.IAM( { region: process.env.AWS_REGION })
 	, rrm      = require( 'rrm' )
 	, fs       = require( 'fs' )
@@ -38,13 +37,22 @@ iam.listUsers( { },
 					suser['arn']       = user.Arn;
 					suser['user-id']   = user.UserId;
 
-					suser['name']      =  name_split( suser['user-name'] ).name;
+					suser['name']      =  name_split( suser['user-name'] );
 
 					susers.push( suser );
 				}
 			} ); // }}} iam.listUsers.Users.forEach
 		} // if err
-		console.log( JSON.stringify( susers, null, 2 ) );
+		if (nopt['dont']) {
+			// TODO: Logging facility
+			console.log( JSON.stringify( susers, null, 2 ) );
+		}
+		else {
+			susers.forEach( function (user) {
+				console.log( 'Storing User object for ' + user.name.acct );
+				rrm.add_object( 'User', user );
+			} );
+		}
 	} // callback from listUsers
 ) // listUsers
 
@@ -52,7 +60,7 @@ function name_split ( name ) {
 	var nothing_found = true;
 	var found;
 
-	var name_struct = function (gn, sn, ac) {
+	var name_struct = function (gn, sn, ac) { // {{{
 		// If you wanted to l10n this you could make it return something like
 		// ARC Jane vs Jane Arc and so on. Or add honorifics.
 		//
@@ -62,24 +70,28 @@ function name_split ( name ) {
 			'name' : gn + ' ' + sn,
 			'acct' : ac
 		}
-	}
+	} // }}}
+
+	var surname_w_articles = /^([A-Z][a-z]+)([CDFLS][aeiou]+[^aeiou]?)([CDFLS][aeiou]+[^aeiou]?)?([A-Z][a-z]+)$/
+		, simple_concat      = /^([A-Z][a-z]+)([A-Z][a-z]+)$/
+		, initialised        = /^([A-Z]{2,3})([A-Z][a-z]+)$/
 
 	var regexen = [ // {{{
 		// JaneArc
 		//
-		[ /^[A-Z][a-z]+[A-Z][a-z]$/, function (n) {
-			var name_parts = n.match( /^([A-Z][a-z]+)([A-Z][a-z]+)/ );
-			return new name_struct( name_parts[0], name_parts[1], n );
+		[ simple_concat, function (n) {
+			var name_parts = n.match( simple_concat );
+			return new name_struct( name_parts[1], name_parts[2], n );
 		} ],
 
 		// JMArc
 		//
-		[ /^[A-Z]{3}[a-z]+$/, function (n) { return new name_struct(n.substr(0,2), n.substr(2, n.length), n) } ],
+		[ initialised, function (n) { return new name_struct(n.substr(0,2), n.substr(2, n.length), n) } ],
 
 		// CruellaDeVille, CruellaDeLaVille
 		//
-		[ /^([A-Z][a-z]+)([^AEIOU][aeiou][^aeiou]?)([^AEIOU][aeiou][^aeiou]?)?([A-Z][a-z]+)$/, function (n) {
-			var name_parts = n.match( /^([A-Z][a-z]+)([^AEIOU][aeiou][^aeiou]?)([^AEIOU][aeiou][^aeiou]?)?([A-Z][a-z]+)$/ );
+		[ surname_w_articles, function (n) {
+			var name_parts = n.match( surname_w_articles );
 			// This is the name we were passed
 			//
 			var orig  = name_parts.shift();
@@ -110,22 +122,27 @@ function name_split ( name ) {
 		} ],
 	]; // }}}
 
-	while (nothing_found && (found == undefined)) {
-		regexen.forEach( function (r) {
-			var re     = r[0]
-				, parser = r[1]
+	regexen.forEach( function (r) {
+		var re     = r[0]
+			, parser = r[1]
 
-			if (new RegExp( re ).test( name )) {
-				found = parser( name );
-				nothing_found = false;
-			}
-		} );
-		if (found == undefined) {
-			// Looks like we walked the regexes and we did not find one suitable.
-			//   singletear.swf
-			//
-			found = new Error( 'Software is hard. ' + name + ' could not be parsed. Sorry.' );
+		if ((found == undefined) && new RegExp( re ).test( name )) {
+			found = parser( name );
+			nothing_found = false;
 		}
+	} );
+
+	if (found == undefined) {
+		// Looks like we walked the regexes and we did not find one suitable.
+		//   singletear.swf
+		//
+		found = new Error( 'Software is hard. ' + name + ' could not be parsed. Sorry.' );
 	}
+	else {
+		// TODO: Add default log facility (tbd with @dlapiduz as of 2 jan 15
+		//
+		// console.log( 'successfully parsed ' + name + ' into ' + found.name )
+	}
+
 	return found;
 }
