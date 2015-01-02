@@ -65,6 +65,13 @@ function name_split ( name ) {
 	}
 
 	var regexen = [ // {{{
+		// JaneArc
+		//
+		[ /^[A-Z][a-z]+[A-Z][a-z]$/, function (n) {
+			var name_parts = n.match( /^([A-Z][a-z]+)([A-Z][a-z]+)/ );
+			return new name_struct( name_parts[0], name_parts[1], n );
+		} ],
+
 		// JMArc
 		//
 		[ /^[A-Z]{3}[a-z]+$/, function (n) { return new name_struct(n.substr(0,2), n.substr(2, n.length), n) } ],
@@ -105,15 +112,20 @@ function name_split ( name ) {
 
 	while (nothing_found && (found == undefined)) {
 		regexen.forEach( function (r) {
-			var re     = r.shift()
-				, parser = r.pop();
+			var re     = r[0]
+				, parser = r[1]
 
 			if (new RegExp( re ).test( name )) {
-				// console.log( name + ' is truthy against ' + re );
 				found = parser( name );
-				nouthing_found = false;
+				nothing_found = false;
 			}
 		} );
+		if (found == undefined) {
+			// Looks like we walked the regexes and we did not find one suitable.
+			//   singletear.swf
+			//
+			found = new Error( 'Software is hard. ' + name + ' could not be parsed. Sorry.' );
+		}
 	}
 	return found;
 }
