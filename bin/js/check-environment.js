@@ -2,7 +2,7 @@
 // (very) simple healthchecks for the sendak environment
 //
 
-"use strict":
+"use strict";
 
 
 var parsed = require( 'sendak-usage' ).parsedown( {
