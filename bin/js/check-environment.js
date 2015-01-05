@@ -80,7 +80,7 @@ var checks = {
 			, rvals  = [ undefined, undefined ]
 			, q      = require('q')
 
-		deferred = q.defer();
+		var deferred = q.defer();
 
 		// So, technically, these tests don't prove anything. But we need to have
 		// both ec2 and iam access for Sendak to verb any nouns.
