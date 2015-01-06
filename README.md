@@ -1,6 +1,6 @@
 # Sendak, or Infrastructure-as-a-service-as-a-service
 
-Sendak gives the [18F](https://18f.gsa.gov) DevOps team a single interface
+Sendak is a [Node.js application](http://nodejs.org/) gives the [18F](https://18f.gsa.gov) DevOps team a single interface
 to manage its projects, users, and deployments across Amazon Web Services and
 GitHub.
 
@@ -63,7 +63,9 @@ sendak --list-tasks
 
 ## Setting up Sendak
 
-* Open a terminal and check out the project. (`npm`-based installation forthcoming.)
+[Node](http://nodejs.org/) is required to run Sendak.
+
+* Open a terminal and check out the project. (Node uses `npm` for package management - a `npm` based installation is forthcoming.)
 
 ```bash
 git clone https://github.com/18F/Sendak.git sendak
