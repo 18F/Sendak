@@ -63,10 +63,10 @@ sendak --list-tasks
 
 ## Setting up Sendak
 
-* Check out the project. (`npm`-based installation forthcoming.)
+* Open a terminal and check out the project. (`npm`-based installation forthcoming.)
 
 ```bash
-git clone git@github.com:18F/Sendak.git sendak
+git clone https://github.com/18F/Sendak.git sendak
 cd sendak
 ```
 
