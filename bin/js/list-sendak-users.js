@@ -3,22 +3,12 @@
 'use strict';
 
 var parsed = require( 'sendak-usage' ).parsedown( {
-	'user-name' : {
-		'type'        : [ String ],
-		'description' : 'Specify an expression to match against username',
-	},
-	'arn' : {
-		'type'        : [ String ],
-		'description' : 'Specify an expression to match against the arn',
-	},
-	'user-id' : {
-		'type'        : [ String ],
-		'description' : 'Specify an expression to match against the user-id',
-	},
-	'help' : {
-		'description' : 'Halp the user.',
-		'type'        : [ Boolean ]
-	}
+	'user-name' : { 'type' : [ Boolean ], 'description' : 'Display usernames' },
+	'arn'       : { 'type' : [ Boolean ], 'description' : 'Display arn\'s' },
+	'user-id'   : { 'type' : [ Boolean ], 'description' : 'Display user-id\'s' },
+	'pattern'   : { 'type' : [ String ],  'description' : 'Pattern to match returned data against' },
+
+	'help'      : { 'type' : [ Boolean ], 'description' : 'Halp the user.' }
 }, process.argv )
 	, usage = parsed[1]
 	, nopt  = parsed[0];
@@ -43,10 +33,20 @@ var pusers = rrm.get_objects( 'user' ).then( function ( users ) {
 		var json = JSON.parse( user );
 		var result = { };
 		Object.keys( nopt ).forEach( function (req_key) {
-			if (json[req_key]) { result[req_key] = json[req_key] }
+			if (json.hasOwnProperty( req_key )) { result[req_key] = json[req_key] }
 		} )
 		results.push( result )
 	} )
-	console.log( results );
+	if (nopt['pattern']) {
+		var rx = new RegExp( nopt['pattern'] );
+		console.log( results.filter( function (record) {
+			var found = false;
+			record.forEach( function (field) { if (rx.test( field )) { found = true } } );
+			if (found == true) { return record }
+			else { /* NOP; we didn't find it */ }
+		} ) );
+	}
+	else {
+		console.log( results );
+	}
 } );
-
