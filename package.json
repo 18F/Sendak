@@ -27,7 +27,6 @@
     "jagrep": ">=0.2.0",
     "deep-grep": ">=0.0.2",
     "rrm": ">=0.0.6",
-    "common-node": "*",
     "sendak-usage": ">=0.0.6",
     "aws-sdk": "*",
     "riak-dc": ">=0.2.5",
