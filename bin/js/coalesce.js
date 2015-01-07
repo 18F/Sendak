@@ -49,8 +49,9 @@ iam.listUsers( { },
 		}
 		else {
 			susers.forEach( function (user) {
-				console.log( 'Storing User object for ' + user.name.acct );
-				rrm.add_object( 'User', user );
+				rrm.add_object( 'user', user ).then( function (s) {
+					console.log( user.name.name + ' object stored with serial ' + s );
+				} );
 			} );
 		}
 	} // callback from listUsers
