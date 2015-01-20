@@ -25,7 +25,7 @@
   "dependencies": {
     "nopt": "*",
     "jagrep": ">=0.2.0",
-    "deep-grep": ">=0.0.2",
+    "deep-grep": ">=0.3.5",
     "rrm": ">=0.0.6",
     "sendak-usage": ">=0.0.6",
     "aws-sdk": "*",
