@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-"use strict":
+"use strict";
 
 var rrm      = require( 'rrm' );
 var metadata = rrm.new_object( 'Project' );

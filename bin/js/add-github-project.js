@@ -40,8 +40,8 @@ if (nopt['help']) {
 if (nopt['github-project-name'] && nopt['base-url']) {
 	metadata['github-project-name'] = nopt['github-project-name'];
 	metadata['base-url']            = nopt['base-url'];
-	ORM.add_object( 'Github_Project', metadata )
-	console.log( metadata );
+	rrm.add_object( 'Github_Project', metadata )
+	console.log( JSON.stringify(metadata) );
 	process.exit(0); // success
 }
 else {
