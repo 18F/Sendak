@@ -8,7 +8,7 @@ var AWS = require('aws-sdk')
 // parse opts
 //
 var parsed = require( 'sendak-usage' ).parsedown( {
-	'username'    : { 'type' : [ String  ], 'description' : 'Specify username (e.g., JaneAvriette)' },
+	'user-name'   : { 'type' : [ String  ], 'description' : 'Specify username (e.g., JaneAvriette)' },
 	'help'        : { 'type' : [ Boolean ], 'description' : 'Halp the user.' },
 	'output-file' : { 'type' : [ String  ], 'description' : 'Where to store the resultant QR code' }
 }, process.argv )
@@ -26,9 +26,12 @@ if (nopt['help']) {
 // This is a placeholder
 //
 iam.createVirtualMfaDevice( {
-	Path                 : // This is the path to the user, I think.
-	VirtualMfaDeviceName : // this needs to be unique so check what list-mfa-devices shows and replicate
-	Outfile              : nopt['output-file']
+	// Path                 : // This is the path to the user, I think.
+	Path                 : 'arn:aws:iam::144433228153:user/SendakTest',
+	// VirtualMfaDeviceName : // this needs to be unique so check what list-mfa-devices shows and replicate
+	VirtualMfaDeviceName : 'Sendak-Test-Fake-MFA-1',
+	// Outfile              : nopt['output-file']
+	Outfile              : 'sendak-qr.png',
 	BootstrapMethod      : 'QRCodePNG'
 }, function( err, data ) {
 	if (err) {
