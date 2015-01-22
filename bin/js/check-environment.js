@@ -11,6 +11,8 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	'rrm'    : { 'type' : [ Boolean ], 'description' : 'check the rrm'    },
 	'aws'    : { 'type' : [ Boolean ], 'description' : 'check the aws'    },
 
+	'all'    : { 'type' : [ Boolean ], 'description' : 'check all things' },
+
 	'help'   : { 'type' : [ Boolean ], 'description': 'halps for users.'  }
 }, process.argv )
 	, nopt  = parsed[0]
@@ -119,7 +121,7 @@ var checks = {
 
 Object.keys( checks ).forEach( function (check) {
 
-	if (nopt[check]) {
+	if (nopt[check] || nopt['all']) {
 		checks[check]().then( function (r) {
 			if (r) { console.log( 'Check [' + check + '] seems superficially healthy.' ) }
 			else { console.log( 'Failed healthcheck for ' + check + '.' ) }
