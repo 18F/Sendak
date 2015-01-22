@@ -76,9 +76,8 @@ var checks = {
 	},
 	'aws' : function () {
 		var AWS    = require('aws-sdk')
-			, region = { region: 'us-east-1' }
-			, iam    = new AWS.IAM( region )
-			, ec2    = new AWS.EC2( region )
+			, iam    = new AWS.IAM( )
+			, ec2    = new AWS.EC2( )
 			, rvals  = [ undefined, undefined ]
 			, q      = require('q')
 

@@ -8,7 +8,7 @@
 //
 var AWS = require('aws-sdk');
 
-var iam = new AWS.IAM( { region: 'us-east-1' } );
+var iam = new AWS.IAM( );
 
 // parse opts
 //

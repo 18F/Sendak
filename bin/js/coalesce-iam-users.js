@@ -3,7 +3,7 @@
 "use strict";
 
 var AWS      = require( 'aws-sdk' )
-	, iam      = new AWS.IAM( { region: process.env.AWS_REGION })
+	, iam      = new AWS.IAM( )
 	, rrm      = require( 'rrm' )
 	, fs       = require( 'fs' )
 	, parsed   = require( 'sendak-usage' ).parsedown( {
