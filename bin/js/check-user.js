@@ -50,7 +50,7 @@ iam.listUsers( { },
 			var users = data.Users;
 			var iam_users = [ ];
 
-			require( 'jagrep' ).sync( { 'function': function (t) {
+			require( 'deep-grep' ).deeply( data.Users, function (t) {
 				if (nopt['username']) {
 					return (t == nopt['username']) ? t : false
 				}
@@ -66,7 +66,7 @@ iam.listUsers( { },
 					return t;
 				}
 				return t;
-			} }, data.Users ).forEach( function (user) {
+			}, { } ).forEach( function (user) {
 				iam.listMFADevices( { 'UserName' : user['UserName'] }, function (err, data) {
 					if (data['MFADevices'].length == 0) {
 						console.log( user['UserName'] + ' has no MFA devices configured' );

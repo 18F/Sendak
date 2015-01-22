@@ -120,15 +120,11 @@ else {
 // list.
 //
 function get_tasks () {
-	var jgrep    = require( 'jagrep' )
-		, dg       = require( 'deep-grep' )
+	var dg       = require( 'deep-grep' )
 		, cwd      = process.cwd()
 		, bindir   = cwd + '/bin'
-		, files    = jgrep.sync( { 'function': function (f) { return is_dir(f) } },
-				fs.readdirSync( bindir ).map( function (bf) {
-					return fs.realpathSync(bindir + '/' + bf)
-				}
-			) ).map( function (ld) { return fs.readdirSync( ld ).map( function (f) { return ld + '/' + f } )
+		, files    = dg.deeply( fs.readdirSync( bindir ).map( function (bf) { return fs.realpathSync(bindir + '/' + bf) } )
+			, function (f) { return is_dir(f) }, { } ).map( function (ld) { return fs.readdirSync( ld ).map( function (f) { return ld + '/' + f } )
 		} )
 		, tasks    = dg.flatten( files )
 		, names    = tasks.map( function (f) {
