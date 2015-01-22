@@ -42,6 +42,14 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	, nopt  = parsed[0]
 	, usage = parsed[1];
 
+var logger  = require( 'log4js' ).getLogger()
+	, logwrap = {
+		debug : function (s) { if (process.env.DEBUG != undefined) { logger.debug(s) } },
+		info  : function (s) { if (process.env.DEBUG != undefined) { logger.info(s) } },
+		warn  : function (s) { if (process.env.DEBUG != undefined) { logger.warn(s) } },
+		error : function (s) { if (process.env.DEBUG != undefined) { logger.error(s) } },
+	};
+
 var thx = '💝';
 
 var fs = require( 'fs' );
@@ -70,7 +78,7 @@ if (parsed[0].argv.original[0].substr(0, 2) != '--') {
 
 		// Let somebody know if they care
 		//
-		default_logger( 'Looks like we found ' + child_task + ' at ' + taskmap[child_task] );
+		logwrap.debug( 'Looks like we found ' + child_task + ' at ' + taskmap[child_task] );
 
 		// Spawn a foo
 		//
@@ -136,12 +144,4 @@ function get_tasks () {
 		} )
 
 		return [ tasks, names ];
-}
-
-// TODO: Replace with log4js
-//
-function default_logger (s) {
-	if (process.env['DEBUG']) {
-		console.log(s);
-	}
 }
