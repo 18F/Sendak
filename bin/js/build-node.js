@@ -198,11 +198,7 @@ var build_instance = function( args, callback ) { // {{{
 // Load the AWS SDK for Node.js & grab an ec2 interface
 //
 var AWS = require('aws-sdk');
-var ec2 = new AWS.EC2(
-	{
-		region: 'us-east-1'  // per @mhart at https://github.com/aws/aws-sdk-js/issues/350
-	}
-);
+var ec2 = new AWS.EC2();
 var rrm = require( 'rrm' );
 
 var this_node = build_instance(

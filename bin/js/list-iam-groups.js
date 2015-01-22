@@ -7,17 +7,13 @@
 // shell rather than passing expressions and transformations to this tool.
 //
 
-"use strict";
+'use strict';
 
 // Load aws-sdk & iam
 //
 var AWS = require('aws-sdk');
 
-var iam = new AWS.IAM(
-	{
-		region: 'us-east-1'  // per @mhart at https://github.com/aws/aws-sdk-js/issues/350
-	}
-);
+var iam = new AWS.IAM();
 
 // parse opts
 //

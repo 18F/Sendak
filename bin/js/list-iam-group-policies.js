@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
 // This is not written right now because the policies are very complicated objects.
 //
@@ -9,11 +9,7 @@
 //
 var AWS = require('aws-sdk');
 
-var iam = new AWS.IAM(
-	{
-		region: 'us-east-1'  // per @mhart at https://github.com/aws/aws-sdk-js/issues/350
-	}
-);
+var iam = new AWS.IAM();
 
 iam.listGroupPolicies(
 	{

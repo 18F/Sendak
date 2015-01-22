@@ -3,7 +3,7 @@
 "use strict";
 
 var AWS = require('aws-sdk')
-	, iam = new AWS.IAM( { region: 'us-east-1' } );
+	, iam = new AWS.IAM( );
 
 // parse opts
 //
