@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
 /*
  https://github.com/18F/18f-slack
@@ -13,6 +13,14 @@ if (process.env.SENDAK_DATASTORE) {
 
 var rrm      = require( 'rrm' );
 var metadata = rrm.new_object( 'Github_Project' );
+
+var logger  = require( 'log4js' ).getLogger()
+	, logwrap = {
+		debug : function (s) { if (process.env.DEBUG != undefined) { logger.debug(s) } },
+		info  : function (s) { if (process.env.DEBUG != undefined) { logger.info(s) } },
+		warn  : function (s) { if (process.env.DEBUG != undefined) { logger.warn(s) } },
+		error : function (s) { if (process.env.DEBUG != undefined) { logger.error(s) } },
+	};
 
 var parsed = require( 'sendak-usage' ).parsedown( {
 	'github-project-name' : {
@@ -40,7 +48,8 @@ if (nopt['help']) {
 if (nopt['github-project-name'] && nopt['base-url']) {
 	metadata['github-project-name'] = nopt['github-project-name'];
 	metadata['base-url']            = nopt['base-url'];
-	rrm.add_object( 'Github_Project', metadata )
+	logwrap.debug( 'Adding new object to github-project', metadata );
+	rrm.add_object( 'github-project', metadata )
 	console.log( JSON.stringify(metadata) );
 	process.exit(0); // success
 }

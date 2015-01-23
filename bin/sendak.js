@@ -42,9 +42,18 @@ var parsed = require( 'sendak-usage' ).parsedown( {
 	, nopt  = parsed[0]
 	, usage = parsed[1];
 
+var logger  = require( 'log4js' ).getLogger()
+	, logwrap = {
+		debug : function (s) { if (process.env.DEBUG != undefined) { logger.debug(s) } },
+		info  : function (s) { if (process.env.DEBUG != undefined) { logger.info(s) } },
+		warn  : function (s) { if (process.env.DEBUG != undefined) { logger.warn(s) } },
+		error : function (s) { if (process.env.DEBUG != undefined) { logger.error(s) } },
+	};
+
 var thx = '💝';
 
 var fs = require( 'fs' );
+var dg = require( 'deep-grep' );
 function is_dir( f )  { return fs.statSync( f ).isDirectory() }
 function is_file( f ) { return fs.statSync( f ).isFile()      }
 
@@ -58,19 +67,18 @@ if (parsed[0].argv.original[0].substr(0, 2) != '--') {
 	var tasks   = get_tasks()
 		, taskmap = { };
 
-	var jgrep      = require( 'jagrep' )
-		, stdhandler = function (buf) { console.log( buf.toString() ) };
+	var stdhandler = function (buf) { console.log( buf.toString() ) };
 
 	// Do we actually have a task named this?
 	//
-	if (jgrep.in( tasks[1], child_task )) {
+	if (dg.in( tasks[1], child_task )) {
 		// One day I will have coalesce or hashslices. Until then, this is "okay."
 		//
 		for (var idx in tasks[1]) { taskmap[tasks[1][idx]] = tasks[0][idx] }
 
 		// Let somebody know if they care
 		//
-		default_logger( 'Looks like we found ' + child_task + ' at ' + taskmap[child_task] );
+		logwrap.debug( 'Looks like we found ' + child_task + ' at ' + taskmap[child_task] );
 
 		// Spawn a foo
 		//
@@ -120,15 +128,10 @@ else {
 // list.
 //
 function get_tasks () {
-	var jgrep    = require( 'jagrep' )
-		, dg       = require( 'deep-grep' )
-		, cwd      = process.cwd()
+	var cwd      = process.cwd()
 		, bindir   = cwd + '/bin'
-		, files    = jgrep.sync( { 'function': function (f) { return is_dir(f) } },
-				fs.readdirSync( bindir ).map( function (bf) {
-					return fs.realpathSync(bindir + '/' + bf)
-				}
-			) ).map( function (ld) { return fs.readdirSync( ld ).map( function (f) { return ld + '/' + f } )
+		, files    = dg.deeply( fs.readdirSync( bindir ).map( function (bf) { return fs.realpathSync(bindir + '/' + bf) } )
+			, function (f) { return is_dir(f) }, { } ).map( function (ld) { return fs.readdirSync( ld ).map( function (f) { return ld + '/' + f } )
 		} )
 		, tasks    = dg.flatten( files )
 		, names    = tasks.map( function (f) {
@@ -140,12 +143,4 @@ function get_tasks () {
 		} )
 
 		return [ tasks, names ];
-}
-
-// TODO: Replace with log4js
-//
-function default_logger (s) {
-	if (process.env['DEBUG']) {
-		console.log(s);
-	}
 }
