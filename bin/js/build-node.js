@@ -103,8 +103,6 @@ var build_instance = function( args, callback ) { // {{{
 	var vpc_id   = 'vpc-c03d95a5';
 	var hostname = 'sendak-subnode-' + frag;
 	
-	// console.log( args ); // XXX: broken in references below
-
 	var launch_params = {
 		// Required:
 		//
