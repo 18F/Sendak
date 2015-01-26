@@ -29,7 +29,7 @@
     "rrm": ">=0.1.0",
     "sendak-usage": ">=0.0.6",
     "aws-sdk": "*",
-    "riak-dc": ">=0.2.5",
+    "riak-dc": ">=0.2.7",
     "mocha" : "*",
     "chai"  : "*",
     "chai-as-promised" : "*",
