@@ -33,6 +33,7 @@
     "mocha" : "*",
     "chai"  : "*",
     "chai-as-promised" : "*",
+    "makemeasandwich" : "*",
     "github" : "*",
     "q": "*"
   },
