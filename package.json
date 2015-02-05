@@ -1,6 +1,6 @@
 {
   "name": "sendak",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "Sendak manages metadata for cloud deployments",
   "author": "Jane Arc <jane.arc@gsa.gov>",
   "preferGlobal": false,
@@ -42,6 +42,6 @@
     "doc": "doc"
   },
   "scripts": {
-    "test": "node test/*"
+    "test": "mocha"
   }
 }
