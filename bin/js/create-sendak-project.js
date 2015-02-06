@@ -1,45 +1,33 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
-var rrm      = require( 'rrm' );
-var metadata = rrm.new_object( 'Project' );
+var meta = function () {
+	return {
+		'args' : {
+			'project-name'        : [ String,  'The ssh key name (not filename) you would use to log into this node with.' ],
+			'with-github-project' : [ String,  'The github project name associated with this' ],
+			'with-user'           : [ String,  'A security group or several security groups that apply to this node.' ],
+			'with-vpc'            : [ String,  'Specify the vpc this project should be associated with' ],
+			'create-vpc'          : [ Boolean, 'Create a VPC specifically for this project (this is an IAM call)' ]
+		},
 
-var parsed = require( 'sendak-usage' ).parsedown( {
-	'project-name' : {
-		'description' : 'The ssh key name (not filename) you would use to log into this node with.',
-		'type'        : [ String ]
-	},
-	'with-github-project' : {
-		'description' : 'The github project name associated with this',
-		'type'        : [ String, Array ],
-	},
-	'with-user' : {
-		'type'        : [ String ],
-		'description' : 'A security group or several security groups that apply to this node.',
-	},
-	'with-vpc' : {
-		'type'        : [ String ],
-		'description' : 'Specify the vpc this project should be associated with',
-	},
-	'create-vpc' : {
-		'description' : 'Create a VPC specifically for this project (this is an IAM call)',
-		'type'        : [ Boolean ],
-	},
-	'help' : {
-		'description' : 'Halp the user.',
-		'type'        : [ Boolean ]
+		'name'     : 'create-sendak-project',
+		'abstract' : 'creates a \'super-project\' or \'parent project\' in Sendak',
+		'broken'   : true
 	}
-}, process.argv )
-	, nopt  = parsed[0]
-	, usage = parsed[1];
+};
 
-if (nopt['help']) {
-	// Be halpful
-	//
-	console.log( 'Usage: ' );
-	console.log( usage );
-	process.exit(0); // success
+
+var plug = function (args) {
+	var Sendak   = require( '../../lib/js/sendak.js' )
+		, rrm      = Sendak.rrm
+		, metadata = rrm.new_object( 'project' )
+		, logger   = Sendak.getlogger()
+		, stdout   = Sendak.stdout
+		, stderr   = Sendak.stderr
+
+	stderr( 'this is not written yet; see notes.' );
 }
 
 /*
@@ -48,3 +36,8 @@ if (nopt['help']) {
 	 * Verify the github project exists. ("grep")
 	 * Apply new object if that's successful
 */
+
+module.exports = plug;
+plug.meta      = meta;
+
+// jane@cpan.org // vim:tw=80:ts=2:noet

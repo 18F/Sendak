@@ -11,9 +11,7 @@ var config = {
 			"type": "console",
 			"layout": {
 				"type": "pattern",
-				// Cribbed from ASF:
-				//   http://logging.apache.org/log4j/2.x/manual/configuration.html
-				'pattern': '%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n',
+				'pattern': '%d{ABSOLUTE} [%[%5.5p%]] [%12c] - %m',
 				"tokens": {
 					"pid" : function() { return process.pid; }
 				}
@@ -24,7 +22,7 @@ var config = {
 
 log4js.configure( config, {} );
 
-var logger = log4js.getLogger( 'Sendak' );
+var logger = log4js.getLogger( 'Sendak' )
 	, logwrap = {
 		debug : function (s) { if (process.env.DEBUG != undefined) { logger.debug(s) } },
 		info  : function (s) { if (process.env.DEBUG != undefined) { logger.info(s) } },

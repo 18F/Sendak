@@ -1,84 +1,43 @@
 #!/usr/bin/env node
-// List the Sendak nodes in the (od)ORM.
-//
 
-"use strict";
+'use strict';
 
-// parse opts
-//
-var parsed = require( 'sendak-usage' ).parsedown( {
-	'name' : {
-		'type'         : [ Boolean ],
-		'description'  : 'display name (production Project node foo)',
-	},
-	'serial' : {
-		'type'         : [ Boolean ],
-		'description'  : 'display serial (a7e13e2ead5803c43e9dc1c73259402e2feb47c10aeec55a37c6526c75dd2112)',
-	},
-	'instance-id' : {
-		'type'         : [ Boolean ],
-		'description'  : 'display instance id (i-3f81fcd4)',
-	},
-	'availability-zone' : {
-		'type'         : [ Boolean ],
-		'description'  : 'display availability zone (us-east-1a)',
-	},
-	'raw' : {
-		'type'         : [ Boolean ],
-		'description'  : 'display as csv instead of json',
-	},
-	'help' : {
-		'description' : 'Halp the user.',
-		'type'        : [ Boolean ]
+var meta = function () {
+	return {
+		'args' : {
+			'name'              : [ Boolean, 'display name (production Project node foo)'   ],
+			'serial'            : [ Boolean, 'display serial (XUkJrwJvuh0o3OyPPxPeBM4pyrO)' ],
+			'instance-id'       : [ Boolean, 'display instance id (i-3f81fcd4)'             ],
+			'availability-zone' : [ Boolean, 'display availability zone (us-east-1a)'       ]
+		},
+
+		'abstract' : 'lists nodes (instances) Sendak knows about.',
+		'name'     : 'list-sendak-nodes'
 	}
-}, process.argv )
-	, nopt  = parsed[0]
-	, usage = parsed[1];
+};
 
-if (nopt['help']) {
-	// Be halpful
-	//
-	console.log( 'Usage: ' );
-	console.log( usage );
-	process.exit(0); // success
+var plug = function (args) {
+	var Sendak  = require( '../../lib/js/sendak.js' )
+		, stdout  = Sendak.stdout
+		, rrm     = Sendak.rrm
+		, pnodes  = rrm.get_objects( 'node' )
+		, display = [ ]
+		, q       = require( 'q' )
+
+	pnodes.then( function (nodes) { nodes.forEach( function (node) {
+		var record = { };
+		Object.keys( node ).forEach( function (attribute) {
+			if (node[attribute]) {
+				record[attribute] = node[attribute];
+			}
+		} );
+		display.push( record );
+	} ) } );
+
+	stdout( display );
 }
 
-// ORM &c
-//
-var rrm = require( 'rrm' );
+module.exports = plug;
+plug.meta      = meta;
 
-// Supplemental Sendak stuff
-//
-var supp = require( 'components/common/js/supplemental.js' );
-
-var nodes = rrm.get_objects( 'Node' );
-
-var display = [ ];
-
-for (var idx in nodes) { // {{{
-	var record = { };
-	if (nopt['name']) {
-		record['name'] = nodes[idx]['name']
-	}
-	if (nopt['serial']) {
-		record['serial'] = nodes[idx]['serial']
-	}
-	if (nopt['instance-id']) {
-		record['instance_id'] = nodes[idx]['instance_id']
-	}
-	if (nopt['availability-zone']) {
-		record['availability_zone'] = nodes[idx]['availability_zone']
-	}
-	display.push( record )
-} // iterate nodes }}}
-if (nopt['raw']) { // display raw {{{
-	// XXX: raw is broken until the keys are normalised with -'s instead of _'s.
-	//
-	for (var idx in display) {
-		var output = supp.display_raw( display[ idx ], Object.keys( nopt ) );
-		console.log( output ) ;
-	} // iterate display
-} // }}} display raw
-else {
-	console.log( display )
-} // if raw
+// jane@cpan.org // vim:tw=80:ts=2:noet

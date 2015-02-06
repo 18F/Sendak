@@ -23,18 +23,18 @@
     "cloud"
   ],
   "dependencies": {
-    "nopt": "*",
     "log4js": "*",
-    "deep-grep": ">=0.3.5",
-    "rrm": ">=0.1.0",
-    "sendak-usage": ">=0.0.6",
     "aws-sdk": "*",
-    "riak-dc": ">=0.2.7",
     "mocha" : "*",
     "chai"  : "*",
     "chai-as-promised" : "*",
     "github" : "*",
-    "q": "*"
+    "q": "*",
+    "deep-grep": ">=0.3.5",
+    "rrm": ">=0.1.0",
+    "sendak-usage": ">=0.0.6",
+    "riak-dc": ">=0.2.7",
+    "plugsuit": ">=0.0.2"
   },
   "homepage": "https://github.com/18F/Sendak",
   "main": "bin/sendak.js",

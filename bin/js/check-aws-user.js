@@ -2,77 +2,65 @@
 // Check to see if a supplied user has the requisite attributes.
 //
 
-"use strict";
+'use strict';
 
-// Load aws-sdk & iam
-//
-var AWS = require('aws-sdk');
+var meta = function () {
+	return {
+		'args' : {
+			'username': [ String, 'Specify username (e.g., JaneArc)' ],
+			'pattern' : [ String, 'Display only usernames matching a (Node RegExp) pattern' ]
+		},
 
-var iam = new AWS.IAM( );
-
-// parse opts
-//
-var parsed = require( 'sendak-usage' ).parsedown( {
-	'username'   : {
-		'description' : 'Specify username (e.g., JaneAvriette)',
-		'type'        : [ String ]
-	},
-	'raw' : {
-		'type'        : [ Boolean ],
-		'description' : 'Just display the records without json (csv)',
-	},
-	'pattern' : {
-		'type'        : [ String ],
-		'description' : 'Display only usernames matching a (Node RegExp) pattern',
-	},
-	'help' : {
-		'description' : 'Halp the user.',
-		'type'        : [ Boolean ]
-	},
-}, process.argv )
-	, nopt  = parsed[0]
-	, usage = parsed[1]
-
-if (nopt['help']) {
-	// Be halpful
-	//
-	console.log( 'Usage: ' );
-	console.log( usage );
-	process.exit(0); // success
+		'abstract' : 'verifies certain characteristics (such as MFA) on aws users',
+		'name'     : 'check-aws-user'
+	}
 }
 
-iam.listUsers( { },
-	function( err, data ) {
-		if (err) {
-			console.log( err, err.stack )
-		}
-		else {
-			var users = data.Users;
-			var iam_users = [ ];
+var plug = function (args) {
+	var Sendak = require( '../../lib/js/sendak.js' )
+		, iam    = Sendak.iam
+		, stdout = Sendak.stdout
+		, stderr = Sendak.stderr
+		, dg     = require( 'deep-grep' )
 
-			require( 'deep-grep' ).deeply( data.Users, function (t) {
-				if (nopt['username']) {
-					return (t == nopt['username']) ? t : false
-				}
-				else if (nopt['pattern']) {
-					if ( new RegExp( nopt['pattern'] ).exec( t.UserName ) ) {
-						return t;
+	iam.listUsers( { },
+		function( err, data ) {
+			if (err) {
+				console.log( err, err.stack )
+			}
+			else {
+				var users = data.Users;
+				var iam_users = [ ];
+
+				dg.deeply( data.Users, function (t) {
+					if (args['username']) {
+						return (t == args['username']) ? t : false
+					}
+					else if (args['pattern']) {
+						if ( new RegExp( args['pattern'] ).exec( t.UserName ) ) {
+							return t;
+						}
+						else {
+							return false;
+						}
 					}
 					else {
-						return false;
+						return t;
 					}
-				}
-				else {
 					return t;
-				}
-				return t;
-			}, { } ).forEach( function (user) {
-				iam.listMFADevices( { 'UserName' : user['UserName'] }, function (err, data) {
-					if (data['MFADevices'].length == 0) {
-						console.log( user['UserName'] + ' has no MFA devices configured' );
-					}
+				}, { } ).forEach( function (user) {
+					iam.listMFADevices( { 'UserName' : user['UserName'] }, function (err, data) {
+						if (data['MFADevices'].length == 0) {
+							stdout( user['UserName'] + ' has no MFA devices configured' );
+						}
+					} );
 				} );
-			} );
-		} // if err
-	} // callback
-) // listUsers
+			} // if err
+		} // callback
+	) // listUsers
+}
+
+module.exports = plug;
+plug.meta      = meta;
+
+// jane@cpan.org // vim:tw=80:ts=2:noet

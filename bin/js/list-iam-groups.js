@@ -9,126 +9,73 @@
 
 'use strict';
 
-// Load aws-sdk & iam
-//
-var AWS = require('aws-sdk');
+var meta = function () {
+	return {
+		'args' : {
+			'groupname'   : [ Boolean, 'Display groupname (e.g., Hubot)', ],
+			'create-date' : [ Boolean, 'Display creation date (e.g., 2014-09-18T13:10:52Z)', ],
+			'arn'         : [ Boolean, 'Display arns (e.g., arn:aws:iam::155555555553:group/hubot)', ],
+			'gid'         : [ Boolean, 'Display gids (e.g., AIXXKLJASDEXEXXASDXXE)', ],
+			'raw'         : [ Boolean, 'Just display the records without json (csv)', ]
+		},
 
-var iam = new AWS.IAM();
-
-// parse opts
-//
-var parsed = require( 'sendak-usage' ).parsedown( {
-	'groupname' : {
-		'type'        : [ Boolean ],
-		'description' : 'Display groupname (e.g., Hubot)',
-	},
-	'create-date' : {
-		'type'        : [ Boolean ],
-		'description' : 'Display creation date (e.g., 2014-09-18T13:10:52Z)',
-	},
-	'arn' : {
-		'type'        : [ Boolean ],
-		'description' : 'Display arns (e.g., arn:aws:iam::155555555553:group/hubot)',
-	},
-	'gid' : {
-		'type'        : [ Boolean ],
-		'description' : 'Display gids (e.g., AIXXKLJASDEXEXXASDXXE)',
-	},
-	'raw' : {
-		'type'        : [ Boolean ],
-		'description' : 'Just display the records without json (csv)',
-	},
-	'help' : {
-		'description' : 'Halp the user.',
-		'type'        : [ Boolean ]
+		'name'     : 'list-iam-groups',
+		'abstract' : 'lists groups in iam'
 	}
-}, process.argv )
-	, usage = parsed[1]
-	, nopt  = parsed[0];
+}
 
-if (nopt['help']) { console.log( 'Usage:' + "\n" + usage ); process.exit(0) }
+// TODO: Clean-up and explain that this transforms IAM data into something
+//       that looks more like the Sendak schema
+//
+var plug = function (args) {
+	var Sendak = require( '../../lib/js/sendak.js' )
+		, iam    = Sendak.iam
+		, stdout = Sendak.stdout
+		, stderr = Sendak.stderr
 
-iam.listGroups( { },
-	function( err, data ) {
-		if (err) {
-			console.log( err, err.stack )
-		}
-		else {
-			var groups = data.Groups;
-			var sendak_groups = [ ]; // spoiler: these are not really sendak users right now
-
-			// Transform the AWS IAM data into something more
-			// machine-and-human-readable.
-			//
-			// XXX: Since this task was written the schema has changed.
-			//
-			for (var idx in groups) { // {{{
-				sendak_groups.push( {
-					'group-name'  : groups[idx].GroupName,
-					'arn'         : groups[idx].Arn,
-					'gid'         : groups[idx].GroupId,
-					'create-date' : groups[idx].CreateDate
-				} );
-			} // for groups }}}
-
-			// Display for the user
-			//
-			var display = [ ];
-			for (var idx in sendak_groups) { // {{{
-				var record = { };
-				if (nopt['group-name']) {
-					record['group-name'] = sendak_groups[idx]['group-name']
-				}
-				if (nopt['create-date']) {
-					record['create-date'] = sendak_groups[idx]['create-date']
-				}
-				if (nopt['arn']) {
-					record['arn'] = sendak_groups[idx]['arn']
-				}
-				if (nopt['gid']) {
-					record['gid'] = sendak_groups[idx]['gid']
-				}
-				display.push( record )
-			} // iterate sendak_groups }}}
-			if (nopt['raw']) {
-				// TODO: use raw_display() from Sendak.supplemental
-				//
-				var raw_display = '';
-				for (var idx in display) {
-					// Construct the raw display, element by element, and give the user
-					// (which we assume to be a shell script).
-					//
-					if (display[idx]['group-name']) {
-						if (raw_display.length) {
-							raw_display = raw_display + ',' ;
-						}
-						raw_display = raw_display + display[idx]['group-name'] ;
-					}
-					if (display[idx]['create-date']) {
-						if (raw_display.length) {
-							raw_display = raw_display + ',' ;
-						}
-						raw_display = raw_display + display[idx]['create-date'] ;
-					}
-					if (display[idx]['arn']) {
-						if (raw_display.length) {
-							raw_display = raw_display + ',' ;
-						}
-						raw_display = raw_display + display[idx]['arn'] ;
-					}
-					if (display[idx]['gid']) {
-						if (raw_display.length) {
-							raw_display = raw_display + ',' ;
-						}
-						raw_display = raw_display + display[idx]['gid'] ;
-					}
-					console.log( raw_display ) ;
-					raw_display = '' ; // for some reason this was not getting de-scoped
-				} // iterate display
+	iam.listGroups( { },
+		function( err, data ) {
+			if (err) {
+				stderr( err, err.stack )
 			}
 			else {
-				console.log( display )
-			} // if raw
-		} // if err
-	} // callback
-) // listgroups
+				var groups = data.Groups;
+				var sendak_groups = [ ];
+
+				groups.forEach( function (group) {
+					sendak_groups.push( {
+						'group-name'  : group.GroupName,
+						'arn'         : group.Arn,
+						'gid'         : group.GroupId,
+						'create-date' : group.CreateDate
+					} );
+				} );
+
+				var display = [ ];
+				sendak_groups.forEach( function (group) {
+					var record = { };
+					if (args['group-name']) {
+						record['group-name'] = group['group-name']
+					}
+					if (args['create-date']) {
+						record['create-date'] = group['create-date']
+					}
+					if (args['arn']) {
+						record['arn'] = group['arn']
+					}
+					if (args['gid']) {
+						record['gid'] = group['gid']
+					}
+					display.push( record )
+				} );
+
+				stdout( display )
+			} // if err
+		} // callback
+	) // listgroups
+}
+
+module.exports = plug;
+plug.meta      = meta;
+
+// jane@cpan.org // vim:tw=80:ts=2:noet

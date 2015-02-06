@@ -5,7 +5,7 @@
 
 var global = { };
 
-global.logger = require( 'etc/log4js.js' ).getlogger();
+global.logger = require( '../etc/log4js.js' ).getlogger();
 
 module.exports = {
 	getcf:     function () { return global },
