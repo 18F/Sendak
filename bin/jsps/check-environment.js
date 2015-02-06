@@ -24,6 +24,7 @@ var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
 		, github = Sendak.github
 		, riak   = Sendak.riak
+		, rrm    = Sendak.rrm
 		, ec2    = Sendak.ec2
 		, iam    = Sendak.iam
 		, logger = Sendak.getlogger()
