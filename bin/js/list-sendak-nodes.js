@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-// List the Sendak nodes in the (od)ORM.
-//
 
 "use strict";
 
@@ -47,10 +45,6 @@ if (nopt['help']) {
 //
 var rrm = require( 'rrm' );
 
-// Supplemental Sendak stuff
-//
-var supp = require( 'components/common/js/supplemental.js' );
-
 var nodes = rrm.get_objects( 'Node' );
 
 var display = [ ];
@@ -71,14 +65,5 @@ for (var idx in nodes) { // {{{
 	}
 	display.push( record )
 } // iterate nodes }}}
-if (nopt['raw']) { // display raw {{{
-	// XXX: raw is broken until the keys are normalised with -'s instead of _'s.
-	//
-	for (var idx in display) {
-		var output = supp.display_raw( display[ idx ], Object.keys( nopt ) );
-		console.log( output ) ;
-	} // iterate display
-} // }}} display raw
-else {
-	console.log( display )
-} // if raw
+
+console.log( display )
