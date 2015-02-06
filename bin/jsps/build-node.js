@@ -22,6 +22,8 @@ var meta = function () {
 
 		'abstract' : 'build nodes in aws',
 		'name'     : 'build-node'
+	}
+}
 
 var build_instance = function( args, callback ) { // {{{
 	// 'args' should be a dictionary containing
@@ -110,9 +112,6 @@ var build_instance = function( args, callback ) { // {{{
 	
 	}; // params for runInstances
 
-
-	// console.log( launch_params ); // XXX: broken in references below
-
 	ec2.runInstances( launch_params, function(ri_err, data) {
 		if (ri_err) {
 			callback( ri_err, ri_err.stack );
@@ -166,38 +165,32 @@ var plug = function (args) {
 
 	var this_node = build_instance( // {{{
 		{
-			// TODO: Fix this to use a map from the defaults hash use with nopt, above
-			//
-			// TODO: autoburn
-			//
-			// TODO: optionally list associated volumes
-			//
-			ssh_key_name    : nopt[ 'ssh-key-name' ]    ? nopt[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
-			security_groups : nopt[ 'security-groups' ] ? nopt[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
-			subnet          : nopt[ 'subnet' ]          ? nopt[ 'subnet' ]          : 'subnet-bd4d85ca',
+			ssh_key_name    : args[ 'ssh-key-name' ]    ? args[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
+			security_groups : args[ 'security-groups' ] ? args[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
+			subnet          : args[ 'subnet' ]          ? args[ 'subnet' ]          : 'subnet-bd4d85ca',
 
-			ami_id          : nopt[ 'ami-id' ]          ? nopt[ 'ami-id' ]          : 'ami-020bc76a',
-			instance_type   : nopt[ 'instance-type' ]   ? nopt[ 'instance-type' ]   : 't1.micro',
-			protect         : nopt[ 'protect' ]         ? nopt[ 'protect' ]         : false
+			ami_id          : args[ 'ami-id' ]          ? args[ 'ami-id' ]          : 'ami-020bc76a',
+			instance_type   : args[ 'instance-type' ]   ? args[ 'instance-type' ]   : 't1.micro',
+			protect         : args[ 'protect' ]         ? args[ 'protect' ]         : false
 		},
 		function (ec2_result, stack) {
 			if (stack) {
-				console.log( 'error during node creation: ' + stack );
+				console.log( 'error during node creation: '.concat( stack ) );
 				process.exit(-255);
 			}
 			else {
 				// So we have successfully created an actual node, but let's get its information and
 				// put it in Riak
 				//
-				var metadata = rrm.new_object( 'Node' );
+				var metadata = rrm.new_object( 'node' );
 
 				metadata['name']              = ec2_result['hostname'];
-				metadata['instance_id']       = ec2_result['instance_id'];
-				metadata['availability_zone'] = ec2_result['availability_zone'];
+				metadata['instance-id']       = ec2_result['instance_id'];
+				metadata['availability-zone'] = ec2_result['availability_zone'];
 
-				rrm.add_object( 'Node', metadata ).then( function (serial) {
+				rrm.add_object( 'node', metadata ).then( function (serial) {
 					console.log(
-						'Node ' + metadata['instance_id'] + ' created (Riak ID: ' + serial +
+						'Node ' + metadata['instance-id'] + ' created (Riak ID: ' + serial +
 						') : ssh ubuntu@' +
 						ec2_result['public_ip']
 					)
