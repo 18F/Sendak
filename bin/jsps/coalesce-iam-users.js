@@ -1,61 +1,70 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
-var AWS      = require( 'aws-sdk' )
-	, iam      = new AWS.IAM( )
-	, rrm      = require( 'rrm' )
-	, fs       = require( 'fs' )
-	, parsed   = require( 'sendak-usage' ).parsedown( {
-		'dont'   : { 'type' : [ Boolean ], 'description' : 'don\'t actually do this thing.' },
-		'help'   : { 'type' : [ Boolean ], 'description' : 'Halp the user.' }
-} , process.argv )
-	, nopt     = parsed[0]
-	, usage    = parsed[1]
-	, susers   = [ ]
-	, excludes = { }
+var meta = function () {
+	return {
+		'args' : {
+			'dont' : [ Boolean, 'don\'t actually do this thing.' ],
+		},
 
-if (fs.existsSync( 'etc/excludes.json' )) {
-	JSON.parse( fs.readFileSync( 'etc/excludes.json' ).toString() )
-		.forEach( function (user) {
-			excludes[ user ] = true;
-		} )
+		'abstract' : 'Take AWS IAM users and create \'accounts\' for them in Sendak\'s rrm',
+		'name'     : 'coalesce-sendak-users'
+	}
 }
 
-if (nopt['help']) { console.log(  usage ); process.exit(0); }
+var plug = function (args) {
+	var Sendak = require( '../../lib/js/sendak.js' )
+		, rrm    = Sendak.rrm
+		, iam    = Sendak.iam
+		, stdout = Sendak.stdout
+		, logger = Sendak.getlogger()
+		, fs       = require( 'fs' )
+		, susers   = [ ]
+		, excludes = { }
 
-iam.listUsers( { },
-	function( err, data ) {
-		if (err) {
-			console.log( err, err.stack )
-		}
-		else {
-			data.Users.forEach( function (user) { // {{{
-				if (!excludes[user.UserName]) {
-					var suser = rrm.new_object( 'user' );
-					suser['user-name'] = user.UserName;
-					suser['arn']       = user.Arn;
-					suser['user-id']   = user.UserId;
+	// TODO: Put this in Sendak.cf
+	//
+	if (fs.existsSync( 'etc/excludes.json' )) {
+		JSON.parse( fs.readFileSync( 'etc/excludes.json' ).toString() )
+			.forEach( function (user) {
+				excludes[ user ] = true;
+			} )
+	}
 
-					suser['name']      =  name_split( suser['user-name'] );
+	iam.listUsers( { },
+		function( err, data ) {
+			if (err) {
+				console.log( err, err.stack )
+			}
+			else {
+				data.Users.forEach( function (user) { // {{{
+					if (!excludes[user.UserName]) {
+						var suser = rrm.new_object( 'user' );
+						suser['user-name'] = user.UserName;
+						suser['arn']       = user.Arn;
+						suser['user-id']   = user.UserId;
 
-					susers.push( suser );
-				}
-			} ); // }}} iam.listUsers.Users.forEach
-		} // if err
-		if (nopt['dont']) {
-			// TODO: Logging facility
-			console.log( JSON.stringify( susers, null, 2 ) );
-		}
-		else {
-			susers.forEach( function (user) {
-				rrm.add_object( 'user', user ).then( function (s) {
-					console.log( user.name.name + ' object stored with serial ' + s );
+						suser['name']      =  name_split( suser['user-name'] );
+
+						susers.push( suser );
+					}
+				} ); // }}} iam.listUsers.Users.forEach
+			} // if err
+			if (args['dont']) {
+				// TODO: Logging facility
+				console.log( JSON.stringify( susers, null, 2 ) );
+			}
+			else {
+				susers.forEach( function (user) {
+					rrm.add_object( 'user', user ).then( function (s) {
+						console.log( user.name.name + ' object stored with serial ' + s );
+					} );
 				} );
-			} );
-		}
-	} // callback from listUsers
-) // listUsers
+			}
+		} // callback from listUsers
+	) // listUsers
+}
 
 function name_split ( name ) {
 	var nothing_found = true;
@@ -140,10 +149,13 @@ function name_split ( name ) {
 		found = new Error( 'Software is hard. ' + name + ' could not be parsed. Sorry.' );
 	}
 	else {
-		// TODO: Add default log facility (tbd with @dlapiduz as of 2 jan 15
-		//
-		// console.log( 'successfully parsed ' + name + ' into ' + found.name )
+		logger.debug( 'successfully parsed '.concat(name, ' into ', found.name ) );
 	}
 
 	return found;
 }
+
+module.exports = plug;
+plug.meta      = meta;
+
+// jane@cpan.org // vim:tw=80:ts=2:noet
