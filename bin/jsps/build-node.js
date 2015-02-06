@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
 /*
 
@@ -9,53 +9,19 @@
 
 */
 
-var parsed = require( 'sendak-usage' ).parsedown( {
-	'ssh-key-name' : {
-		'description' : 'The ssh key name (not filename) you would use to log into this node with.',
-		'type'        : [ String ]
-	},
-	'security-groups' : {
-		'description' : 'A security group or several security groups that apply to this node.',
-		'type'        : [ String, Array ]
-	},
-	'subnet' : {
-		'description' : 'The subnet [implies vpc] where this node should reside.',
-		'type'        : [ String ]
-	},
-	'ami-id' : {
-		'description' : 'The amazon AMI you would have burned onto this node.',
-		'type'        : [ String ]
-	},
-	'instance-type' : {
-		'description' : 'The type of instance for the node.',
-		'type'        : [ String ]
-	},
-	'protect' : {
-		'description' : 'Whether this node should have instance termination protection.',
-		'type'        : [ Boolean ]
-	},
-	'autoburn' : {
-		'description' : 'Whether this node should be terminated upon launch (useful for "burner" nodes).',
-		'type'        : [ Boolean ]
-	},
-	'help' : {
-		'description' : 'Halp the user.',
-		'type'        : [ Boolean ]
-	},
-}, process.argv )
-	, nopt  = parsed[0]
-	, usage = parsed[1];
+var meta = function () {
+	return {
+		'args' : {
+			'ssh-key-name'    : [ String,  'The ssh key name (not filename) you would use to log into this node with.' ],
+			'security-groups' : [ String,  'A security group to apply to this node.' ],
+			'subnet'          : [ String,  'The subnet [implies vpc] where this node should reside.' ],
+			'ami-id'          : [ String,  'The amazon AMI you would have burned onto this node.' ],
+			'instance-type'   : [ String,  'The type of instance for the node.' ],
+			'protect'         : [ Boolean, 'Whether this node should have instance termination protection.' ]
+		},
 
-
-if (nopt['help']) {
-	// Be halpful
-	//
-	console.log( 'Usage: ' );
-	console.log( usage );
-	process.exit(0); // success
-}
-
-// TODO: Add 'self-destruct-upon-task' flag for constructor
+		'abstract' : 'build nodes in aws',
+		'name'     : 'build-node'
 
 var build_instance = function( args, callback ) { // {{{
 	// 'args' should be a dictionary containing
@@ -101,7 +67,7 @@ var build_instance = function( args, callback ) { // {{{
 	// This is the infrastructure cloud, where Sendak lives.
 	//
 	var vpc_id   = 'vpc-c03d95a5';
-	var hostname = 'sendak-subnode-' + frag;
+	var hostname = 'sendak-subnode-'.concat( frag );
 	
 	var launch_params = {
 		// Required:
@@ -193,51 +159,55 @@ var build_instance = function( args, callback ) { // {{{
 	} ) // runInstances
 } // }}} build_instance
 
-// Load the AWS SDK for Node.js & grab an ec2 interface
-//
-var AWS = require('aws-sdk');
-var ec2 = new AWS.EC2();
-var rrm = require( 'rrm' );
+var plug = function (args) {
+	var Sendak = require( '../../lib/js/sendak.js' )
+		, ec2    = Sendak.ec2
+		, rrm    = Sendak.rrm
 
-var this_node = build_instance(
-	{
-		// TODO: Fix this to use a map from the defaults hash use with nopt, above
-		//
-		// TODO: autoburn
-		//
-		// TODO: optionally list associated volumes
-		//
-		ssh_key_name    : nopt[ 'ssh-key-name' ]    ? nopt[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
-		security_groups : nopt[ 'security-groups' ] ? nopt[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
-		subnet          : nopt[ 'subnet' ]          ? nopt[ 'subnet' ]          : 'subnet-bd4d85ca',
-
-		ami_id          : nopt[ 'ami-id' ]          ? nopt[ 'ami-id' ]          : 'ami-020bc76a',
-		instance_type   : nopt[ 'instance-type' ]   ? nopt[ 'instance-type' ]   : 't1.micro',
-		protect         : nopt[ 'protect' ]         ? nopt[ 'protect' ]         : false
-	},
-	function (ec2_result, stack) {
-		if (stack) {
-			console.log( 'error during node creation: ' + stack );
-			process.exit(-255);
-		}
-		else {
-			// So we have successfully created an actual node, but let's get its information and
-			// put it in Riak
+	var this_node = build_instance( // {{{
+		{
+			// TODO: Fix this to use a map from the defaults hash use with nopt, above
 			//
-			var metadata = rrm.new_object( 'Node' );
+			// TODO: autoburn
+			//
+			// TODO: optionally list associated volumes
+			//
+			ssh_key_name    : nopt[ 'ssh-key-name' ]    ? nopt[ 'ssh-key-name' ]    : 'jane-fetch-aws-root',
+			security_groups : nopt[ 'security-groups' ] ? nopt[ 'security-groups' ] : [ 'sg-d5f1a7b0', 'sg-5ca8f939' ],
+			subnet          : nopt[ 'subnet' ]          ? nopt[ 'subnet' ]          : 'subnet-bd4d85ca',
 
-			metadata['name']              = ec2_result['hostname'];
-			metadata['instance_id']       = ec2_result['instance_id'];
-			metadata['availability_zone'] = ec2_result['availability_zone'];
+			ami_id          : nopt[ 'ami-id' ]          ? nopt[ 'ami-id' ]          : 'ami-020bc76a',
+			instance_type   : nopt[ 'instance-type' ]   ? nopt[ 'instance-type' ]   : 't1.micro',
+			protect         : nopt[ 'protect' ]         ? nopt[ 'protect' ]         : false
+		},
+		function (ec2_result, stack) {
+			if (stack) {
+				console.log( 'error during node creation: ' + stack );
+				process.exit(-255);
+			}
+			else {
+				// So we have successfully created an actual node, but let's get its information and
+				// put it in Riak
+				//
+				var metadata = rrm.new_object( 'Node' );
 
-			rrm.add_object( 'Node', metadata ).then( function (serial) {
-				console.log(
-					'Node ' + metadata['instance_id'] + ' created (Riak ID: ' + serial +
-					') : ssh ubuntu@' +
-					ec2_result['public_ip']
-				)
-			} )
-		}
-	} // callback to build_instance
-); // this_node = build_instance
+				metadata['name']              = ec2_result['hostname'];
+				metadata['instance_id']       = ec2_result['instance_id'];
+				metadata['availability_zone'] = ec2_result['availability_zone'];
 
+				rrm.add_object( 'Node', metadata ).then( function (serial) {
+					console.log(
+						'Node ' + metadata['instance_id'] + ' created (Riak ID: ' + serial +
+						') : ssh ubuntu@' +
+						ec2_result['public_ip']
+					)
+				} )
+			}
+		} // callback to build_instance
+	); // this_node = build_instance }}}
+}
+
+module.exports = plug;
+plug.meta      = meta;
+
+// jane@cpan.org // vim:tw=80:ts=2:noet
