@@ -1,6 +1,7 @@
 # Developing Sendak
 
-Help for people working on Sendak. You should be familiar with the [usage](README.md#usage) and [setup process](README#setting-up-sendak)
+Help for people working on Sendak. You should be familiar with the
+[usage](README.md#usage) and [setup process](README#setting-up-sendak)
 
 ## What is all this stuff
 
