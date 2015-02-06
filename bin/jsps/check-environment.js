@@ -2,7 +2,7 @@
 // (very) simple healthchecks for the sendak environment
 //
 
-"use strict";
+'use strict';
 
 var meta = function () {
 	return {
@@ -26,6 +26,7 @@ var plug = function (args) {
 		, riak   = Sendak.riak
 		, ec2    = Sendak.ec2
 		, iam    = Sendak.iam
+		, logger = Sendak.getlogger()
 		, stdout = Sendak.stdout
 		, stderr = Sendak.stderr
 		, q      = require( 'q' )
@@ -40,12 +41,14 @@ var plug = function (args) {
 
 	var checks = {
 		'riak' : function () {
+			logger.debug( 'checking riak status' );
 			return riak.ping().then( function (r) { return r } );
 		},
 		'github' : function () {
 			var deferred = q.defer()
 				, health   = undefined;
 
+			logger.debug( 'checking github status' );
 			// And of course octocat has followers.
 			//
 			deferred.resolve( health );
@@ -60,6 +63,8 @@ var plug = function (args) {
 		'aws' : function () {
 			var rvals  = [ undefined, undefined ]
 				, deferred = q.defer();
+
+			logger.debug( 'checking aws status' );
 
 			// So, technically, these tests don't prove anything. But we need to have
 			// both ec2 and iam access for Sendak to verb any nouns.
@@ -86,6 +91,8 @@ var plug = function (args) {
 		'rrm' : function () {
 			var deferred = q.defer();
 
+			logger.debug( 'checking rrm status' );
+
 			return q.all( function () {
 				return rrm.get_schema().then( function (f) { return f } )
 			} );
@@ -102,5 +109,8 @@ var plug = function (args) {
 		}
 	} );
 }
+
+module.exports = plug;
+plug.meta      = meta;
 
 // jane@cpan.org // vim:tw=80:ts=2:noet
