@@ -32,14 +32,6 @@ var plug = function (args) {
 		, stderr = Sendak.stderr
 		, q      = require( 'q' )
 
-	if (args['help']) {
-		// Be halpful
-		//
-		console.log( 'Usage: ' );
-		console.log( usage );
-		process.exit(0); // success
-	}
-
 	var checks = {
 		'riak' : function () {
 			logger.debug( 'checking riak status' );

@@ -31,9 +31,9 @@
     "github" : "*",
     "q": "*",
     "deep-grep": ">=0.3.5",
-    "rrm": ">=0.1.0",
+    "rrm": ">=0.1.1",
     "sendak-usage": ">=0.0.6",
-    "riak-dc": ">=0.2.7",
+    "riak-dc": ">=0.2.8",
     "plugsuit": ">=0.0.2"
   },
   "homepage": "https://github.com/18F/Sendak",
