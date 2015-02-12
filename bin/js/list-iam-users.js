@@ -22,61 +22,14 @@ var plug = function (args) {
 		, stdout = Sendak.stdout
 		, stderr = Sendak.stderr
 
-	iam.listUsers( { },
-		function( err, data ) {
-			if (err) {
-				stderr( err, err.stack )
-			}
-			else {
-				var users = data.Users;
-				var iam_users = [ ];
+	var users = Sendak.users.iam.get( args );
 
-				// Transform the AWS IAM data into something more
-				// machine-and-human-readable.
-				//
-				users.forEach( function (user) { // {{{
-					if (args['pattern']) {
-						if (new RegExp( args['pattern'], 'i' ).exec( user.UserName )) {
-							// Found a match
-							iam_users.push( {
-								'user-name' : user.UserName,
-								'arn'       : user.Arn,
-								'uid'       : user.UserId
-							} );
-						}
-						else {
-							// nop
-						}
-					}
-					else {
-						iam_users.push( {
-							'user-name' : user.UserName,
-							'arn'       : user.Arn,
-							'uid'       : user.UserId
-						} );
-					} // if args
-				} ); // users.forEach }}}
-
-				// Display for the user
-				//
-				var display = [ ];
-				iam_users.forEach( function (iam_user) { // {{{
-					var record = { };
-					if (args['user-name']) {
-						record['user-name'] = iam_user['user-name']
-					}
-					if (args['arn']) {
-						record['arn'] = iam_user['arn']
-					}
-					if (args['uid']) {
-						record['uid'] = iam_user['uid']
-					}
-					display.push( record )
-				} ); // iterate iam_users }}}
-				console.log( display );
-			} // if err
-		} // callback
-	); // listUsers
+	if (users.length < 1) {
+		stderr( 'failed to retrieve any users.' );
+	}
+	else {
+		stdout( users );
+	}
 }
 
 module.exports = plug;
