@@ -24,6 +24,8 @@ var plug = function (args) {
 
 	var users = Sendak.users.iam.get( args );
 
+	// Note: this returns a *promise* not a thing.
+	//
 	if (users.length < 1) {
 		stderr( 'failed to retrieve any users.' );
 	}

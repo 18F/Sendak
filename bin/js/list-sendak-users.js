@@ -18,36 +18,20 @@ var meta = function () {
 
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
-		, rrm    = Sendak.rrm
+		, users  = Sendak.users.sendak.get( args )
 		, stdout = Sendak.stdout
-		, dg     = require( 'deep-grep' )
+		, stderr = Sendak.stderr;
 
 	var results = [ ];
 
-	var pusers = rrm.get_objects( 'user' ).then( function ( users ) {
-		users.forEach( function (user) {
-			var json = JSON.parse( user );
-			var result = { };
-			Object.keys( args ).forEach( function (req_key) {
-				if (json.hasOwnProperty( req_key )) { result[req_key] = json[req_key] }
-			} )
-			results.push( result )
-		} )
-		if (args['pattern']) {
-			console.log( dg.deeply(
-				results,
-				function (k) { if (k.toString().match( args['pattern'] )) { return true } },
-				{
-					'return-hash-tuples' : true,
-					'check-values'       : true,
-					'check-keys'         : false
-				}
-			) )
-		}
-		else {
-			console.log( results );
-		}
-	} );
+	// Note: this returns a *promise* not a thing.
+	//
+	if (users.length < 1) {
+		stderr( 'failed to retrieve any users.' );
+	}
+	else {
+		stdout( users );
+	}
 }
 
 module.exports = plug;
