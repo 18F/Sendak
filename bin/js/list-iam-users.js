@@ -1,14 +1,12 @@
-#! /usr/bin/env node
-
 'use strict';
 
 var meta = function () {
 	return {
 		'args' : {
-			'user-name' : [ Boolean, 'Display user names (e.g., JaneAvriette)', ],
+			'user-name' : [ Boolean, 'Display user names (e.g., JaneAvriette)' ],
 			'arn'       : [ Boolean, 'Display arns (e.g., arn:aws:iam::141234512345:user/JaneAvriette)', ],
-			'uid'       : [ Boolean, 'Display uids (e.g., AIXXKLJASDEXEXXASDXXE)', ],
-			'pattern'   : [ String,  'Display only user names matching a (Node RegExp) pattern', ]
+			'uid'       : [ Boolean, 'Display uids (e.g., AIXXKLJASDEXEXXASDXXE)' ],
+			'pattern'   : [ String,  'Display only user names matching a (Node RegExp) pattern' ]
 		},
 
 		'name'     : 'list-iam-users',
