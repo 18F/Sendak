@@ -53,6 +53,12 @@ var schema = {
 			distinct  : true,
 			verified  : 'RESERVED',
 		},
+		'github-id' : {
+			isa       : 'string',
+			defined   : true,
+			distinct  : true,
+			verified  : 'RESERVED',
+		},
 		hasmany   : [ 'project', 'group' ],
 	}, // }}} user
 	'node' : { // {{{
