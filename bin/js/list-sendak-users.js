@@ -23,6 +23,8 @@ var plug = function (args) {
 
 	var results = [ ];
 
+	// TODO: Add support for ${CWD|HOME}/etc/excludes.json
+	//       .. or does that go in sendak.cf?
 	pusers.then( function (users) {
 		logger.debug( 'inside promised get_users' );
 		if (users.length < 1) {
