@@ -20,16 +20,20 @@ var plug = function (args) {
 		, stdout = Sendak.stdout
 		, stderr = Sendak.stderr
 
-	var users = Sendak.users.iam.get( args );
+	var pusers = Sendak.users.iam.get( args );
 
 	// Note: this returns a *promise* not a thing.
 	//
-	if (users.length < 1) {
-		stderr( 'failed to retrieve any users.' );
-	}
-	else {
-		stdout( users );
-	}
+	pusers.then( function (users) {
+		if (users.length < 1) {
+			stderr( 'failed to retrieve any users.' );
+		}
+		else {
+			users.forEach( function (user) {
+				stdout( user );
+			} )
+		}
+	} )
 }
 
 module.exports = plug;
