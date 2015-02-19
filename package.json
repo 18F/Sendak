@@ -34,7 +34,7 @@
     "rrm": ">=0.1.1",
     "sendak-usage": ">=0.0.6",
     "riak-dc": ">=0.2.8",
-    "plugsuit": ">=0.0.2"
+    "plugsuit": ">=0.0.4"
   },
   "homepage": "https://github.com/18F/Sendak",
   "main": "bin/sendak.js",
