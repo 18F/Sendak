@@ -16,20 +16,24 @@ var meta = function () {
 
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
-		, users  = Sendak.users.sendak.get( args )
+		, pusers  = Sendak.users.sendak.get( args )
 		, stdout = Sendak.stdout
-		, stderr = Sendak.stderr;
+		, stderr = Sendak.stderr
+		, logger = Sendak.getlogger()
 
 	var results = [ ];
 
-	// Note: this returns a *promise* not a thing.
-	//
-	if (users.length < 1) {
-		stderr( 'failed to retrieve any users.' );
-	}
-	else {
-		stdout( users );
-	}
+	pusers.then( function (users) {
+		logger.debug( 'inside promised get_users' );
+		if (users.length < 1) {
+			stderr( 'failed to retrieve any users.' );
+		}
+		else {
+			users.forEach( function (user) {
+				stdout( user );
+			} )
+		}
+	} )
 }
 
 module.exports = plug;
