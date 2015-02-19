@@ -20,6 +20,7 @@ var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
 		, stdout = Sendak.stdout
 		, stderr = Sendak.stderr
+		, logger = Sendak.getlogger()
 
 	var pusers = Sendak.users.github.get( args );
 
@@ -30,7 +31,7 @@ var plug = function (args) {
 		else {
 			stdout( users );
 		}
-	}
+	} );
 }
 
 module.exports = plug;
