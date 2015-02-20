@@ -37,30 +37,13 @@ var plug = function (args) {
 		, rrm    = Sendak.rrm
 		, stdout = Sendak.stdout
 		, stderr = Sendak.stderr
+		, logger = Sendak.getlogger()
 
 	if (args['user-name']) {
-		var puser = rrm.new_object( 'User' );
-
-		puser.then( function (user) {
-			// Once we have the prototype for a user...
-			// { name: '', arn: '', amznid: '' }
-
-			// This is a placeholder for now. The object has to change a bit.
-			//
-			user['user-name'] = args['user-name'];
-			if (! args['dry-run']) {
-				var pserial = rrm.add_object( 'User', user );
-			}
-
-			stdout( 'User object to create: ', user )
-
-			// So some kind of display formatting would go here.
-			//
-			pserial.then( function (serial) {
-				stdout( 'Serial returned ' + serial );
-			} );
-
-		} ); // promise of user
+		logger.debug( 'attempting to create new user '.concat( args['user-name'] ) );
+		Sendak.users.sendak.create( args ).then( function (user) {
+			stdout( user );
+		} );
 	}
 	else {
 		stderr( 'You need to provide a user name.' );
