@@ -30,7 +30,7 @@
     "chai-as-promised" : "*",
     "github" : "*",
     "q": "*",
-    "deep-grep": ">=0.3.5",
+    "deep-grep": ">=0.4.0",
     "rrm": ">=0.1.2",
     "sendak-usage": ">=0.0.6",
     "riak-dc": ">=0.2.8",
