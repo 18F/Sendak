@@ -20,24 +20,9 @@ var plug = function (args) {
 		, stdout = Sendak.stdout
 		, stderr = Sendak.stderr
 
-	// This is a placeholder
-	//
-	iam.createVirtualMfaDevice( {
-		// Path                 : // This is the path to the user, I think.
-		Path                 : 'arn:aws:iam::144433228153:user/SendakTest',
-		// VirtualMfaDeviceName : // this needs to be unique so check what list-mfa-devices shows and replicate
-		VirtualMfaDeviceName : 'Sendak-Test-Fake-MFA-1',
-		// Outfile              : nopt['output-file']
-		Outfile              : 'sendak-qr.png',
-		BootstrapMethod      : 'QRCodePNG'
-	}, function( err, data ) {
-		if (err) {
-			stderr( err, err.stack )
-		}
-		else {
-
-		}
-	} ); // createVirtualMfaDevice
+	Sendak.users.iam.mfa.create( ).then( function () {
+		stdout( arguments )
+	} );
 }
 
 module.exports = plug;
