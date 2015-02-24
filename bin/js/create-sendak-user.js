@@ -30,8 +30,6 @@ var meta = function () {
 
 */
 
-//   User: '{"name":{"isa":"string","defined":true,"distinct":true},"arn":{"isa":"string","defined":true,"distinct":true,"verified":"RESERVED"},"amznid":{"isa":"string","defined":true,"distinct":true,"verified":"RESERVED"},"hasmany":["Project","Group"]}',
-
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
 		, rrm    = Sendak.rrm
@@ -42,7 +40,9 @@ var plug = function (args) {
 	if (args['user-name']) {
 		logger.debug( 'attempting to create new user '.concat( args['user-name'] ) );
 		Sendak.users.sendak.create( args ).then( function (user) {
-			stdout( user );
+			logger.info( 'user created'.concat(
+				' ', user['user-name'], ' (', user['serial'], ')'
+			) );
 		} );
 	}
 	else {
