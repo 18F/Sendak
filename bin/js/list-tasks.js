@@ -1,5 +1,4 @@
-#! /usr/bin/env node
-// (very) simple healthchecks for the sendak environment
+// list tasks in the sendak bin directory
 //
 
 'use strict';

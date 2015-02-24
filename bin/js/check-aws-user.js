@@ -1,4 +1,3 @@
-#! /usr/bin/env node
 // Check to see if a supplied user has the requisite attributes.
 //
 

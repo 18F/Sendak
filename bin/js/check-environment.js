@@ -1,4 +1,3 @@
-#! /usr/bin/env node
 // (very) simple healthchecks for the sendak environment
 //
 
