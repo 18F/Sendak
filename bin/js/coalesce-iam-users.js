@@ -6,14 +6,14 @@ var meta = function () {
 			'dont' : [ Boolean, 'don\'t actually do this thing.' ],
 		},
 
-		'abstract' : 'Take AWS IAM users and create \'accounts\' for them in Sendak\'s rrm',
+		'abstract' : 'Take AWS IAM users and create \'accounts\' for them in Sendak\'s rm',
 		'name'     : 'coalesce-iam-users'
 	}
 }
 
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
-		, rrm    = Sendak.rrm
+		, rm     = Sendak.rm
 		, iam    = Sendak.iam
 		, stdout = Sendak.stdout
 		, logger = Sendak.getlogger()
@@ -127,7 +127,7 @@ var plug = function (args) {
 			else {
 				data.Users.forEach( function (user) { // {{{
 					if (!excludes[user.UserName]) {
-						var suser = rrm.new_object( 'user' );
+						var suser = rm.new_object( 'user' );
 						suser['user-name'] = user.UserName;
 						suser['arn']       = user.Arn;
 						suser['user-id']   = user.UserId;
@@ -144,7 +144,7 @@ var plug = function (args) {
 			}
 			else {
 				susers.forEach( function (user) {
-					rrm.add_object( 'user', user ).then( function (s) {
+					rm.add_object( 'user', user ).then( function (s) {
 						console.log( user.name.name + ' object stored with serial ' + s );
 					} );
 				} );

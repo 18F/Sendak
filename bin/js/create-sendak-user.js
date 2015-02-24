@@ -30,7 +30,7 @@ var meta = function () {
 
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
-		, rrm    = Sendak.rrm
+		, rm     = Sendak.rm
 		, stdout = Sendak.stdout
 		, stderr = Sendak.stderr
 		, logger = Sendak.getlogger()

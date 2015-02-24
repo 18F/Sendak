@@ -8,7 +8,7 @@ var meta = function () {
 		'args' : {
 			'riak'   : [ Boolean, 'check the riak'   ],
 			'github' : [ Boolean, 'check the github' ],
-			'rrm'    : [ Boolean, 'check the rrm'    ],
+			'rm'     : [ Boolean, 'check the rm'    ],
 			'aws'    : [ Boolean, 'check the aws'    ],
 
 			'all'    : [ Boolean, 'check all things' ],
@@ -23,7 +23,7 @@ var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
 		, github = Sendak.github
 		, riak   = Sendak.riak
-		, rrm    = Sendak.rrm
+		, rm     = Sendak.rm
 		, ec2    = Sendak.ec2
 		, iam    = Sendak.iam
 		, logger = Sendak.getlogger()
@@ -80,13 +80,13 @@ var plug = function (args) {
 
 			return deferred.promise;
 		},
-		'rrm' : function () {
+		'rm' : function () {
 			var deferred = q.defer();
 
-			logger.debug( 'checking rrm status' );
+			logger.debug( 'checking rm status' );
 
 			return q.all( function () {
-				return rrm.get_schema().then( function (f) { return f } )
+				return rm.get_schema().then( function (f) { return f } )
 			} );
 		}
 	};

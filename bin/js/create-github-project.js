@@ -1,7 +1,7 @@
 'use strict';
 
-var rrm      = require( 'rrm' );
-var metadata = rrm.new_object( 'github-project' );
+var rm       = require( 'rm' )
+	, metadata = rm.new_object( 'github-project' );
 
 var meta = function () {
 	return {
@@ -11,13 +11,13 @@ var meta = function () {
 		},
 
 		'name'     : 'create-github-project',
-		'abstract' : 'creates a new record for a project on github in the Sendak rrm'
+		'abstract' : 'creates a new record for a project on github in the Sendak rm'
 	}
 }
 
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
-		, rrm    = Sendak.rrm
+		, rm     = Sendak.rm
 		, logger = Sendak.getlogger()
 		, stdout = Sendak.stdout
 
@@ -25,7 +25,7 @@ var plug = function (args) {
 		metadata['github-project-name'] = args['github-project-name'];
 		metadata['base-url']            = args['base-url'];
 		logger.debug( 'Adding new object to github-project', metadata );
-		rrm.add_object( 'github-project', metadata )
+		rm.add_object( 'github-project', metadata )
 		stdout( JSON.stringify(metadata) );
 		process.exit(0); // success
 	}

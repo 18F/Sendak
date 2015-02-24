@@ -159,7 +159,7 @@ var build_instance = function( args, callback ) { // {{{
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
 		, ec2    = Sendak.ec2
-		, rrm    = Sendak.rrm
+		, rm     = Sendak.rm
 
 	var this_node = build_instance( // {{{
 		{
@@ -180,13 +180,13 @@ var plug = function (args) {
 				// So we have successfully created an actual node, but let's get its information and
 				// put it in Riak
 				//
-				var metadata = rrm.new_object( 'node' );
+				var metadata = rm.new_object( 'node' );
 
 				metadata['name']              = ec2_result['hostname'];
 				metadata['instance-id']       = ec2_result['instance_id'];
 				metadata['availability-zone'] = ec2_result['availability_zone'];
 
-				rrm.add_object( 'node', metadata ).then( function (serial) {
+				rm.add_object( 'node', metadata ).then( function (serial) {
 					console.log(
 						'Node ' + metadata['instance-id'] + ' created (Riak ID: ' + serial +
 						') : ssh ubuntu@' +

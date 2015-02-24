@@ -19,8 +19,8 @@ var meta = function () {
 
 var plug = function (args) {
 	var Sendak   = require( '../../lib/js/sendak.js' )
-		, rrm      = Sendak.rrm
-		, metadata = rrm.new_object( 'project' )
+		, rm       = Sendak.rm
+		, metadata = rm.new_object( 'project' )
 		, logger   = Sendak.getlogger()
 		, stdout   = Sendak.stdout
 		, stderr   = Sendak.stderr
