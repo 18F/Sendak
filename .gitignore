@@ -5,3 +5,4 @@ npm-debug.log
 *.swo
 *.swp
 swap.2gb
+out/**

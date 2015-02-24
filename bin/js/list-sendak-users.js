@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 'use strict';
 
 var meta = function () {
@@ -18,36 +16,26 @@ var meta = function () {
 
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
-		, rrm    = Sendak.rrm
+		, pusers  = Sendak.users.sendak.get( args )
 		, stdout = Sendak.stdout
-		, dg     = require( 'deep-grep' )
+		, stderr = Sendak.stderr
+		, logger = Sendak.getlogger()
 
 	var results = [ ];
 
-	var pusers = rrm.get_objects( 'user' ).then( function ( users ) {
-		users.forEach( function (user) {
-			var json = JSON.parse( user );
-			var result = { };
-			Object.keys( args ).forEach( function (req_key) {
-				if (json.hasOwnProperty( req_key )) { result[req_key] = json[req_key] }
-			} )
-			results.push( result )
-		} )
-		if (args['pattern']) {
-			console.log( dg.deeply(
-				results,
-				function (k) { if (k.toString().match( args['pattern'] )) { return true } },
-				{
-					'return-hash-tuples' : true,
-					'check-values'       : true,
-					'check-keys'         : false
-				}
-			) )
+	// TODO: Add support for ${CWD|HOME}/etc/excludes.json
+	//       .. or does that go in sendak.cf?
+	pusers.then( function (users) {
+		logger.debug( 'inside promised get_users' );
+		if (users.length < 1) {
+			stderr( 'failed to retrieve any users.' );
 		}
 		else {
-			console.log( results );
+			users.forEach( function (user) {
+				stdout( user );
+			} )
 		}
-	} );
+	} )
 }
 
 module.exports = plug;

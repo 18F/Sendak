@@ -1,37 +1,37 @@
+// mostly provided for consistency rather than utility
+//
+
 'use strict';
 
 var meta = function () {
 	return {
 		'args' : {
-			'user-name' : [ Boolean, 'Display user names (e.g., JaneAvriette)' ],
-			'arn'       : [ Boolean, 'Display arns (e.g., arn:aws:iam::141234512345:user/JaneAvriette)', ],
-			'uid'       : [ Boolean, 'Display uids (e.g., AIXXKLJASDEXEXXASDXXE)' ],
+			'user-name' : [ Boolean, 'Display user names (e.g., janearc)' ],
+			'org'       : [ Boolean, 'The org you wish to query for (default: 18F)' ],
 			'pattern'   : [ String,  'Display only user names matching a (Node RegExp) pattern' ]
 		},
 
-		'name'     : 'list-iam-users',
-		'abstract' : 'displays a list of the users in iam with an optionally-supplied pattern'
+		'name'     : 'list-github-users',
+		'abstract' : 'displays a list of the users in github for a given org'
 	}
 };
 
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
-		, iam    = Sendak.iam
 		, stdout = Sendak.stdout
 		, stderr = Sendak.stderr
+		, logger = Sendak.getlogger()
 
-	var pusers = Sendak.users.iam.get( args );
+	var pusers = Sendak.users.github.get( args );
 
 	pusers.then( function (users) {
 		if (users.length < 1) {
 			stderr( 'failed to retrieve any users.' );
 		}
 		else {
-			users.forEach( function (user) {
-				stdout( user );
-			} )
+			stdout( users );
 		}
-	} )
+	} );
 }
 
 module.exports = plug;
