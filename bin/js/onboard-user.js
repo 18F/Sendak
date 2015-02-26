@@ -33,16 +33,70 @@ var meta = function () {
 var plug = function (args) {
 	var Sendak   = require( '../../lib/js/sendak.js' )
 		, iam      = Sendak.iam
+		, rm       = Sendak.rm
 		, stdout   = Sendak.stdout
 		, stderr   = Sendak.stderr
 		, logger   = Sendak.getlogger()
 		, fs       = require('fs')
 		, q        = require('q')
+		, dg       = require('deep-grep')
 
 		// Promises, promises
 		//   https://www.youtube.com/watch?v=H8Q83DPZy6E
 		, def_mfa  = q.defer()
 		, def_file = q.defer()
+
+		// Get an acceptable username and metadata object for the user
+		//
+		, username  = Sendak.users.sendak.util.name_to_userid( args['given-name'], args['sur-name'] )
+		, pmetadata = rm.new_object( 'user' )
+
+		// Get a list of our users in AWS
+		//
+		, paws_users = Sendak.users.iam.get( { 'user-name': true } )
+
+	paws_users.then( function (users) {
+		if (dg.deeply( users, username, { } )) {
+			// It looks like this user exists in IAM and we can't proceed.
+			//
+			logger.error( 'Appears '.concat( username, ' already exists in IAM.' ) );
+			process.exit( -255 );
+		}
+		else {
+			Sendak.users.iam.create( { 'user-name' : username } ).then( function (response) {
+				var awsuser = response.User;
+
+				// Now we have a user from Amazon, grab the metadata from RM, and store
+				// it back in the database.
+				//
+				pmetadata.then( function (metadata) {
+					// Did they specify a github id at invocation?
+					//
+					if (args['github-id']) {
+						metadata['github-id'] = args['github-id'];
+					}
+					// here, we should:
+					//   * mogrify awsuser
+					//   * dg.coalesce( awsuser, metadata, { 'return-clone': true } );
+					//   * Sendak.users.sendak.create( /* the mog */ )
+					//
+					// sendak keys:
+					//   * user-name
+					//   * arn
+					//   * user-id
+					//   * name (an object)
+					//   * github-id
+					//
+					var mog = Sendak.users.mogrify.aws_to_sendak( awsuser );
+					Sendak.users.sendak.create( dg.coalesce( mog, metadata ), { 'return-clone': true } )
+						.then( function (serial) {
+							// Creation of a sendak user was successful, let the user know.
+							//
+						} )
+					} );
+			} )
+		}
+	} );
 }
 
 module.exports = plug;
