@@ -56,10 +56,19 @@ var plug = function (args) {
 		, paws_users = Sendak.users.iam.get( { 'user-name': true } )
 
 	paws_users.then( function (users) {
-		if (dg.deeply( users, username, { } )) {
+		var extant = dg.deeply( users, function (t) {
+			if (t == username) { return true }
+		}, {
+			'check-keys':         true,
+			'check-values':       false,
+			'return-hash-tuples': true
+		} );
+
+		if (extant.length) {
 			// It looks like this user exists in IAM and we can't proceed.
 			//
 			logger.error( 'Appears '.concat( username, ' already exists in IAM.' ) );
+			logger.error( extant );
 			process.exit( -255 );
 		}
 		else {
@@ -92,6 +101,7 @@ var plug = function (args) {
 						.then( function (serial) {
 							// Creation of a sendak user was successful, let the user know.
 							//
+							stdout( 'hurrah, sendak user with serial '.concat( serial, ' created.' ) );
 						} )
 					} );
 			} )
