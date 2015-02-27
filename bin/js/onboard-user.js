@@ -40,7 +40,7 @@ var plug = function (args) {
 		, fs       = require('fs')
 		, q        = require('q')
 		, dg       = require('deep-grep')
-		, xit      = require('xact-id-tiny')
+		, xit      = require('xact-id-tiny') // remove for production
 		, nonce    = xit.nonce
 
 		// Promises, promises
@@ -90,34 +90,32 @@ var plug = function (args) {
 					if (args['github-id']) {
 						metadata['github-id'] = args['github-id'];
 					}
-					// here, we should:
-					//   * mogrify awsuser
-					//   * dg.coalesce( awsuser, metadata, { 'return-clone': true } );
-					//   * Sendak.users.sendak.create( /* the mog */ )
-					//
-					// sendak keys:
-					//   * user-name
-					//   * arn
-					//   * user-id
-					//   * name (an object)
-					//   * github-id
-					//
 					var mog = Sendak.users.mogrify.aws_to_sendak( awsuser );
 					Sendak.users.sendak.create( dg.coalesce( mog, metadata, { 'return-clone': true } ) )
 						.then( function (user) {
-							// Creation of a sendak user was successful, resolve that promise
+							// Creation of a sendak user was successful, creation of iam user was
+							// successful, so resolve those values, and create an MFA device and
+							// tell the caller.
 							//
 							defs.serial.resolve( user.serial );
 							defs.arn.resolve( mog.arn );
+							Sendak.users.iam.mfa.create( { 'user-name': mog['user-name'] }  )
+								.then( function (mfadata) {
+									defs.mfa.resolve( mfadata )
+									} );
+								} );
 						} )
-					} );
-			} )
-		}
+				} );
+			}
 	} );
 	defs.serial.promise.then( function (serial) {
 		defs.arn.promise.then( function (arn) {
-			logger.info( 'hurrah, sendak user with serial '.concat( serial, ' created.' ) );
-			logger.info( 'this corresponds to IAM user '.concat( arn ) );
+			defs.mfa.promise.then( function (mfadata) {
+				var dev_sn = mfadata.VirtualMFADevice.SerialNumber;
+				logger.info( 'this user has an MFA device id of '.concat( dev_sn ) );
+				logger.info( 'hurrah, sendak user with serial '.concat( serial, ' created.' ) );
+				logger.info( 'this corresponds to IAM user '.concat( arn ) );
+			} )
 		} );
 	} );
 }
