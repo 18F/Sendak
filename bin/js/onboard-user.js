@@ -40,11 +40,17 @@ var plug = function (args) {
 		, fs       = require('fs')
 		, q        = require('q')
 		, dg       = require('deep-grep')
+		, xit      = require('xact-id-tiny')
+		, nonce    = xit.nonce
 
 		// Promises, promises
 		//   https://www.youtube.com/watch?v=H8Q83DPZy6E
-		, def_mfa  = q.defer()
-		, def_file = q.defer()
+		, defs     = {
+				arn    : q.defer(),
+				mfa    : q.defer(),
+				file   : q.defer(),
+				serial : q.defer()
+			}
 
 		// Get an acceptable username and metadata object for the user
 		//
@@ -59,8 +65,8 @@ var plug = function (args) {
 		var extant = dg.deeply( users, function (t) {
 			if (t == username) { return true }
 		}, {
-			'check-keys':         true,
-			'check-values':       false,
+			'check-keys':         false,
+			'check-values':       true,
 			'return-hash-tuples': true
 		} );
 
@@ -72,7 +78,7 @@ var plug = function (args) {
 			process.exit( -255 );
 		}
 		else {
-			Sendak.users.iam.create( { 'user-name' : username } ).then( function (response) {
+			Sendak.users.iam.create( { 'user-name' : username.concat( nonce() ) } ).then( function (response) {
 				var awsuser = response.User;
 
 				// Now we have a user from Amazon, grab the metadata from RM, and store
@@ -97,15 +103,22 @@ var plug = function (args) {
 					//   * github-id
 					//
 					var mog = Sendak.users.mogrify.aws_to_sendak( awsuser );
-					Sendak.users.sendak.create( dg.coalesce( mog, metadata ), { 'return-clone': true } )
-						.then( function (serial) {
-							// Creation of a sendak user was successful, let the user know.
+					Sendak.users.sendak.create( dg.coalesce( mog, metadata, { 'return-clone': true } ) )
+						.then( function (user) {
+							// Creation of a sendak user was successful, resolve that promise
 							//
-							stdout( 'hurrah, sendak user with serial '.concat( serial, ' created.' ) );
+							defs.serial.resolve( user.serial );
+							defs.arn.resolve( mog.arn );
 						} )
 					} );
 			} )
 		}
+	} );
+	defs.serial.promise.then( function (serial) {
+		defs.arn.promise.then( function (arn) {
+			logger.info( 'hurrah, sendak user with serial '.concat( serial, ' created.' ) );
+			logger.info( 'this corresponds to IAM user '.concat( arn ) );
+		} );
 	} );
 }
 
