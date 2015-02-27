@@ -61,6 +61,9 @@ var plug = function (args) {
 		//
 		, paws_users = Sendak.users.iam.get( { 'user-name': true } )
 
+	q.longStackSupport = true;
+	q.onerror          = true;
+
 	paws_users.then( function (users) {
 		var extant = dg.deeply( users, function (t) {
 			if (t == username) { return true }
@@ -115,19 +118,14 @@ var plug = function (args) {
 				// Actually write the QR PNG
 				//
 				logger.info( 'calling fs.write ' + args['output-file'] );
-				logger.info( typeof mfadev.contents );
-				fs.write( args['output-file'], mfadev.contents, function (err, bw, buf) {
+				fs.writeFile( args['output-file'], mfadev.contents, function (err, bw, buf) {
 					if (err) {
 						logger.info( 'error during write.' );
 						defs.file.resolve( err );
 					}
-					else if (bw > 0) {
+					else {
 						logger.info( 'writing file.' );
 						defs.file.resolve( args['output-file'] )
-					}
-					else {
-						logger.info( 'something weird happened during write.' );
-						defs.file.resolve( new Error( 'Failure to write file, unknown failure.' ) )
 					}
 				} )
 				defs.file.promise.then( function (f) {
