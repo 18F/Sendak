@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 // This is not written right now because the policies are very complicated objects.
 //
 

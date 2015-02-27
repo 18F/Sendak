@@ -30,10 +30,9 @@
     "chai-as-promised" : "*",
     "github" : "*",
     "q": "*",
-    "deep-grep": ">=0.4.0",
-    "rrm": ">=0.1.2",
+    "deep-grep": ">=0.4.1",
+    "rm": ">=0.1.5",
     "sendak-usage": ">=0.0.6",
-    "riak-dc": ">=0.3.0",
     "plugsuit": ">=0.0.4"
   },
   "homepage": "https://github.com/18F/Sendak",

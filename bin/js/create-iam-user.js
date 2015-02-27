@@ -38,4 +38,4 @@ var plug = function (args) {
 module.exports = plug;
 plug.meta      = meta;
 
-// @janearc // jane@cpan.org // vim:tw=80:ts=2:noet
+// @janearc 🐙👾 // jane@cpan.org // vim:tw=80:ts=2:noet
