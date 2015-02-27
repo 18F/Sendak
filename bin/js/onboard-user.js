@@ -111,10 +111,37 @@ var plug = function (args) {
 	defs.serial.promise.then( function (serial) {
 		defs.arn.promise.then( function (arn) {
 			defs.mfa.promise.then( function (mfadata) {
-				var dev_sn = mfadata.VirtualMFADevice.SerialNumber;
-				logger.info( 'this user has an MFA device id of '.concat( dev_sn ) );
-				logger.info( 'hurrah, sendak user with serial '.concat( serial, ' created.' ) );
-				logger.info( 'this corresponds to IAM user '.concat( arn ) );
+				var mfadev = Sendak.users.mogrify.aws_mfa_to_sendak( mfadata );
+				// Actually write the QR PNG
+				//
+				logger.info( 'calling fs.write ' + args['output-file'] );
+				logger.info( typeof mfadev.contents );
+				fs.write( args['output-file'], mfadev.contents, function (err, bw, buf) {
+					if (err) {
+						logger.info( 'error during write.' );
+						defs.file.resolve( err );
+					}
+					else if (bw > 0) {
+						logger.info( 'writing file.' );
+						defs.file.resolve( args['output-file'] )
+					}
+					else {
+						logger.info( 'something weird happened during write.' );
+						defs.file.resolve( new Error( 'Failure to write file, unknown failure.' ) )
+					}
+				} )
+				defs.file.promise.then( function (f) {
+					if (typeof f == 'error') {
+						logger.error( 'Failure to write qr code: '.concat( f.toString() ) );
+						process.exit( -255 );
+					}
+					if (typeof f == 'string') {
+						logger.info( 'this user has an MFA device id of '.concat( mfadev.sn ) );
+						logger.info( 'hurrah, sendak user with serial '.concat( serial, ' created.' ) );
+						logger.info( 'this corresponds to IAM user '.concat( arn ) );
+						logger.info( 'their QR code is on-disk at '.concat( f ) );
+					}
+				} )
 			} )
 		} );
 	} );
