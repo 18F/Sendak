@@ -15,13 +15,14 @@ var plug = function (args) {
 	var Sendak   = require( '../../lib/js/sendak.js' )
 		, plugsuit = require( 'plugsuit' )
 
-	Sendak.stdout( plugsuit.plugs.forEach( function (plug) {
-		return ' * '.concat( plug.meta.name )
-	} ).join( '\n' ) );
+	plugsuit.plugs.forEach( function (plug) {
+		Sendak.stdout( ' * '.concat( plug.meta().name ) );
+	} );
+
 	process.exit( 0 );
 };
 
 module.exports = plug;
 plug.meta      = meta;
 
-// jane@cpan.org // vim:tw=80:ts=2:noet
+// @janearc 🐙👾 // jane@cpan.org // vim:tw=80:ts=2:noet

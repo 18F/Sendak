@@ -33,7 +33,7 @@
     "deep-grep": ">=0.4.1",
     "rm": ">=0.1.5",
     "sendak-usage": ">=0.0.6",
-    "plugsuit": ">=0.0.5"
+    "plugsuit": ">=0.0.6"
   },
   "homepage": "https://github.com/18F/Sendak",
   "main": "bin/sendak.js",
