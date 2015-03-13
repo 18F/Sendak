@@ -4,7 +4,6 @@
   "description": "Sendak manages metadata for cloud deployments",
   "author": "Jane Arc <jane.arc@gsa.gov>",
   "preferGlobal": false,
-  "private": true,
   "license": "CC0-1.0",
   "bin": {
     "sendak": "./bin/sendak"
