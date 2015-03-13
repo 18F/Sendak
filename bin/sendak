@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-// sendak.ps
-//   the sendak dispatcher, which lives atop plugsuit
-
 'use strict;'
 
 var plugsuit = require( 'plugsuit' )
@@ -18,7 +15,24 @@ if (args['help']) {
 	process.exit( 0 );
 }
 
-plugsuit.init( 'bin/js' );
-plugsuit.dispatch( process.argv )
+var initdir;
+
+if (process.env.SENDAK_DIR) {
+	initdir = process.env.SENDAK_DIR
+}
+else if (require('fs').existsSync( '/usr/local/lib/node_modules/sendak/bin/js')) {
+	initdir = '/usr/local/lib/node_modules/sendak/bin/js';
+}
+else if (require('fs').existsSync( './node_modules/sendak/bin/js' )) {
+	initdir = './node_modules/sendak/bin/js';
+}
+
+if (initdir) {
+	plugsuit.init( initdir );
+	plugsuit.dispatch( process.argv );
+}
+else {
+	plugsuit.logger.fatal( 'Could not initialise Sendak; try setting SENDAK_DIR?');
+}
 
 // @janearc 🐙👾 // jane@cpan.org // vim:tw=80:ts=2:noet
