@@ -15,7 +15,11 @@ var plug = function (args) {
 	var Sendak   = require( '../../lib/js/sendak.js' )
 		, plugsuit = require( 'plugsuit' )
 
-	plugsuit.init( get_initdir() );
+	var where = get_initdir();
+
+	plugsuit.init( where );
+
+	Sendak.stdout( 'Your tasks, as installed in '.concat( where, ' are:' ) );
 
 	plugsuit.plugs.forEach( function (plug) {
 		Sendak.stdout( ' * '.concat( plug.meta().name ) );

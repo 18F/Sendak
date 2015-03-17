@@ -1,22 +1,13 @@
 #!/usr/bin/env node
 
-var Riak = require( 'riak-dc' );
-
-/*
-	http://docs.basho.com/riak/latest/dev/using/basics/
-
-	There is no need to intentionally create buckets in Riak. They pop into
-	existence when keys are added to them, and disappear when all keys have
-	been removed from them. If you don't specify a bucket's type, the type
-	default will be applied.
-*/
+var riak = require( 'riak-dc' );
 
 var schema = {
 	'project' : { // {{{
 		'name' : {
-			isa       : 'string', // varchar(256)?
-			defined   : true,     // must be not-null
-			distinct  : true      // can be indexed as distinct
+			isa       : 'string',
+			defined   : true,
+			distinct  : true
 		},
 		hasmany : [ 'github-project', 'user' ]
 	}, // }}} project
@@ -30,7 +21,7 @@ var schema = {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
-			verified  : 'RESERVED' // we probably want to check for url-ness of this
+			verified  : 'RESERVED'
 		},
 		hasmany : [ 'user' ],
 		hasone  : [ 'project' ]
@@ -45,7 +36,7 @@ var schema = {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
-			verified  : 'RESERVED', // is there a way to say "verified by stored procedure"
+			verified  : 'RESERVED',
 		},
 		'user-id' : {
 			isa       : 'string',
@@ -62,24 +53,28 @@ var schema = {
 		hasmany   : [ 'project', 'group' ],
 	}, // }}} user
 	'node' : { // {{{
-		hasone : [ 'project', 'github-project' ], // must reference a distinct key in these tables
+		hasone : [ 'project', 'github-project' ],
 		'user-name' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
 			verified  : 'RESERVED',
 		},
-		'instance-id' : { // I am thinking this should actually be an object with hooks into aws that also speaks sql.
+		'instance-id' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
-			verified  : 'RESERVED', // is there a way to say "verified by stored procedure"
+			verified  : 'RESERVED',
 		},
-		'availability-zone' : { // sooooo, we can identify instances by their availability zone (which gives us their region) and their instanceid but we can't do it with a single unique identifier like an arn.
+		// sooooo, we can identify instances by their availability zone (which gives
+		// us their region) and their instanceid but we can't do it with a single
+		// unique identifier like an arn.
+		//
+		'availability-zone' : {
 			isa       : 'string',
 			defined   : true,
 			distinct  : true,
-			verified  : 'RESERVED', // is there a way to say "verified by stored procedure"
+			verified  : 'RESERVED',
 		},
 	}, // }}} node
 }
@@ -92,5 +87,6 @@ Object.keys( schema ).forEach( function ( type ) {
 	console.log( 'prototype object found (' + type + ')' );
 	console.log( prototype );
 
-	Riak.put_tuple( 'prototypes', prototype, type ).then( console.log );
+	riak.put_tuple( 'prototypes', prototype, type )
+		.then( console.log );
 } );

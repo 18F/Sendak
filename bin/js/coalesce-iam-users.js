@@ -131,21 +131,19 @@ var plug = function (args) {
 						suser['user-name'] = user.UserName;
 						suser['arn']       = user.Arn;
 						suser['user-id']   = user.UserId;
-
-						suser['name']      =  name_split( suser['user-name'] );
+						suser['name']      = name_split( suser['user-name'] );
 
 						susers.push( suser );
 					}
-				} ); // }}} iam.listUsers.Users.forEach
-			} // if err
+				} );
+			} 
 			if (args['dont']) {
-				// TODO: Logging facility
-				console.log( JSON.stringify( susers, null, 2 ) );
+				stdout( JSON.stringify( susers, null, 2 ) );
 			}
 			else {
 				susers.forEach( function (user) {
 					rm.add_object( 'user', user ).then( function (s) {
-						console.log( user.name.name + ' object stored with serial ' + s );
+						stdout( user.name.name.concat( ' stored with serial ', s ) );
 					} );
 				} );
 			}
