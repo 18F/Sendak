@@ -40,7 +40,6 @@ var plug = function (args) {
 		, fs       = require('fs')
 		, q        = require('q')
 		, dg       = require('deep-grep')
-		, xit      = require('xact-id-tiny') // remove for production
 		, nonce    = xit.nonce
 
 		// Promises, promises
