@@ -27,3 +27,54 @@ inside and out of promises, when transactions in riak get opened, and so on.
 If you&apos;re still not sure what&apos;s going on, setting `process.env.DEBUG`
 to `TRACE`, all your output to stdout will go via `console.trace` and
 `util.inspect`. *NOTE:* this will fill up disks very, very quickly.
+
+The API
+---
+
+Generally, all functions exported by the Sendak back-end have jsdoc explanations
+for what's required of the caller to get Things from Places.
+
+##### Sendak.users.iam
+
+* `Sendak.users.iam.get(object)`
+```javascript
+Sendak.users.iam.get( {
+	// Use a regular expression (or string)
+	'pattern': '[Jj]ane',
+
+	// Or explicitly look for a username; this is case-sensitive
+	'user-name': 'JaneArc',
+
+	// Or explicitly look for an arn
+	'arn': 'arn:aws:iam::555555555555:user/JaneArc',
+
+	// Or explicitly look for a uid
+	'user-id': 'AIDAXXXXXXXXXXXXXXXOS',
+
+	// Since Sendak also stores this data in Riak, you may request a cached
+	// copy from Riak and save yourself the call to AWS IAM (which is time-
+	// consuming); of course, IAM is the authoritative source.
+	'cached': true,
+} ).then( function (users) {
+	// Your users are here.
+} );
+```
+
+* `Sendak.users.iam.create(object)`
+```javascript
+Sendak.users.iam.create( {
+	'user-name': 'JaneArc'
+} ).then( function (arn) {
+	// The return value here is the ARN that Amazon provided, or a (hopefully)
+	// meaningful Error object 'splaining what went wrong.
+} );
+```
+
+* `Sendak.users.iam.mfa.create(object)`
+```javascript
+Sendak.users.iam.mfa.create( {
+	'user-name': 'JaneArc'
+} ).then( function (mfadata) {
+	// mfadata.contents - a PNG of a QR code you should write somewhere safe
+} );
+```
