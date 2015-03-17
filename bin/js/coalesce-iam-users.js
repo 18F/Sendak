@@ -122,7 +122,7 @@ var plug = function (args) {
 	iam.listUsers( { },
 		function( err, data ) {
 			if (err) {
-				console.log( err, err.stack )
+				stderr( err, err.stack )
 			}
 			else {
 				data.Users.forEach( function (user) { // {{{

@@ -145,8 +145,6 @@ var build_instance = function( args, callback ) { // {{{
 							return_value.public_ip         = instance_zero.PublicIpAddress;
 							return_value.availability_zone = instance_zero.Placement.AvailabilityZone;
 
-							// console.log( instance_zero )
-
 							callback( return_value );
 						} // if wait_for_err
 					} ) // ec2.waitFor
@@ -158,6 +156,7 @@ var build_instance = function( args, callback ) { // {{{
 
 var plug = function (args) {
 	var Sendak = require( '../../lib/js/sendak.js' )
+		, stdout = Sendak.stdout
 		, ec2    = Sendak.ec2
 		, rm     = Sendak.rm
 
@@ -173,7 +172,7 @@ var plug = function (args) {
 		},
 		function (ec2_result, stack) {
 			if (stack) {
-				console.log( 'error during node creation: '.concat( stack ) );
+				stdout( 'error during node creation: '.concat( stack ) );
 				process.exit(-255);
 			}
 			else {
@@ -187,7 +186,7 @@ var plug = function (args) {
 				metadata['availability-zone'] = ec2_result['availability_zone'];
 
 				rm.add_object( 'node', metadata ).then( function (serial) {
-					console.log(
+					stdout(
 						'Node ' + metadata['instance-id'] + ' created (Riak ID: ' + serial +
 						') : ssh ubuntu@' +
 						ec2_result['public_ip']
