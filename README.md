@@ -1,8 +1,7 @@
 # Sendak, or Infrastructure-as-a-service-as-a-service
 
-Sendak gives the [18F](https://18f.gsa.gov) DevOps team a single interface
-to manage its projects, users, and deployments across Amazon Web Services and
-GitHub.
+Sendak gives [18F](https://18f.gsa.gov) a single interface to manage its
+projects, users, and deployments across Amazon Web Services and GitHub.
 
 Sendak lets teams specify **projects**, which can be linked to:
 
@@ -58,7 +57,7 @@ sendak list-iam-groups --help
 For a full list of commands:
 
 ```bash
-sendak --list-tasks
+sendak list-tasks
 ```
 
 ## Setting up Sendak
@@ -81,7 +80,8 @@ export AWS_REGION=us-east-1
 
 * If you'll be using GitHub private repositories, you'll need to provide
 GitHub credentials. The simplest way to authenticate is to create a **personal
-access token** in your [GitHub application settings](https://github.com/settings/applications) and set it to an environment variable:
+access token** in your [GitHub application settings](https://github.com/settings/applications)
+and set it to an environment variable:
 
 ```
 export GH_TOKEN=[your-app-token]
@@ -98,7 +98,8 @@ your team's [Riak](https://github.com/basho/riak) instance. Sendak will expect R
 * Check that your environment is working:
 
 ```bash
-sendak check-environment --riak --github --aws
+sendak check-environment --riak --github --aws # or...
+sendak check-environment --all
 ```
 
 You should now be able to run [Sendak commands](#usage).
