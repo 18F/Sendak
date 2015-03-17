@@ -1,13 +1,12 @@
 {
   "name": "sendak",
-  "version": "0.1.0",
+  "version": "0.0.3",
   "description": "Sendak manages metadata for cloud deployments",
   "author": "Jane Arc <jane.arc@gsa.gov>",
   "preferGlobal": false,
-  "private": true,
   "license": "CC0-1.0",
   "bin": {
-    "sendak": "./bin/sendak.js"
+    "sendak": "./bin/sendak"
   },
   "repository": {
     "type": "git",
@@ -33,10 +32,9 @@
     "deep-grep": ">=0.4.1",
     "rm": ">=0.1.5",
     "sendak-usage": ">=0.0.6",
-    "plugsuit": ">=0.0.7"
+    "plugsuit": ">=0.0.8"
   },
   "homepage": "https://github.com/18F/Sendak",
-  "main": "bin/sendak.js",
   "directories": {
     "doc": "doc"
   },

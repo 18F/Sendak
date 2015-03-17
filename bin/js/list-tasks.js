@@ -15,13 +15,30 @@ var plug = function (args) {
 	var Sendak   = require( '../../lib/js/sendak.js' )
 		, plugsuit = require( 'plugsuit' )
 
-	Sendak.stdout( plugsuit.plugs.forEach( function (plug) {
-		return ' * '.concat( plug.meta.name )
-	} ).join( '\n' ) );
+	plugsuit.init( get_initdir() );
+
+	plugsuit.plugs.forEach( function (plug) {
+		Sendak.stdout( ' * '.concat( plug.meta().name ) );
+	} );
+
 	process.exit( 0 );
 };
 
 module.exports = plug;
 plug.meta      = meta;
 
-// jane@cpan.org // vim:tw=80:ts=2:noet
+function get_initdir () { // {{{
+	var initdir;
+	if (process.env.SENDAK_DIR) {
+		initdir = process.env.SENDAK_DIR
+	}
+	else if (require('fs').existsSync( '/usr/local/lib/node_modules/sendak/bin/js')) {
+		initdir = '/usr/local/lib/node_modules/sendak/bin/js';
+	}
+	else if (require('fs').existsSync( './node_modules/sendak/bin/js' )) {
+		initdir = './node_modules/sendak/bin/js';
+	}
+	return initdir;
+} // }}}
+
+// @janearc 🐙👾 // jane@cpan.org // vim:tw=80:ts=2:noet

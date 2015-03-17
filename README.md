@@ -63,25 +63,7 @@ sendak --list-tasks
 
 ## Setting up Sendak
 
-* Check out the project. (`npm`-based installation forthcoming.)
-
-```bash
-git clone git@github.com:18F/Sendak.git sendak
-cd sendak
-```
-
-* Install dependencies:
-
-```bash
-npm install
-```
-
-* Until Sendak is in `npm`, you may wish to add an alias to your `.bashrc` or
-`bash_profile` that points to `bin/sendak.js`:
-
-```
-alias sendak=/path/to/bin/sendak.js
-```
+* `npm install -g sendak`
 
 * Configure your AWS credentials. Sendak first looks for config files in your
 `~/.aws` directory, as created by the [AWS Node
@@ -136,8 +118,7 @@ There*, and illustrated *Little Bear*.
 The progenitor of this software was called Thing Launcher, which was developed
 at [CFPB](http://www.consumerfinance.gov/).
 
-Sendak, you see, keeps track of the Wild Things for devops.
-
+Sendak, you see, keeps track of the Wild Things for 18F.
 
 ## Public domain
 

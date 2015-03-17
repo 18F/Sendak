@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+'use strict;'
+
+var plugsuit = require( 'plugsuit' )
+
+function get_initdir () { // {{{
+	var initdir;
+	if (process.env.SENDAK_DIR) {
+		initdir = process.env.SENDAK_DIR
+	}
+	else if (require('fs').existsSync( '/usr/local/lib/node_modules/sendak/bin/js')) {
+		initdir = '/usr/local/lib/node_modules/sendak/bin/js';
+	}
+	else if (require('fs').existsSync( './node_modules/sendak/bin/js' )) {
+		initdir = './node_modules/sendak/bin/js';
+	}
+	return initdir;
+} // }}}
+
+if (get_initdir()) {
+	plugsuit.init( get_initdir() ).dispatch( process.argv );
+}
+else {
+	plugsuit.logger.fatal( 'Could not initialise Sendak; try setting SENDAK_DIR?');
+}
+
+// @janearc 🐙👾 // jane@cpan.org // vim:tw=80:ts=2:noet
