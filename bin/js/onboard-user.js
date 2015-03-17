@@ -40,7 +40,6 @@ var plug = function (args) {
 		, fs       = require('fs')
 		, q        = require('q')
 		, dg       = require('deep-grep')
-		, nonce    = xit.nonce
 
 		// Promises, promises
 		//   https://www.youtube.com/watch?v=H8Q83DPZy6E
