@@ -1,6 +1,4 @@
-# Sendak, or Infrastructure-as-a-service-as-a-service
-
-Sendak gives [18F](https://18f.gsa.gov) a single interface to manage its
+**Sendak** gives [18F](https://18f.gsa.gov) a single interface to manage its
 projects, users, and deployments across Amazon Web Services and GitHub.
 
 Sendak lets teams specify **projects**, which can be linked to:
