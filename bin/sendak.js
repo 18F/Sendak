@@ -6,19 +6,9 @@
 'use strict;'
 
 var plugsuit = require( 'plugsuit' )
-	, parsed   = require( 'sendak-usage' ).parsedown( {
-			'help'       : { 'type' : [ Boolean ] }
-		}, process.argv )
+	, parsed   = require( 'sendak-usage' ).parsedown( { }, process.argv )
 	, usage    = parsed[1]
 	, args     = parsed[0];
 
-if (args['help']) {
-	console.log( 'Usage:' );
-	console.log( usage );
-	process.exit( 0 );
-}
-
 plugsuit.init( 'bin/js' );
 plugsuit.dispatch( process.argv )
-
-
