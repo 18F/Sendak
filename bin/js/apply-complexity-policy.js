@@ -18,8 +18,8 @@ var meta = function () {
 	return {
 		'args' : mapping,
 
-		'abstract' : 'verifies certain characteristics (such as MFA) on aws users',
-		'name'     : 'check-aws-user'
+		'abstract' : 'applies a password complexity policy',
+		'name'     : 'apply-complexity-policy'
 	}
 }
 
