@@ -31,7 +31,7 @@ var plug = function (args) {
 				//
 			} // if err
 		} // callback
-	) // iam.UpdateAccountPasswordPolicy
+	) // ct.createTrail
 }
 
 module.exports = plug;
