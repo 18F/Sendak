@@ -1,7 +1,7 @@
 // base configuration for sendak
 //
 
-'use strict;'
+'use strict';
 
 var global = { };
 
