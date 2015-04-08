@@ -54,14 +54,10 @@ fetch:~ jane$
 
 	iam.AddUserToGroup( { 'GroupName': args['group-name'], 'UserName': args['user-name'] },
 		function( err, data ) {
-			if (err) {
-				stderr( err, err.stack )
-			}
-			else {
-				var result = data[0].
-			} // if err
+			if (err) { stderr( err, err.stack ) }
+			else     { var result = data[0]     }
 		} // callback
-	) // iam.AddUserToGroup
+	); // iam.AddUserToGroup
 }
 
 module.exports = plug;
